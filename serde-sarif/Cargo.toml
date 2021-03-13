@@ -1,0 +1,28 @@
+[package]
+name = "serde-sarif"
+version = "0.1.0"
+authors = ["Paul Sastrasinh <psastras@gmail.com>"]
+edition = "2018"
+description = "Serde serialization for SARIF files"
+license = "MIT"
+readme = "README.md"
+keywords = ["sarif", "serde", "serialization"]
+categories = ["encoding"]
+build = "build.rs"
+
+[badges]
+github = { repository = "psastras/sarif-rs" }
+
+[dependencies]
+serde = "1.0.126"
+serde_json = "1.0.64"
+
+[dev-dependencies]
+version-sync = "0.9"
+
+[build-dependencies]
+anyhow = "1.0.33"
+rustfmt = "0.10.0"
+schemafy_lib = "0.5.2"
+serde_json = "1.0.64"
+cargo-readme = "3.2.0"
