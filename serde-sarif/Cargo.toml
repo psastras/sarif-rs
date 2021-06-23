@@ -10,7 +10,7 @@ keywords = ["sarif", "serde", "serialization"]
 categories = ["encoding"]
 build = "build.rs"
 homepage  = "https://github.com/psastras/sarif-rs"
-documentation = "https://docs.rs/serde-sarif/"
+documentation = "https://psastras.github.io/sarif-rs/serde_sarif/index.html"
 repository = "https://github.com/psastras/sarif-rs"
 
 [badges]
