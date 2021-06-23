@@ -79,10 +79,7 @@ jobs:
           toolchain: stable
           override: true
       - uses: Swatinem/rust-cache@v1
-      - uses: actions-rs/cargo@v1
+      - uses: katyo/publish-crates@v1
         with:
-          command: install
-          args: cargo-publish-all
-      - run:
-          cargo-publish-all --token ${{ secrets.CRATES_IO_TOKEN }} --yes
-          --no-verify1
+          registry-token: ${{ secrets.CRATES_IO_TOKEN }}
+          args: --no-verify
