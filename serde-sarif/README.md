@@ -6,6 +6,8 @@ This crate provides a type safe [serde](https://serde.rs/) compatible
 [SARIF](https://sarifweb.azurewebsites.net/) structure. It is intended
 for use in Rust code which may need to read or write SARIF files.
 
+The latest [documentation can be found here](https://psastras.github.io/sarif-rs/serde_sarif/index.html).
+
 serde is a popular serialization framework for Rust. More information can be
 found on the official repository: [https://github.com/serde-rs/serde](https://github.com/serde-rs/serde)
 
@@ -23,8 +25,14 @@ write to and from the struct.
 ```rust
 use serde_sarif::Sarif;
 
-let sarif: Sarif = serde_json::from_str(r#"{ "version": "2.1.0", "runs": [] }"#).unwrap();
-assert_eq!(sarif.version.to_string(), "\"2.1.0\"".to_string());
+let sarif: Sarif = serde_json::from_str(
+  r#"{ "version": "2.1.0", "runs": [] }"#
+).unwrap();
+
+assert_eq!(
+  sarif.version.to_string(),
+  "\"2.1.0\"".to_string()
+);
 ```
 
 ## Internal Implementation Details
