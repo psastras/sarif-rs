@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/serde-sarif/0.1.1")]
+#![doc(html_root_url = "https://docs.rs/serde-sarif/0.1.2")]
 
 //! This crate provides a type safe [serde](https://serde.rs/) compatible
 //! [SARIF](https://sarifweb.azurewebsites.net/) structure. It is intended
