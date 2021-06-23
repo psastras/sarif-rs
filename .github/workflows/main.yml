@@ -1,5 +1,5 @@
 on: [push, pull_request]
-
+# ignore gh-pages
 name: main
 
 jobs:
@@ -66,6 +66,26 @@ jobs:
         with:
           command: clippy
           args: -- -D warnings
+
+  Docs:
+    needs: [check, test, fmt, clippy]
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - uses: Swatinem/rust-cache@v1
+      - run: cargo doc --workspace --no-deps
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/doc
+          force_orphan: true
 
   Publish:
     needs: [check, test, fmt, clippy]
