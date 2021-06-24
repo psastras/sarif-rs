@@ -15,7 +15,7 @@
 //!
 //! ## Usage
 //!
-//! For most cases, simply use the root [Sarif] struct with [serde] to read and
+//! For most cases, simply use the root [sarif::Sarif] struct with [serde] to read and
 //! write to and from the struct.
 //!
 //! ## Example
@@ -33,9 +33,9 @@
 //! );
 //! ```
 //!
-//! Because many of the [Sarif] structures contain a lot of optional fields, it is
+//! Because many of the [sarif::Sarif] structures contain a lot of optional fields, it is
 //! often convenient to use the builder pattern to contstruct these structs. Each
-//! structure has a [Builder] with a default.
+//! structure has a builder with a default.
 //!
 //! ## Example
 //!
@@ -50,8 +50,24 @@
 //!
 //! ## Internal Implementation Details
 //!
-//! The root [Sarif] struct is automatically generated from the latest Sarif
-//! JSON schema, this is done at build time (see [build.rs]).
+//! The root [sarif::Sarif] struct is automatically generated from the latest Sarif
+//! JSON schema, this is done at build time (via the buildscript).
 //!
+//! ## Crate Features
+//!
+//! This crate contains different features which may be enabled depndending on your
+//! use case.
+//!
+//! ### Example
+//!
+//! ```toml
+//! [dependencies]
+//! serde-sarif = { version = "0.2.1", features = ["clippy-converters"] }
+//! ```
+//!
+//! ### Converters
+//! - **clippy-converters** Provides conversions bewteen Clippy
+//!    and SARIF types
 
+pub mod converters;
 pub mod sarif;
