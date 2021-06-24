@@ -8,7 +8,6 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::process::Command;
 use std::process::Stdio;
-use syn;
 
 use anyhow::Result;
 use schemafy_lib::Expander;
@@ -34,7 +33,6 @@ fn reformat(text: impl std::fmt::Display) -> Result<String> {
 fn process_token_stream(
   input: proc_macro2::TokenStream,
 ) -> proc_macro2::TokenStream {
-  let input = proc_macro2::TokenStream::from(input);
   let mut ast: syn::File = syn::parse2(input).unwrap();
 
   // add use directives to top of the file
@@ -66,43 +64,37 @@ fn process_token_stream(
 
     vec!["Option|", "std|option|Option|", "core|option|Option|"]
       .into_iter()
-      .find(|s| &idents_of_path == *s)
+      .find(|s| idents_of_path == *s)
       != None
   }
 
-  (&mut ast.items)
-    .into_iter()
-    .for_each(|ref mut item| match item {
-      syn::Item::Struct(s) => {
-        // add builder attributes to each struct
-        s.attrs.extend(vec![
-          syn::parse_quote! {
-            #[derive(Builder)]
-          },
-          syn::parse_quote! {
-            #[builder(setter(into, strip_option))]
-          },
-        ]);
+  (&mut ast.items).iter_mut().for_each(|ref mut item| {
+    if let syn::Item::Struct(s) = item {
+      // add builder attributes to each struct
+      s.attrs.extend(vec![
+        syn::parse_quote! {
+          #[derive(Builder)]
+        },
+        syn::parse_quote! {
+          #[builder(setter(into, strip_option))]
+        },
+      ]);
 
-        // for each struct field, if that field is Optional, set None
-        // as the default value when using the builder
-        (&mut s.fields)
-          .into_iter()
-          .for_each(|ref mut field| match &field.ty {
-            syn::Type::Path(typepath) => {
-              if path_is_option(&typepath.path) {
-                field.attrs.push(syn::parse_quote! {
-                  #[builder(setter(into, strip_option), default)]
-                })
-              }
-            }
-            _ => {}
-          })
-      }
-      _ => {}
-    });
+      // for each struct field, if that field is Optional, set None
+      // as the default value when using the builder
+      (&mut s.fields).into_iter().for_each(|ref mut field| {
+        if let syn::Type::Path(typepath) = &field.ty {
+          if path_is_option(&typepath.path) {
+            field.attrs.push(syn::parse_quote! {
+              #[builder(setter(into, strip_option), default)]
+            })
+          }
+        }
+      })
+    }
+  });
 
-  proc_macro2::TokenStream::from(ast.into_token_stream())
+  ast.into_token_stream()
 }
 
 fn main() -> Result<()> {

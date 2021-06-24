@@ -35,8 +35,8 @@ assert_eq!(
 );
 ```
 
-Because many of the [Sarif] structures contain many optional fields, it is
-often convenient to use the builder pattern to contstruct these fields. Each
+Because many of the [Sarif] structures contain a lot of optional fields, it is
+often convenient to use the builder pattern to contstruct these structs. Each
 structure has a [Builder] with a default.
 
 ## Example
