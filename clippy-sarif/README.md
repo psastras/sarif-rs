@@ -46,8 +46,9 @@ are available in GHAS.
 ```yaml
 on:
   workflow_run:
-  workflows: ["main"]
-  types: [completed]
+    workflows: ["main"]
+    branches: [main]
+    types: [completed]
 
 name: sarif
 

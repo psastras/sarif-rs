@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/clippy-sarif/0.1.1")]
+#![doc(html_root_url = "https://docs.rs/clippy-sarif/0.1.2")]
 
 //! This crate provides a command line tool to convert `cargo clippy` diagnostic
 //! output into SARIF.
@@ -44,8 +44,9 @@
 //! ```yaml
 //! on:
 //!   workflow_run:
-//!   workflows: ["main"]
-//!   types: [completed]
+//!     workflows: ["main"]
+//!     branches: [main]
+//!     types: [completed]
 //!
 //! name: sarif
 //!
