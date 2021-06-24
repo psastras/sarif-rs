@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/clippy-sarif/0.1.0")]
+#![doc(html_root_url = "https://docs.rs/clippy-sarif/0.1.1")]
 
 //! This crate provides a command line tool to convert `cargo clippy` diagnostic
 //! output into SARIF.
@@ -29,6 +29,46 @@
 //!
 //!```shell
 //! cargo clippy --message-format=json | clippy-sarif
+//! ```
+//!
+//! If you are using Github Actions, SARIF is useful for integrating with
+//! Github Advanced Security (GHAS), which can show code alerts in the
+//! "Security" tab of your respository.
+//!
+//! After uploading `cargo-clippy` output to Github, `clippy` diagnostics
+//! are available in GHAS.
+//! [You can see a demo in this repository](https://github.com/psastras/sarif-rs/security/code-scanning).
+//!
+//! ## Example
+//!
+//! ```yaml
+//! on:
+//!   workflow_run:
+//!   workflows: ["main"]
+//!   types: [completed]
+//!
+//! name: sarif
+//!
+//! jobs:
+//!   upload-sarif:
+//!     runs-on: ubuntu-latest
+//!     if: ${{ github.ref == 'refs/heads/main' }}
+//!     steps:
+//!       - uses: actions/checkout@v2
+//!       - uses: actions-rs/toolchain@v1
+//!         with:
+//!           profile: minimal
+//!           toolchain: stable
+//!           override: true
+//!       - uses: Swatinem/rust-cache@v1
+//!       - run: cargo install clippy-sarif
+//!       - run:
+//!           cargo clippy --all-targets --all-features --message-format=json |
+//!           clippy-sarif > results.sarif
+//!       - name: Upload SARIF file
+//!         uses: github/codeql-action/upload-sarif@v1
+//!         with:
+//!           sarif_file: results.sarif
 //! ```
 //!
 

@@ -4,15 +4,11 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    labels:
-      - "CI/CD"
     commit-message:
       prefix: ci
   - package-ecosystem: "cargo"
     directory: "/"
     schedule:
       interval: "daily"
-    labels:
-      - "CI/CD"
     commit-message:
       prefix: ci
