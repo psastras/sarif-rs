@@ -23,7 +23,7 @@ write to and from the struct.
 ## Example
 
 ```rust
-use serde_sarif::Sarif;
+use serde_sarif::sarif::Sarif;
 
 let sarif: Sarif = serde_json::from_str(
   r#"{ "version": "2.1.0", "runs": [] }"#
@@ -35,10 +35,25 @@ assert_eq!(
 );
 ```
 
+Because many of the [Sarif] structures contain many optional fields, it is
+often convenient to use the builder pattern to contstruct these fields. Each
+structure has a [Builder] with a default.
+
+## Example
+
+```rust
+use serde_sarif::sarif::MessageBuilder;
+
+let message = MessageBuilder::default()
+  .id("id")
+  .build()
+  .unwrap();
+```
+
 ## Internal Implementation Details
 
 The root [Sarif] struct is automatically generated from the latest Sarif
-JSON schema.
+JSON schema, this is done at build time (see [build.rs]).
 
 
 License: MIT
