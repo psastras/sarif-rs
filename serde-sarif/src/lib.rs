@@ -21,7 +21,7 @@
 //! ## Example
 //!
 //!```rust
-//! use serde_sarif::Sarif;
+//! use serde_sarif::sarif::Sarif;
 //!
 //! let sarif: Sarif = serde_json::from_str(
 //!   r#"{ "version": "2.1.0", "runs": [] }"#
@@ -33,10 +33,25 @@
 //! );
 //! ```
 //!
+//! Because many of the [Sarif] structures contain a lot of optional fields, it is
+//! often convenient to use the builder pattern to contstruct these structs. Each
+//! structure has a [Builder] with a default.
+//!
+//! ## Example
+//!
+//! ```rust
+//! use serde_sarif::sarif::MessageBuilder;
+//!
+//! let message = MessageBuilder::default()
+//!   .id("id")
+//!   .build()
+//!   .unwrap();
+//! ```
+//!
 //! ## Internal Implementation Details
 //!
 //! The root [Sarif] struct is automatically generated from the latest Sarif
-//! JSON schema.
+//! JSON schema, this is done at build time (see [build.rs]).
 //!
 
 pub mod sarif;
