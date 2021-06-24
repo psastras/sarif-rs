@@ -64,11 +64,11 @@ use case.
 
 ```toml
 [dependencies]
-serde-sarif = { version = "0.2.1", features = ["clippy-converters"] }
+serde-sarif = { version = "0.2.2", features = ["clippy-converters"] }
 ```
 
 ### Converters
-- **clippy-converters** Provides `From` and `Into` implementations for Clippy
+- **clippy-converters** Provides conversions bewteen Clippy
    and SARIF types
 
 License: MIT
