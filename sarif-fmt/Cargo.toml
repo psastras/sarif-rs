@@ -1,12 +1,12 @@
 [package]
-name = "clippy-sarif"
-version = "0.1.2"
+name = "sarif-fmt"
+version = "0.1.0"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Convert clippy output to SARIF"
 license = "MIT"
 readme = "README.md"
-keywords = ["sarif", "clippy", "cli"]
+keywords = ["sarif", "fmt", "cli"]
 categories = ["command-line-utilities"]
 build = "build.rs"
 homepage  = "https://github.com/psastras/sarif-rs"
@@ -17,12 +17,14 @@ repository = "https://github.com/psastras/sarif-rs"
 github = { repository = "psastras/sarif-rs" }
 
 [[bin]]
-name = "clippy-sarif"
+name = "sarif-fmt"
 path = "src/bin.rs"
 
 [dependencies]
 anyhow = "1.0.33"
-serde-sarif = { path = "../serde-sarif", version = "0.2.2", features = ["clippy-converters"] }
+codespan-reporting = "0.11.1"
+serde_json = "1.0.64"
+serde-sarif = { path = "../serde-sarif", version = "0.2.2" }
 
 [dependencies.clap]
 version = "3.0.0-beta.2"
