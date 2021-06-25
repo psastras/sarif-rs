@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/serde-sarif/0.2.2")]
+#![doc(html_root_url = "https://docs.rs/serde-sarif/0.2.4")]
 
 //! # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 //!
@@ -64,7 +64,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! serde-sarif = { version = "0.2.2", features = ["clippy-converters"] }
+//! serde-sarif = { version = "*", features = ["clippy-converters"] }
 //! ```
 //!
 //! ### Converters
