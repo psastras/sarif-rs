@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.1.0")]
+#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.4")]
 
 //! # DO NOT USE (EARLY IMPLEMENTATION)
 //!
