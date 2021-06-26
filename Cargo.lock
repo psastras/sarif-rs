@@ -182,7 +182,7 @@ dependencies = [
 
 [[package]]
 name = "clippy-sarif"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "anyhow",
  "cargo-readme",
@@ -376,6 +376,12 @@ dependencies = [
  "unicode-bidi",
  "unicode-normalization",
 ]
+
+[[package]]
+name = "if_chain"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1f7280c75fb2e2fc47080ec80ccc481376923acb04501957fc38f935c3de5088"
 
 [[package]]
 name = "indexmap"
@@ -724,12 +730,13 @@ checksum = "71d301d4193d031abdd79ff7e3dd721168a9572ef3fe51a1517aba235bd8f86e"
 
 [[package]]
 name = "sarif-fmt"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "anyhow",
  "cargo-readme",
  "clap 3.0.0-beta.2",
  "codespan-reporting",
+ "if_chain",
  "serde-sarif",
  "serde_json",
  "version-sync",
@@ -812,7 +819,7 @@ dependencies = [
 
 [[package]]
 name = "serde-sarif"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "anyhow",
  "cargo-readme",

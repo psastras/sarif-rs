@@ -1,5 +1,5 @@
-#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.4")]
-
+#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.5")]
+#![recursion_limit = "256"]
 //! # DO NOT USE (EARLY IMPLEMENTATION)
 //!
 //! This crate provides a command line tool to format SARIF files to pretty
@@ -34,14 +34,16 @@ use anyhow::Result;
 use clap::{App, Arg};
 use codespan_reporting::diagnostic::Diagnostic;
 use codespan_reporting::diagnostic::Label;
+use codespan_reporting::files::Files;
 use codespan_reporting::files::SimpleFiles;
 use codespan_reporting::term;
 use codespan_reporting::term::termcolor::ColorChoice;
 use codespan_reporting::term::termcolor::StandardStream;
+use if_chain::if_chain;
 use serde_sarif::sarif;
 use serde_sarif::sarif::ResultLevel;
 use std::fs::File;
-use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
+use std::io::{BufRead, BufReader, Read};
 use std::path::Path;
 use std::str::FromStr;
 use std::usize;
@@ -51,132 +53,137 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
   Ok(s)
 }
 
-/// Returns [sarif::Sarif] serialized into a JSON stream
-///
-/// # Arguments
-///
-/// * `reader` - A `BufRead` of cargo output
-/// * `writer` - A `Writer` to write the results to
-pub fn parse_to_writer<R: BufRead, W: Write>(
-  reader: R,
-  writer: W,
-) -> Result<()> {
-  let sarif = process(reader)?;
-  to_writer_pretty(writer, &sarif)?;
-  Ok(())
+fn get_physical_location_contents(
+  physical_location: &sarif::PhysicalLocation,
+) -> Result<String> {
+  if_chain! {
+    if let Some(artifact_location) = physical_location.artifact_location.as_ref();
+    if let Some(uri) = artifact_location.uri.as_ref();
+    let path = Path::new(uri);
+    if path.exists();
+    let mut file = File::open(uri)?;
+    let mut contents = String::new();
+    then {
+      file.read_to_string(&mut contents)?;
+      Ok(contents)
+    } else {
+      Err(anyhow::anyhow!(""))
+    }
+  }
 }
 
-fn to_writer_pretty<W>(_: W, sarif: &sarif::Sarif) -> Result<()>
-where
-  W: io::Write,
-{
-  let writer = StandardStream::stderr(ColorChoice::Always);
+fn try_get_byte_offset(
+  file_id: usize,
+  files: &SimpleFiles<&String, String>,
+  row: i64,
+  column: i64,
+) -> Result<usize> {
+  files
+    .line_range(file_id, row as usize - 1)?
+    .find(|byte| {
+      if let Ok(location) = files.location(file_id, *byte) {
+        location.column_number == column as usize
+      } else {
+        false
+      }
+    })
+    .ok_or_else(|| anyhow::anyhow!("Byte offset not found"))
+}
 
+fn get_byte_range(
+  file_id: usize,
+  files: &SimpleFiles<&String, String>,
+  region: &sarif::Region,
+) -> (Option<usize>, Option<usize>) {
+  // todo: support character regions
+  let byte_offset = if let Some(byte_offset) = region.byte_offset {
+    Some(byte_offset as usize)
+  } else if let (Some(start_line), Some(start_column)) =
+    (region.start_line, region.start_column)
+  {
+    if let Ok(byte_offset) =
+      try_get_byte_offset(file_id, files, start_line, start_column)
+    {
+      Some(byte_offset)
+    } else {
+      None
+    }
+  } else {
+    None
+  };
+
+  let byte_end = if let Some(byte_offset) = byte_offset {
+    if let Some(byte_length) = region.byte_length {
+      Some(byte_offset + byte_length as usize)
+    } else if let (Some(end_line), Some(end_column)) =
+      (region.end_line, region.end_column)
+    {
+      if let Ok(byte_offset) =
+        try_get_byte_offset(file_id, files, end_line, end_column)
+      {
+        Some(byte_offset)
+      } else {
+        Some(byte_offset)
+      }
+    } else {
+      Some(byte_offset)
+    }
+  } else {
+    None
+  };
+
+  (byte_offset, byte_end)
+}
+
+fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
+  let writer = StandardStream::stderr(ColorChoice::Always);
   let mut files = SimpleFiles::new();
   let config = codespan_reporting::term::Config::default();
 
   sarif.runs.iter().try_for_each(|run| -> Result<()> {
     if let Some(results) = run.results.as_ref() {
       results.iter().try_for_each(|result| -> Result<()> {
-        // attempt to fetch text
-        let message = result.message.text.as_ref().cloned();
+        if_chain! {
+          if let Some(message) = result.message.text.as_ref().cloned();
+          if let Some(locations) = result.locations.as_ref();
+          then {
+            locations.iter().try_for_each(|location| -> Result<()> {
+              if_chain! {
+                if let Some(physical_location) = location.physical_location.as_ref();
+                if let Some(artifact_location) = physical_location.artifact_location.as_ref();
+                if let Some(uri) = artifact_location.uri.as_ref();
+                if let Some(region) = physical_location.region.as_ref();
+                if let Ok(contents) = get_physical_location_contents(physical_location);
+                let file_id = files.add(uri, contents);
+                if let (Some(range_start), Some(range_end))  = get_byte_range(file_id, &files, region);
+                then {
+                  let mut diagnostic = diagnostic(result)?
+                    .with_message(message.clone())
+                    .with_labels(vec![Label::primary(
+                      file_id,
+                      range_start..range_end,
+                    )]);
 
-        // attempt to fetch files
-        if let Some(locations) = result.locations.as_ref() {
-          locations.iter().try_for_each(|location| -> Result<()> {
-            if let Some(physical_location) = location.physical_location.as_ref()
-            {
-              if let Some(artifact_location) =
-                physical_location.artifact_location.as_ref()
-              {
-                if let Some(uri) = artifact_location.uri.as_ref() {
-                  let path = Path::new(uri);
-                  if path.exists() {
-                    let mut file = File::open(uri)?;
-                    let mut contents = String::new();
-                    file.read_to_string(&mut contents)?;
-                    let file_id = files.add(uri, contents);
-                    if let Some(region) = physical_location.region.as_ref() {
-                      if let (Some(byte_start), Some(byte_length)) =
-                        (region.byte_offset, region.byte_length)
-                      {
-                        let range_start = byte_start as usize;
-                        let range_end = (byte_start + byte_length) as usize;
-                        let diagnostic = if let Some(level) =
-                          result.level.as_ref()
-                        {
-                          let level = ResultLevel::from_str(
-                            level.as_str().unwrap_or("note"),
-                          )?;
-                          match level {
-                            ResultLevel::Warning => {
-                              Diagnostic::<usize>::warning()
-                            }
-                            ResultLevel::Error => Diagnostic::<usize>::error(),
-                            ResultLevel::Note => Diagnostic::<usize>::note(),
-                            _ => Diagnostic::error(),
-                          }
-                        } else {
-                          Diagnostic::note()
-                        };
-
-                        let mut diagnostic = diagnostic
-                          .with_message(
-                            message.as_ref().unwrap_or(&"".to_string()).clone(),
-                          )
-                          .with_labels(vec![Label::primary(
-                            file_id,
-                            range_start..range_end,
-                          )]);
-
-                        if let Some(rule_index) = result.rule_index {
-                          if let Some(rules) = run.tool.driver.rules.as_ref() {
-                            if let Some(rule) = rules.get(rule_index as usize) {
-                              if let Some(full_description) =
-                                rule.full_description.as_ref()
-                              {
-                                diagnostic =
-                                  diagnostic.with_notes(vec![full_description
-                                    .text
-                                    .clone()])
-                              } else if let Some(short_description) =
-                                rule.short_description.as_ref()
-                              {
-                                diagnostic =
-                                  diagnostic.with_notes(vec![short_description
-                                    .text
-                                    .clone()])
-                              }
-                            }
-                          }
-                        }
-
-                        term::emit(
-                          &mut writer.lock(),
-                          &config,
-                          &files,
-                          &diagnostic,
-                        )?;
-                      } else if let (
-                        Some(_start_line),
-                        Some(_start_column),
-                        Some(_end_line),
-                        Some(_end_column),
-                      ) = (
-                        region.start_line,
-                        region.start_column,
-                        region.end_line,
-                        region.end_column,
-                      ) {
-                        todo!()
+                  if_chain! {
+                    if let Some(rule_index) = result.rule_index;
+                    if let Some(rules) = run.tool.driver.rules.as_ref();
+                    if let Some(rule) = rules.get(rule_index as usize);
+                    then {
+                      if let Some(full_description) = rule.full_description.as_ref() {
+                        diagnostic = diagnostic.with_notes(vec![full_description.text.clone()])
+                      } else if let Some(short_description) = rule.short_description.as_ref() {
+                        diagnostic = diagnostic.with_notes(vec![short_description.text.clone()])
                       }
+                      term::emit(&mut writer.lock(), &config, &files, &diagnostic,)?;
                     }
                   }
                 }
               }
-            }
-            Ok(())
-          })?
+              Ok(())
+            })?;
+          } else {
+            println!("else just printing a message");
+          }
         }
 
         Ok(())
@@ -188,9 +195,26 @@ where
   Ok(())
 }
 
+fn diagnostic(
+  result: &sarif::Result,
+) -> Result<Diagnostic<usize>, anyhow::Error> {
+  let diagnostic = if let Some(level) = result.level.as_ref() {
+    let level = ResultLevel::from_str(level.as_str().unwrap_or("note"))?;
+    match level {
+      ResultLevel::Warning => Diagnostic::<usize>::warning(),
+      ResultLevel::Error => Diagnostic::<usize>::error(),
+      ResultLevel::Note => Diagnostic::<usize>::note(),
+      _ => Diagnostic::error(),
+    }
+  } else {
+    Diagnostic::note()
+  };
+  Ok(diagnostic)
+}
+
 fn main() -> Result<()> {
-  let matches = App::new("clippy-sarif")
-        .about("Convert clippy warnings into SARIF")
+  let matches = App::new("sarif-fmt")
+        .about("Pretty print SARIF results")
         .after_help(
             "The expected input is generated by running 'cargo clippy --message-format=json'.",
         )
@@ -200,13 +224,6 @@ fn main() -> Result<()> {
                 .about("input file; reads from stdin if none is given")
                 .takes_value(true),
         )
-        .arg(
-            Arg::new("output")
-                .about("output file; writes to stdout if none is given")
-                .short('o')
-                .long("output")
-                .takes_value(true),
-        )
         .get_matches();
 
   let read = match matches.value_of_os("input").map(Path::new) {
@@ -214,12 +231,6 @@ fn main() -> Result<()> {
     None => Box::new(std::io::stdin()) as Box<dyn Read>,
   };
   let reader = BufReader::new(read);
-
-  let write = match matches.value_of_os("output").map(Path::new) {
-    Some(path) => Box::new(File::create(path)?) as Box<dyn Write>,
-    None => Box::new(std::io::stdout()) as Box<dyn Write>,
-  };
-  let writer = BufWriter::new(write);
-
-  parse_to_writer(reader, writer)
+  let sarif = process(reader)?;
+  to_writer_pretty(&sarif)
 }
