@@ -161,9 +161,10 @@ fn get_byte_range(
   let byte_end = if let Some(byte_offset) = byte_offset {
     if let Some(byte_length) = region.byte_length {
       Some(byte_offset + byte_length as usize)
-    } else if let (Some(end_line), Some(end_column)) =
-      (region.end_line, region.end_column)
-    {
+    } else if let (Some(end_line), Some(end_column)) = (
+      region.end_line.map_or_else(|| region.start_line, Some), // if no end_line, default to start_line
+      region.end_column.map_or_else(|| region.start_column, Some), // if no end_column, default to start_column
+    ) {
       if let Ok(byte_offset) =
         try_get_byte_offset(file_id, files, end_line, end_column)
       {
