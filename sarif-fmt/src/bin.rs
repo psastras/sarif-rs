@@ -45,6 +45,7 @@ use serde_sarif::sarif::ResultLevel;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Read};
 use std::path::Path;
+use std::path::PathBuf;
 use std::str::FromStr;
 use std::usize;
 
@@ -53,23 +54,68 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
   Ok(s)
 }
 
-fn get_physical_location_contents(
+fn try_find_file(
   physical_location: &sarif::PhysicalLocation,
-) -> Result<String> {
-  if_chain! {
-    if let Some(artifact_location) = physical_location.artifact_location.as_ref();
-    if let Some(uri) = artifact_location.uri.as_ref();
-    let path = Path::new(uri);
-    if path.exists();
-    let mut file = File::open(uri)?;
-    let mut contents = String::new();
-    then {
-      file.read_to_string(&mut contents)?;
-      Ok(contents)
-    } else {
-      Err(anyhow::anyhow!(""))
+  run: &sarif::Run,
+) -> Result<PathBuf> {
+  let artifact_location = physical_location
+    .artifact_location
+    .as_ref()
+    .map_or_else(|| Err(anyhow::anyhow!("No artifact location.")), Ok)?;
+  let uri = artifact_location
+    .uri
+    .as_ref()
+    .map_or_else(|| Err(anyhow::anyhow!("No uri.")), Ok)?;
+  let path = Path::new(uri);
+
+  // if the path is absolute and exists, return it, else
+  if path.is_absolute() {
+    if path.exists() {
+      return Ok(path.to_path_buf());
+    }
+    return Err(anyhow::anyhow!("Path does not exist"));
+  }
+
+  // if it's a relative path, it's more complicated and dictated by the SARIF spec
+
+  // 1. check if uri base id exists -- it SHOULD exist, but may not
+  if let Some(uri_base_id) = artifact_location.uri_base_id.as_ref() {
+    // check if this is defined in originalUriBaseIds
+    if let Some(original_uri_base_ids) = run.original_uri_base_ids.as_ref() {
+      let mut path = PathBuf::new();
+      if let Some(uri_base) = original_uri_base_ids.get(uri_base_id) {
+        // todo: this doesn't handle recursive uri_base_id...
+        if let Some(uri) = uri_base.uri.as_ref() {
+          path.push(uri);
+        }
+      }
+      path.push(uri);
+      if path.exists() {
+        return Ok(path);
+      }
+    }
+
+    // just check if the relative path exists by chance
+    if path.exists() {
+      return Ok(path.to_path_buf());
     }
   }
+  if path.exists() {
+    Ok(path.to_path_buf())
+  } else {
+    Err(anyhow::anyhow!("Path not found: {:#?}", path))
+  }
+}
+
+fn get_physical_location_contents(
+  physical_location: &sarif::PhysicalLocation,
+  run: &sarif::Run,
+) -> Result<String> {
+  let path = try_find_file(physical_location, run)?;
+  let mut file = File::open(path)?;
+  let mut contents = String::new();
+  file.read_to_string(&mut contents)?;
+  Ok(contents)
 }
 
 fn try_get_byte_offset(
@@ -153,7 +199,7 @@ fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
                 if let Some(artifact_location) = physical_location.artifact_location.as_ref();
                 if let Some(uri) = artifact_location.uri.as_ref();
                 if let Some(region) = physical_location.region.as_ref();
-                if let Ok(contents) = get_physical_location_contents(physical_location);
+                if let Ok(contents) = get_physical_location_contents(physical_location, run);
                 let file_id = files.add(uri, contents);
                 if let (Some(range_start), Some(range_end))  = get_byte_range(file_id, &files, region);
                 then {
@@ -163,7 +209,6 @@ fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
                       file_id,
                       range_start..range_end,
                     )]);
-
                   if_chain! {
                     if let Some(rule_index) = result.rule_index;
                     if let Some(rules) = run.tool.driver.rules.as_ref();
