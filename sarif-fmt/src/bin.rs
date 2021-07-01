@@ -1,9 +1,9 @@
-#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.8")]
+#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.9")]
 #![recursion_limit = "256"]
-//! # DO NOT USE (EARLY IMPLEMENTATION)
+//! # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 //!
-//! This crate provides a command line tool to format SARIF files to pretty
-//! printed text.
+//! This crate provides a command line tool to pretty print SARIF files to
+//! easy human readable output.
 //!
 //! The latest [documentation can be found here](https://psastras.github.io/sarif-rs/sarif_fmt/index.html).
 //!
@@ -21,17 +21,28 @@
 //!
 //! ## Usage
 //!
-//! For most cases, simply pipe a SARIF file into `sarif-fmt`
+//! For most cases, simply pipe a SARIF file into `sarif-fmt` (`cat ./foo.sarif | sarif-fmt`)
 //!
 //! ## Example
 //!
 //!```shell
-//! cargo clippy --message-format=json | clippy-sarif | sarif-fmt
+//! $ cargo clippy --message-format=json | clippy-sarif | sarif-fmt
+//! $ warning: using `Option.and_then(|x| Some(y))`, which is more succinctly expressed as `map(|x| y)`
+//!     ┌─ sarif-fmt/src/bin.rs:423:13
+//!     │  
+//! 423 │ ╭             the_rule
+//! 424 │ │               .full_description
+//! 425 │ │               .as_ref()
+//! 426 │ │               .and_then(|mfms| Some(mfms.text.clone()))
+//!     │ ╰───────────────────────────────────────────────────────^
+//!     │  
+//!     = `#[warn(clippy::bind_instead_of_map)]` on by default
+//!       for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#bind_instead_of_map
 //! ```
-//!
 
 use anyhow::Result;
 use clap::{App, Arg};
+use codespan_reporting::diagnostic;
 use codespan_reporting::diagnostic::Diagnostic;
 use codespan_reporting::diagnostic::Label;
 use codespan_reporting::files::Files;
@@ -42,7 +53,6 @@ use codespan_reporting::term::termcolor::ColorChoice;
 use codespan_reporting::term::termcolor::ColorSpec;
 use codespan_reporting::term::termcolor::StandardStream;
 use codespan_reporting::term::termcolor::WriteColor;
-use if_chain::if_chain;
 use serde_sarif::sarif;
 use serde_sarif::sarif::ResultLevel;
 use std::fs::File;
@@ -375,6 +385,62 @@ fn resolve_message_text_from_result(
   // .or_else(|| None) # uncesscary but written for illustration
 }
 
+fn resolve_full_description_from_result(
+  rules: &[sarif::ReportingDescriptor],
+  result: &sarif::Result,
+) -> Option<String> {
+  result
+    .rule_index
+    .and_then(|rule_index| {
+      rules.get(rule_index as usize).and_then(|the_descriptor| {
+        the_descriptor
+          .full_description
+          .as_ref()
+          .map(|mfms| mfms.text.clone())
+      })
+    })
+    .or_else(|| {
+      result.rule.as_ref().and_then(|rule| {
+        rule.index.and_then(|rule_index| {
+          rules.get(rule_index as usize).and_then(|the_descriptor| {
+            the_descriptor
+              .full_description
+              .as_ref()
+              .map(|mfms| mfms.text.clone())
+          })
+        })
+      })
+    })
+}
+
+fn resolve_short_description_from_result(
+  rules: &[sarif::ReportingDescriptor],
+  result: &sarif::Result,
+) -> Option<String> {
+  result
+    .rule_index
+    .and_then(|rule_index| {
+      rules.get(rule_index as usize).and_then(|the_descriptor| {
+        the_descriptor
+          .short_description
+          .as_ref()
+          .map(|mfms| mfms.text.clone())
+      })
+    })
+    .or_else(|| {
+      result.rule.as_ref().and_then(|rule| {
+        rule.index.and_then(|rule_index| {
+          rules.get(rule_index as usize).and_then(|the_descriptor| {
+            the_descriptor
+              .short_description
+              .as_ref()
+              .map(|mfms| mfms.text.clone())
+          })
+        })
+      })
+    })
+}
+
 fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
   let mut writer = StandardStream::stderr(ColorChoice::Always);
   let mut files = SimpleFiles::new();
@@ -383,61 +449,107 @@ fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
   sarif.runs.iter().try_for_each(|run| -> Result<()> {
     if let Some(results) = run.results.as_ref() {
       results.iter().try_for_each(|result| -> Result<()> {
-        if_chain! {
-          if let Some(message) = resolve_message_text_from_result(result, run);
-          if let Some(locations) = result.locations.as_ref();
-          then {
-            locations.iter().try_for_each(|location| -> Result<()> {
-              if_chain! {
-                if let Some(physical_location) = location.physical_location.as_ref();
-                if let Some(artifact_location) = physical_location.artifact_location.as_ref();
-                if let Some(uri) = artifact_location.uri.as_ref();
-                if let Some(region) = physical_location.region.as_ref();
-                if let Ok(contents) = get_physical_location_contents(physical_location, run);
-                let file_id = files.add(uri, contents);
-                if let (Some(range_start), Some(range_end))  = get_byte_range(file_id, &files, region);
-                then {
-                  let rules = Vec::new();
-                  let level = resolve_level(run.tool.driver.rules.as_ref().unwrap_or(&rules), run, result);
-                  let mut diagnostic = match level {
-                    ResultLevel::Warning => Diagnostic::<usize>::warning(),
-                    ResultLevel::Error => Diagnostic::<usize>::error(),
-                    ResultLevel::Note => Diagnostic::<usize>::note(),
-                    _ => Diagnostic::warning(),
-                  }.with_message(message.clone())
-                  .with_labels(vec![Label::primary(
-                    file_id,
-                    range_start..range_end,
-                  )]);
-                  if_chain! {
-                    if let Some(rule_index) = result.rule_index;
-                    if let Some(rules) = run.tool.driver.rules.as_ref();
-                    if let Some(rule) = rules.get(rule_index as usize);
-                    then {
-                      if let Some(short_description) = rule.short_description.as_ref() {
-                        diagnostic = diagnostic.with_notes(vec![short_description.text.clone()])
-                      }
-                      if let Some(full_description) = rule.full_description.as_ref() {
-                        diagnostic = diagnostic.with_notes(vec![full_description.text.clone()])
-                      }
-                      term::emit(&mut writer.lock(), &config, &files, &diagnostic,)?;
-                      match diagnostic.severity {
-                        codespan_reporting::diagnostic::Severity::Note => message_counter.0 += 1,
-                        codespan_reporting::diagnostic::Severity::Warning => message_counter.1 += 1,
-                        codespan_reporting::diagnostic::Severity::Error => message_counter.2 += 1,
-                        _ =>  {}
-                      }
-                    }
-                  }
-                }
-              }
-              Ok(())
-            })?;
-          } else {
-            println!("Oops! Not implemented yet.");
-          }
+        let rules = vec![];
+        let rules = run.tool.driver.rules.as_ref().unwrap_or(&rules);
+        let level = resolve_level(rules, run, result);
+        let mut diagnostic: Diagnostic<usize> = Diagnostic::new(match level {
+          ResultLevel::Note => diagnostic::Severity::Note,
+          ResultLevel::Warning => diagnostic::Severity::Warning,
+          ResultLevel::Error => diagnostic::Severity::Error,
+          _ => diagnostic::Severity::Warning,
+        });
+
+        if let Some(message) = resolve_message_text_from_result(result, run) {
+          diagnostic.message = message;
+        }
+        if let Some(text) = resolve_short_description_from_result(rules, result)
+        {
+          diagnostic.notes.push(text);
+        }
+        if let Some(text) = resolve_full_description_from_result(rules, result)
+        {
+          diagnostic.notes.push(text);
         }
 
+        if let Some(locations) = result.locations.as_ref() {
+          locations.iter().for_each(|location| {
+            if let Some((file_id, range)) = location
+              .physical_location
+              .as_ref()
+              .and_then(|physical_location| {
+                physical_location.artifact_location.as_ref().and_then(
+                  |artifact_location| {
+                    artifact_location.uri.as_ref().and_then(|uri| {
+                      physical_location.region.as_ref().and_then(|region| {
+                        get_physical_location_contents(physical_location, run)
+                          .ok()
+                          .and_then(|contents| {
+                            let file_id = files.add(uri, contents);
+                            if let (Some(range_start), Some(range_end)) =
+                              get_byte_range(file_id, &files, region)
+                            {
+                              Some((file_id, range_start..range_end))
+                            } else {
+                              None
+                            }
+                          })
+                      })
+                    })
+                  },
+                )
+              })
+            {
+              diagnostic.labels.push(Label::primary(file_id, range));
+            }
+          });
+        }
+
+        if let Some(locations) = result.related_locations.as_ref() {
+          locations.iter().for_each(|location| {
+            if let Some((file_id, range)) = location
+              .physical_location
+              .as_ref()
+              .and_then(|physical_location| {
+                physical_location.artifact_location.as_ref().and_then(
+                  |artifact_location| {
+                    artifact_location.uri.as_ref().and_then(|uri| {
+                      physical_location.region.as_ref().and_then(|region| {
+                        get_physical_location_contents(physical_location, run)
+                          .ok()
+                          .and_then(|contents| {
+                            let file_id = files.add(uri, contents);
+                            if let (Some(range_start), Some(range_end)) =
+                              get_byte_range(file_id, &files, region)
+                            {
+                              Some((file_id, range_start..range_end))
+                            } else {
+                              None
+                            }
+                          })
+                      })
+                    })
+                  },
+                )
+              })
+            {
+              diagnostic.labels.push(Label::secondary(file_id, range));
+            }
+          });
+        }
+
+        term::emit(&mut writer.lock(), &config, &files, &diagnostic)?;
+        match diagnostic.severity {
+          codespan_reporting::diagnostic::Severity::Note => {
+            message_counter.0 += 1
+          }
+          codespan_reporting::diagnostic::Severity::Warning => {
+            message_counter.1 += 1
+          }
+          codespan_reporting::diagnostic::Severity::Error => {
+            message_counter.2 += 1
+          }
+          _ => {}
+        }
         Ok(())
       })?;
     };
