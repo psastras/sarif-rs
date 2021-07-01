@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/clippy-sarif/0.2.8")]
+#![doc(html_root_url = "https://docs.rs/clippy-sarif/0.2.9")]
 
 //! This crate provides a command line tool to convert `cargo clippy` diagnostic
 //! output into SARIF.

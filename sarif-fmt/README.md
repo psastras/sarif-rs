@@ -2,10 +2,10 @@
 
 # sarif-fmt
 
-# DO NOT USE (EARLY IMPLEMENTATION)
+# WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 
-This crate provides a command line tool to format SARIF files to pretty
-printed text.
+This crate provides a command line tool to pretty print SARIF files to
+easy human readable output.
 
 The latest [documentation can be found here](https://psastras.github.io/sarif-rs/sarif_fmt/index.html).
 
@@ -23,13 +23,23 @@ cargo install sarif-fmt
 
 ## Usage
 
-For most cases, simply pipe a SARIF file into `sarif-fmt`
+For most cases, simply pipe a SARIF file into `sarif-fmt` (`cat ./foo.sarif | sarif-fmt`)
 
 ## Example
 
 ```shell
-cargo clippy --message-format=json | clippy-sarif | sarif-fmt
+$ cargo clippy --message-format=json | clippy-sarif | sarif-fmt
+$ warning: using `Option.and_then(|x| Some(y))`, which is more succinctly expressed as `map(|x| y)`
+    ┌─ sarif-fmt/src/bin.rs:423:13
+    │
+423 │ ╭             the_rule
+424 │ │               .full_description
+425 │ │               .as_ref()
+426 │ │               .and_then(|mfms| Some(mfms.text.clone()))
+    │ ╰───────────────────────────────────────────────────────^
+    │
+    = `#[warn(clippy::bind_instead_of_map)]` on by default
+      for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#bind_instead_of_map
 ```
-
 
 License: MIT
