@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.9")]
+#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.10")]
 #![recursion_limit = "256"]
 //! # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 //!
@@ -159,7 +159,7 @@ fn get_byte_range(
   let byte_offset = if let Some(byte_offset) = region.byte_offset {
     Some(byte_offset as usize)
   } else if let (Some(start_line), Some(start_column)) =
-    (region.start_line, region.start_column)
+    (region.start_line, region.start_column.or(Some(1)))
   {
     if let Ok(byte_offset) =
       try_get_byte_offset(file_id, files, start_line, start_column)
@@ -177,7 +177,31 @@ fn get_byte_range(
       Some(byte_offset + byte_length as usize)
     } else if let (Some(end_line), Some(end_column)) = (
       region.end_line.map_or_else(|| region.start_line, Some), // if no end_line, default to start_line
-      region.end_column.map_or_else(|| region.start_column, Some), // if no end_column, default to start_column
+      region.end_column.map_or_else(
+        // if no end column use the line's last column
+        || {
+          region
+            .end_line
+            .map_or_else(|| region.start_line, Some)
+            .and_then(|start_line| {
+              files
+                .line_range(file_id, start_line as usize - 1)
+                .map_or(None, Option::from)
+                .and_then(|byte_range| {
+                  byte_range.last().and_then(|last_byte| {
+                    files
+                      .column_number(
+                        file_id,
+                        start_line as usize - 1,
+                        last_byte,
+                      )
+                      .map_or(None, |v| Option::from(v as i64))
+                  })
+                })
+            })
+        },
+        Some,
+      ),
     ) {
       if let Ok(byte_offset) =
         try_get_byte_offset(file_id, files, end_line, end_column)
@@ -458,7 +482,6 @@ fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
           ResultLevel::Error => diagnostic::Severity::Error,
           _ => diagnostic::Severity::Warning,
         });
-
         if let Some(message) = resolve_message_text_from_result(result, run) {
           diagnostic.message = message;
         }

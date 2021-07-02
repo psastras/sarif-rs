@@ -5,7 +5,7 @@ use std::{
   io::{BufRead, BufWriter, Write},
 };
 
-use crate::sarif;
+use crate::sarif::{self, BuilderError};
 use anyhow::Result;
 use cargo_metadata::{
   self,
@@ -13,7 +13,6 @@ use cargo_metadata::{
   Message,
 };
 use std::convert::TryInto;
-use thiserror::Error;
 
 // TODO: refactor, add features, etc.
 
@@ -63,36 +62,6 @@ impl From<&DiagnosticLevel> for sarif::ResultLevel {
   }
 }
 
-// todo: implement for other error types, probably convert to procmacro
-#[derive(Error, Debug)]
-pub enum BuilderError {
-  #[error(transparent)]
-  LocationBuilderError {
-    #[from]
-    source: sarif::LocationBuilderError,
-  },
-  #[error(transparent)]
-  PhysicalLocationBuilderError {
-    #[from]
-    source: sarif::PhysicalLocationBuilderError,
-  },
-  #[error(transparent)]
-  RegionBuilderError {
-    #[from]
-    source: sarif::RegionBuilderError,
-  },
-  #[error(transparent)]
-  ArtifactLocationBuilderError {
-    #[from]
-    source: sarif::ArtifactLocationBuilderError,
-  },
-  #[error(transparent)]
-  ResultBuilderError {
-    #[from]
-    source: sarif::ResultBuilderError,
-  },
-}
-
 impl TryFrom<&DiagnosticSpan> for sarif::Location {
   type Error = BuilderError;
 
@@ -109,29 +78,6 @@ impl TryFrom<&DiagnosticSpan> for sarif::Location {
         )
         .build()?,
     )
-  }
-}
-
-impl TryFrom<&String> for sarif::MultiformatMessageString {
-  type Error = sarif::MultiformatMessageStringBuilderError;
-
-  fn try_from(message: &String) -> Result<Self, Self::Error> {
-    sarif::MultiformatMessageStringBuilder::default()
-      .text(message.clone())
-      .build()
-  }
-}
-
-impl TryFrom<Vec<sarif::ReportingDescriptor>> for sarif::ToolComponent {
-  type Error = sarif::ToolComponentBuilderError;
-
-  fn try_from(
-    value: Vec<sarif::ReportingDescriptor>,
-  ) -> Result<Self, Self::Error> {
-    sarif::ToolComponentBuilder::default()
-      .name("clippy")
-      .rules(value)
-      .build()
   }
 }
 
@@ -211,7 +157,11 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
       Ok(())
     })?;
 
-  let tool_component: sarif::ToolComponent = rules.try_into()?;
+  let tool_component: sarif::ToolComponent =
+    sarif::ToolComponentBuilder::default()
+      .name("clippy")
+      .rules(rules)
+      .build()?;
   let run = sarif::RunBuilder::default()
     .tool::<sarif::Tool>(tool_component.try_into()?)
     .results(results)
@@ -249,11 +199,4 @@ pub fn parse_to_string<R: BufRead>(reader: R) -> Result<String> {
   let sarif = process(reader)?;
   let json = serde_json::to_string_pretty(&sarif)?;
   Ok(json)
-}
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  fn test() {}
 }

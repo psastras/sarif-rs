@@ -1,6 +1,7 @@
+use std::convert::TryFrom;
 use strum_macros::Display;
 use strum_macros::EnumString;
-
+use thiserror::Error;
 include!(concat!(env!("OUT_DIR"), "/sarif.rs"));
 
 #[doc = "The SARIF format version of this log file."]
@@ -193,4 +194,52 @@ pub enum ToolComponentContents {
   LocalizedData,
   #[strum(serialize = "nonLocalizedData")]
   NonLocalizedData,
+}
+
+// todo: implement for other error types, probably convert to procmacro
+#[derive(Error, Debug)]
+pub enum BuilderError {
+  #[error(transparent)]
+  LocationBuilderError {
+    #[from]
+    source: LocationBuilderError,
+  },
+  #[error(transparent)]
+  PhysicalLocationBuilderError {
+    #[from]
+    source: PhysicalLocationBuilderError,
+  },
+  #[error(transparent)]
+  RegionBuilderError {
+    #[from]
+    source: RegionBuilderError,
+  },
+  #[error(transparent)]
+  ArtifactLocationBuilderError {
+    #[from]
+    source: ArtifactLocationBuilderError,
+  },
+  #[error(transparent)]
+  ResultBuilderError {
+    #[from]
+    source: ResultBuilderError,
+  },
+}
+
+impl TryFrom<&String> for MultiformatMessageString {
+  type Error = MultiformatMessageStringBuilderError;
+
+  fn try_from(message: &String) -> anyhow::Result<Self, Self::Error> {
+    MultiformatMessageStringBuilder::default()
+      .text(message.clone())
+      .build()
+  }
+}
+
+impl TryFrom<&String> for Message {
+  type Error = MessageBuilderError;
+
+  fn try_from(message: &String) -> anyhow::Result<Self, Self::Error> {
+    MessageBuilder::default().text(message.clone()).build()
+  }
 }
