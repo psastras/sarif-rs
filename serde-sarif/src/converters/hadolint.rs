@@ -105,6 +105,16 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
           sarif::ReportingDescriptorBuilder::default()
             .id(result.code.clone())
             .name(result.code.clone())
+            .short_description::<sarif::MultiformatMessageString>(
+              (&format!("DL{}", result.code)).try_into()?,
+            )
+            .full_description::<sarif::MultiformatMessageString>(
+              (&format!(
+                "For more information: https://github.com/hadolint/hadolint/wiki/DL{}",
+                result.code
+              ))
+                .try_into()?,
+            )
             .build()?,
         );
       }
