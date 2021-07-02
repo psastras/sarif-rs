@@ -109,10 +109,13 @@ jobs:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
 
-  Github-Release-x86_64-linux-gnu:
+  Github-Release:
     needs: [check, test, fmt, clippy]
     if: ${{ github.ref == 'refs/heads/main' }}
-    runs-on: [ubuntu-latest, macos-latest]
+    strategy:
+      matrix:
+        node: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
