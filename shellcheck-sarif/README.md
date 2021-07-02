@@ -65,7 +65,7 @@ jobs:
       - uses: Swatinem/rust-cache@v1
       - run: cargo install shellcheck-sarif
       - run:
-          shellcheck -f json1 shellscript.sh |
+          shellcheck -f json shellscript.sh |
           shellcheck-sarif > results.sarif
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
