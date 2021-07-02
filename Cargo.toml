@@ -2,6 +2,7 @@
 members = [
   "sarif-fmt",
   "hadolint-sarif",
+  "shellcheck-sarif",
   "clippy-sarif",
   "serde-sarif",
 ]

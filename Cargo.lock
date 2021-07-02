@@ -182,7 +182,7 @@ dependencies = [
 
 [[package]]
 name = "clippy-sarif"
-version = "0.2.10"
+version = "0.2.11"
 dependencies = [
  "anyhow",
  "cargo-readme",
@@ -338,7 +338,7 @@ dependencies = [
 
 [[package]]
 name = "hadolint-sarif"
-version = "0.2.10"
+version = "0.2.11"
 dependencies = [
  "anyhow",
  "cargo-readme",
@@ -735,7 +735,7 @@ checksum = "71d301d4193d031abdd79ff7e3dd721168a9572ef3fe51a1517aba235bd8f86e"
 
 [[package]]
 name = "sarif-fmt"
-version = "0.2.10"
+version = "0.2.11"
 dependencies = [
  "anyhow",
  "cargo-readme",
@@ -823,7 +823,7 @@ dependencies = [
 
 [[package]]
 name = "serde-sarif"
-version = "0.2.10"
+version = "0.2.11"
 dependencies = [
  "anyhow",
  "cargo-readme",
@@ -862,6 +862,17 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "shellcheck-sarif"
+version = "0.2.11"
+dependencies = [
+ "anyhow",
+ "cargo-readme",
+ "clap 3.0.0-beta.2",
+ "serde-sarif",
+ "version-sync",
 ]
 
 [[package]]

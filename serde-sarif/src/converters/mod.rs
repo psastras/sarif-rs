@@ -5,3 +5,7 @@ pub mod clippy;
 #[cfg(feature = "hadolint-converters")]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "hadolint-converters")))]
 pub mod hadolint;
+
+#[cfg(feature = "shellcheck-converters")]
+#[cfg_attr(doc_cfg, doc(cfg(feature = "shellcheck-converters")))]
+pub mod shellcheck;
