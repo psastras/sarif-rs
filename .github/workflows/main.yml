@@ -72,7 +72,8 @@ jobs:
           command: clippy
           args: -- -D warnings
 
-  Docs:
+  docs:
+    name: Docs
     needs: [check, test, fmt, clippy]
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
@@ -92,7 +93,8 @@ jobs:
           publish_dir: ./target/doc
           force_orphan: true
 
-  Publish:
+  publish:
+    name: Publish
     needs: [check, test, fmt, clippy]
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
@@ -109,7 +111,8 @@ jobs:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
 
-  Github-Release:
+  gh-release:
+    name: Github Release
     needs: [check, test, fmt, clippy]
     if: ${{ github.ref == 'refs/heads/main' }}
     strategy:
@@ -131,9 +134,9 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest-${{ env.RUNNER_OS }}"
+          automatic_release_tag: "latest-${{ runner.os }}"
           prerelease: true
-          title: "latest-${{ env.RUNNER_OS }}"
+          title: "latest-${{ runner.os }}"
           files: |
             ./target/release/clippy-sarif
             ./target/release/hadolint-sarif
