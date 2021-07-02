@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/serde-sarif/0.2.9")]
+#![doc(html_root_url = "https://docs.rs/serde-sarif/0.2.10")]
 
 //! # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 //!
@@ -70,6 +70,9 @@
 //! ### Converters
 //! - **clippy-converters** Provides conversions bewteen Clippy
 //!    and SARIF types
+//! - **hadolint-converters** Provides conversions bewteen hadolint
+//!    and SARIF types
+//!
 
 pub mod converters;
 pub mod sarif;

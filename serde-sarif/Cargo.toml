@@ -1,6 +1,6 @@
 [package]
 name = "serde-sarif"
-version = "0.2.9"
+version = "0.2.10"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Serde serialization for SARIF files"
@@ -19,6 +19,7 @@ github = { repository = "psastras/sarif-rs" }
 [features]
 default = []
 clippy-converters = ["cargo_metadata"]
+hadolint-converters = []
 
 [dependencies]
 anyhow = "1.0.33"

@@ -182,7 +182,7 @@ dependencies = [
 
 [[package]]
 name = "clippy-sarif"
-version = "0.2.9"
+version = "0.2.10"
 dependencies = [
  "anyhow",
  "cargo-readme",
@@ -334,6 +334,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "14dbbfd5c71d70241ecf9e6f13737f7b5ce823821063188d7e46c41d371eebd5"
 dependencies = [
  "unicode-width",
+]
+
+[[package]]
+name = "hadolint-sarif"
+version = "0.2.10"
+dependencies = [
+ "anyhow",
+ "cargo-readme",
+ "clap 3.0.0-beta.2",
+ "serde-sarif",
+ "version-sync",
 ]
 
 [[package]]
@@ -724,7 +735,7 @@ checksum = "71d301d4193d031abdd79ff7e3dd721168a9572ef3fe51a1517aba235bd8f86e"
 
 [[package]]
 name = "sarif-fmt"
-version = "0.2.9"
+version = "0.2.10"
 dependencies = [
  "anyhow",
  "cargo-readme",
@@ -812,7 +823,7 @@ dependencies = [
 
 [[package]]
 name = "serde-sarif"
-version = "0.2.9"
+version = "0.2.10"
 dependencies = [
  "anyhow",
  "cargo-readme",
