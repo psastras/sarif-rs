@@ -226,6 +226,9 @@ pub enum BuilderError {
   },
 }
 
+// Note that due to the blanket implementation in core, TryFrom<AsRef<String>>
+// results in a compiler error.
+// https://github.com/rust-lang/rust/issues/50133
 impl TryFrom<&String> for MultiformatMessageString {
   type Error = MultiformatMessageStringBuilderError;
 
@@ -241,5 +244,15 @@ impl TryFrom<&String> for Message {
 
   fn try_from(message: &String) -> anyhow::Result<Self, Self::Error> {
     MessageBuilder::default().text(message.clone()).build()
+  }
+}
+
+impl TryFrom<ToolComponent> for Tool {
+  type Error = ToolBuilderError;
+
+  fn try_from(
+    tool_component: ToolComponent,
+  ) -> anyhow::Result<Self, Self::Error> {
+    ToolBuilder::default().driver(tool_component).build()
   }
 }

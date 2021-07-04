@@ -588,6 +588,7 @@ fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
     writer.write_all(
       format!(": {} warnings emitted\n", message_counter.1).as_bytes(),
     )?;
+    writer.reset()?;
   }
 
   if message_counter.2 > 0 {
@@ -599,6 +600,7 @@ fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
     writer.write_all(
       format!(": {} errors emitted\n", message_counter.1).as_bytes(),
     )?;
+    writer.reset()?;
   }
 
   Ok(())

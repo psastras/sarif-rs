@@ -81,16 +81,6 @@ impl TryFrom<&DiagnosticSpan> for sarif::Location {
   }
 }
 
-impl TryFrom<sarif::ToolComponent> for sarif::Tool {
-  type Error = sarif::ToolBuilderError;
-
-  fn try_from(
-    tool_component: sarif::ToolComponent,
-  ) -> Result<Self, Self::Error> {
-    sarif::ToolBuilder::default().driver(tool_component).build()
-  }
-}
-
 // recursively visits all diagnostic children which are non-local (have no span)
 //  to build up diagnostic text.
 fn build_global_message<W: Write>(
