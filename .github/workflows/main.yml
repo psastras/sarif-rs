@@ -131,12 +131,18 @@ jobs:
         with:
           command: build
           args: --release --bins
+      - name: target triple
+        id: target-triple
+        run: |
+          TARGET_TRIPLE=$(rustc --version --verbose | grep host | awk '{print $2}')
+          echo ::set-output name=target_triple::$TARGET_TRIPLE
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest-${{ runner.os }}"
+          automatic_release_tag:
+            "latest-${{ steps.target-triple.outputs.target_triple }}"
           prerelease: true
-          title: "latest-${{ runner.os }}"
+          title: "latest-${{ steps.target-triple.outputs.target_triple }}"
           files: |
             ./target/release/clippy-sarif
             ./target/release/hadolint-sarif
