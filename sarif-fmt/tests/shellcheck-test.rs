@@ -19,10 +19,27 @@ fn test_lint() -> Result<()> {
     ]
     .iter(),
   ))?;
-  let dockerfile_file = fs::canonicalize(PathBuf::from_iter(
+
+  let shell_file = fs::canonicalize(PathBuf::from_iter(
     [
       cargo_manifest_directory.clone(),
       PathBuf::from("tests/data/shell.sh"),
+    ]
+    .iter(),
+  ))?;
+
+  let sarif_fmt_bin = fs::canonicalize(PathBuf::from_iter(
+    [
+      cargo_workspace_directory.clone(),
+      PathBuf::from("./target/debug/sarif-fmt"),
+    ]
+    .iter(),
+  ))?;
+
+  let shellcheck_sarif_bin = fs::canonicalize(PathBuf::from_iter(
+    [
+      cargo_workspace_directory.clone(),
+      PathBuf::from("./target/debug/shellcheck-sarif"),
     ]
     .iter(),
   ))?;
@@ -40,13 +57,14 @@ fn test_lint() -> Result<()> {
   .run()?;
 
   let cmd = format!(
-    "nix-shell --run 'shellcheck -f json {} | ./target/debug/shellcheck-sarif | ./target/debug/sarif-fmt' {}",
-    dockerfile_file.to_str().unwrap(),
+    "nix-shell --run 'shellcheck -f json {} | {} | {}' {}",
+    shell_file.to_str().unwrap(),
+    shellcheck_sarif_bin.to_str().unwrap(),
+    sarif_fmt_bin.to_str().unwrap(),
     nix_file.to_str().unwrap(),
   );
 
   let output = duct_sh::sh_dangerous(cmd.as_str())
-    .dir(cargo_workspace_directory)
     .unchecked()
     .env("NO_COLOR", "1")
     .read()?;
