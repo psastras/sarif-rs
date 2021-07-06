@@ -63,4 +63,25 @@ See each subproject for more detailed information:
   SARIF information using [serde](https://serde.rs/). See the
   [Rust documentation](https://psastras.github.io/sarif-rs/serde_sarif/index.html).
 
+## Development
+
+Before you begin, ensure the following programs are available on your machine:
+
+- [`cargo`](https://rustup.rs/)
+- [`nix`](https://nixos.org/download.html#nix-quick-install)
+
+Assuming `cargo` is installed on your machine, the standard `cargo` commands can
+be run to build and test all projects in the workspace:
+
+```shell
+cargo build
+cargo test
+```
+
+For more information on specific configurations, refer to the
+[`cargo` documentation](https://doc.rust-lang.org/cargo/index.html).
+
+`nix` is used internally (ie. via test fixtures) to manage other dependencies
+(so you don't have to manage them yourself.)
+
 License: MIT
