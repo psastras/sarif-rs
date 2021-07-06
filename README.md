@@ -20,7 +20,7 @@ $ warning: using `Option.and_then(|x| Some(y))`, which is more succinctly expres
     │ ╰───────────────────────────────────────────────────────^
     │
     = `#[warn(clippy::bind_instead_of_map)]` on by default
-      for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#bind_instead_of_map
+      for further information visit https://rust-lang.github.io/rust-clippy/master#bind_instead_of_map
 ```
 
 ## Install
@@ -50,18 +50,16 @@ curl -sSL https://github.com/psastras/sarif-rs/releases/download/latest-x86_64-u
 See each subproject for more detailed information:
 
 - `clippy-sarif`: CLI tool to convert `clippy` diagnostics into SARIF. See the
-  [Rust documentation](https://psastras.github.io/sarif-rs/clippy_sarif/index.html).
+  [Rust documentation](https://docs.rs/clippy_sarif/).
 - `hadolint-sarif`: CLI tool to convert `hadolint` diagnostics into SARIF. See
-  the
-  [Rust documentation](https://psastras.github.io/sarif-rs/hadolint_sarif/index.html).
+  the [Rust documentation](https://docs.rs/hadolint_sarif/).
 - `shellcheck-sarif`: CLI tool to convert `shellcheck` diagnostics into SARIF.
-  See the
-  [Rust documentation](https://psastras.github.io/sarif-rs/shellcheck_sarif/index.html).
+  See the [Rust documentation](https://docs.rs/shellcheck_sarif/).
 - `sarif-fmt`: CLI tool to pretty print SARIF diagnostics. See the
-  [Rust documentation](https://psastras.github.io/sarif-rs/sarif_fmt/index.html).
+  [Rust documentation](https://docs.rs/sarif_fmt/).
 - `serde-sarif`: Typesafe SARIF structures for serializing and deserializing
   SARIF information using [serde](https://serde.rs/). See the
-  [Rust documentation](https://psastras.github.io/sarif-rs/serde_sarif/index.html).
+  [Rust documentation](https://docs.rs/serde_sarif/).
 
 ## Development
 
@@ -79,7 +77,7 @@ cargo test
 ```
 
 For more information on specific configurations, refer to the
-[`cargo` documentation](https://doc.rust-lang.org/cargo/index.html).
+[`cargo` documentation](https://doc.rust-lang.org/cargo).
 
 `nix` is used internally (ie. via test fixtures) to manage other dependencies
 (so you don't have to manage them yourself.)

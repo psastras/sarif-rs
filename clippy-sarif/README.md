@@ -5,14 +5,16 @@
 This crate provides a command line tool to convert `cargo clippy` diagnostic
 output into SARIF.
 
-The latest [documentation can be found here](https://psastras.github.io/sarif-rs/clippy_sarif/index.html).
+The latest [documentation can be found here](https://docs.rs/clippy_sarif).
 
-clippy is a popular linter / static analysis tool for rust. More information
-can be found on the official repository: [https://github.com/rust-lang/rust-clippy](https://github.com/rust-lang/rust-clippy)
+clippy is a popular linter / static analysis tool for rust. More information can
+be found on the official repository:
+[https://github.com/rust-lang/rust-clippy](https://github.com/rust-lang/rust-clippy)
 
-SARIF or the Static Analysis Results Interchange Format is an industry
-standard format for the output of static analysis tools. More information
-can be found on the official website: [https://sarifweb.azurewebsites.net/](https://sarifweb.azurewebsites.net/).
+SARIF or the Static Analysis Results Interchange Format is an industry standard
+format for the output of static analysis tools. More information can be found on
+the official website:
+[https://sarifweb.azurewebsites.net/](https://sarifweb.azurewebsites.net/).
 
 ## Installation
 
@@ -33,12 +35,12 @@ results into `clippy-sarif`.
 cargo clippy --message-format=json | clippy-sarif
 ```
 
-If you are using Github Actions, SARIF is useful for integrating with
-Github Advanced Security (GHAS), which can show code alerts in the
-"Security" tab of your respository.
+If you are using Github Actions, SARIF is useful for integrating with Github
+Advanced Security (GHAS), which can show code alerts in the "Security" tab of
+your respository.
 
-After uploading `clippy-sarif` output to Github, `clippy` diagnostics
-are available in GHAS.
+After uploading `clippy-sarif` output to Github, `clippy` diagnostics are
+available in GHAS.
 
 ## Example
 
@@ -72,6 +74,5 @@ jobs:
         with:
           sarif_file: results.sarif
 ```
-
 
 License: MIT

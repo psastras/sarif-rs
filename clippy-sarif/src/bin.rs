@@ -1,9 +1,9 @@
-#![doc(html_root_url = "https://docs.rs/clippy-sarif/0.2.13")]
+#![doc(html_root_url = "https://docs.rs/clippy-sarif/0.2.14")]
 
 //! This crate provides a command line tool to convert `cargo clippy` diagnostic
 //! output into SARIF.
 //!
-//! The latest [documentation can be found here](https://psastras.github.io/sarif-rs/clippy_sarif/index.html).
+//! The latest [documentation can be found here](https://docs.rs/clippy_sarif).
 //!
 //! clippy is a popular linter / static analysis tool for rust. More information
 //! can be found on the official repository: [https://github.com/rust-lang/rust-clippy](https://github.com/rust-lang/rust-clippy)
