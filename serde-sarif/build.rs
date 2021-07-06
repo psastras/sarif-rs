@@ -1,9 +1,7 @@
 use quote::ToTokens;
 use std::env;
-use std::fs;
 use std::fs::File;
 use std::io::Write;
-use std::path;
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::Command;
@@ -113,22 +111,6 @@ fn main() -> Result<()> {
   let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
   let mut file = File::create(out_path.join("sarif.rs"))?;
   file.write_all(reformat(token_stream.to_string())?.as_bytes())?;
-
-  // Generate README.md with cargo_readme.
-  let mut f = fs::File::open("src/lib.rs").unwrap();
-  let content = cargo_readme::generate_readme(
-    &path::PathBuf::from("./"),
-    &mut f,
-    None,
-    true,
-    true,
-    true,
-    false,
-  )
-  .unwrap();
-
-  let mut f = fs::File::create("README.md").unwrap();
-  f.write_all(content.as_bytes()).unwrap();
 
   Ok(())
 }

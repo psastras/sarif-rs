@@ -8,7 +8,6 @@ license = "MIT"
 readme = "README.md"
 keywords = ["sarif", "clippy", "cli"]
 categories = ["command-line-utilities"]
-build = "build.rs"
 homepage  = "https://github.com/psastras/sarif-rs"
 documentation = "https://psastras.github.io/sarif-rs/clippy_sarif/index.html"
 repository = "https://github.com/psastras/sarif-rs"
@@ -29,6 +28,3 @@ version = "3.0.0-beta.2"
 
 [dev-dependencies]
 version-sync = "0.9"
-
-[build-dependencies]
-cargo-readme = "3.2.0"
