@@ -1,13 +1,32 @@
 name: auto merge
-
-on: pull_request_target
-
+on:
+  pull_request:
+    types:
+      - labeled
+      - unlabeled
+      - synchronize
+      - opened
+      - edited
+      - ready_for_review
+      - reopened
+      - unlocked
+  pull_request_review:
+    types:
+      - submitted
+  check_suite:
+    types:
+      - completed
+  status: {}
 jobs:
-  enable-auto-merge:
+  automerge:
     runs-on: ubuntu-latest
     steps:
-      - uses: alexwilson/enable-github-automerge-action@main
-        if: github.actor == 'dependabot[bot]' || github.actor == 'psastras'
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          merge-method: "REBASE"
+      - name: automerge
+        uses: "pascalgn/automerge-action@v0.14.2"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_LABELS: ""
+          MERGE_METHOD: "rebase"
+          MERGE_DELETE_BRANCH: "true"
+          UPDATE_METHOD: "rebase"
+          UPDATE_LABELS: ""
