@@ -16,8 +16,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
-          override: true
+          components: rustfmt
       - uses: Swatinem/rust-cache@v1
       - uses: actions-rs/cargo@v1
         with:
@@ -32,12 +31,25 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: nightly
+          components: llvm-tools-preview,rustfmt
           override: true
       - uses: Swatinem/rust-cache@v1
+      - name: Install cargo-llvm-cov
+        run:
+          curl -LsSf
+          https://github.com/taiki-e/cargo-llvm-cov/releases/download/v0.1.0-alpha.4/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz
+          | tar xzf - -C ~/.cargo/bin
       - uses: actions-rs/cargo@v1
         with:
-          command: test
+          command: llvm-cov
+          args: --all-features --workspace --lcov --output-path lcov.info
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: lcov.info
+          fail_ci_if_error: true
 
   fmt:
     name: Rustfmt
@@ -47,10 +59,8 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
-          override: true
+          components: rustfmt
       - uses: Swatinem/rust-cache@v1
-      - run: rustup component add rustfmt
       - uses: actions-rs/cargo@v1
         with:
           command: fmt
@@ -64,10 +74,8 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
-          override: true
+          components: rustfmt,clippy
       - uses: Swatinem/rust-cache@v1
-      - run: rustup component add clippy
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
@@ -83,8 +91,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
-          override: true
+          components: rustfmt
       - uses: Swatinem/rust-cache@v1
       - run: cargo doc --workspace --no-deps
       - name: Deploy
@@ -104,8 +111,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
-          override: true
+          components: rustfmt
       - uses: Swatinem/rust-cache@v1
       # hack: sometimes crates.io takes time to detect the newly published
       # crate dependency causing other crates to fail, so, try 3 times
@@ -137,8 +143,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
-          override: true
+          components: rustfmt
       - uses: Swatinem/rust-cache@v1
       - uses: actions-rs/cargo@v1
         with:
