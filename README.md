@@ -1,3 +1,6 @@
+[![Workflow Status](https://github.com/psastras/sarif-rs/workflows/main/badge.svg)](https://github.com/psastras/sarif-rs/actions?query=workflow%3A%22main%22)
+[![codecov](https://codecov.io/gh/psastras/sarif-rs/branch/main/graph/badge.svg?token=KSXYAZGS5U)](https://codecov.io/gh/psastras/sarif-rs)
+
 # sarif-rs
 
 A group of Rust projects for interacting with the
