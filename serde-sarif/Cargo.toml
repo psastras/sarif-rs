@@ -1,6 +1,6 @@
 [package]
 name = "serde-sarif"
-version = "0.2.14"
+version = "0.2.15"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Serde serialization for SARIF files"
