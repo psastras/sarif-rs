@@ -106,11 +106,11 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
             .id(result.code.clone())
             .name(result.code.clone())
             .short_description::<sarif::MultiformatMessageString>(
-              (&format!("DL{}", result.code)).try_into()?,
+              (&result.code as &String).try_into()?,
             )
             .full_description::<sarif::MultiformatMessageString>(
               (&format!(
-                "For more information: https://github.com/hadolint/hadolint/wiki/DL{}",
+                "For more information: https://github.com/hadolint/hadolint/wiki/{}",
                 result.code
               ))
                 .try_into()?,

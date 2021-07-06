@@ -15,8 +15,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
-          override: true
+          components: clippy
       - uses: Swatinem/rust-cache@v1
       - run: cargo install clippy-sarif
       - run:

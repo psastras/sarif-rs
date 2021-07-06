@@ -466,7 +466,7 @@ fn resolve_short_description_from_result(
 }
 
 fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
-  let mut writer = StandardStream::stderr(ColorChoice::Auto);
+  let mut writer = StandardStream::stdout(ColorChoice::Auto);
   let mut files = SimpleFiles::new();
   let config = codespan_reporting::term::Config::default();
   let mut message_counter = (0, 0, 0);
