@@ -15,20 +15,20 @@ fn test_lint() -> Result<()> {
   let nix_file = fs::canonicalize(PathBuf::from_iter(
     [
       cargo_workspace_directory.clone(),
-      PathBuf::from("nix/hadolint.nix"),
+      PathBuf::from("nix/shellcheck.nix"),
     ]
     .iter(),
   ))?;
   let dockerfile_file = fs::canonicalize(PathBuf::from_iter(
     [
       cargo_manifest_directory.clone(),
-      PathBuf::from("tests/data/Dockerfile"),
+      PathBuf::from("tests/data/shell.sh"),
     ]
     .iter(),
   ))?;
 
   duct_sh::sh(
-    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly build --bin hadolint-sarif",
+    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly build --bin shellcheck-sarif",
   )
   .dir(cargo_workspace_directory.clone())
   .run()?;
@@ -40,7 +40,7 @@ fn test_lint() -> Result<()> {
   .run()?;
 
   let cmd = format!(
-    "nix-shell --run 'hadolint -f json {} | ./target/debug/hadolint-sarif | ./target/debug/sarif-fmt' {}",
+    "nix-shell --run 'shellcheck -f json {} | ./target/debug/shellcheck-sarif | ./target/debug/sarif-fmt' {}",
     dockerfile_file.to_str().unwrap(),
     nix_file.to_str().unwrap(),
   );
@@ -51,15 +51,14 @@ fn test_lint() -> Result<()> {
     .env("NO_COLOR", "1")
     .read()?;
 
-  assert!(
-    output.contains("warning: Always tag the version of an image explicitly")
-  );
-  assert!(output.contains("Dockerfile:1:1"));
-  assert!(output.contains("FROM debian"));
-  assert!(output.contains("DL3006"));
   assert!(output.contains(
-    "For more information: https://github.com/hadolint/hadolint/wiki/DL3006"
+    "warning: Couldn't parse this for loop. Fix to allow more checks."
   ));
+  assert!(output.contains("shell.sh:5:1"));
+  assert!(output.contains("for f in \"*.ogg\""));
+  assert!(output.contains("SC1073"));
+  assert!(output
+    .contains("For more information: https://www.shellcheck.net/wiki/SC1073"));
 
   Ok(())
 }
