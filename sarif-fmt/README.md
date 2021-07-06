@@ -4,14 +4,15 @@
 
 # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 
-This crate provides a command line tool to pretty print SARIF files to
-easy human readable output.
+This crate provides a command line tool to pretty print SARIF files to easy
+human readable output.
 
-The latest [documentation can be found here](https://psastras.github.io/sarif-rs/sarif_fmt/index.html).
+The latest [documentation can be found here](https://docs.rs/sarif_fmt).
 
-SARIF or the Static Analysis Results Interchange Format is an industry
-standard format for the output of static analysis tools. More information
-can be found on the official website: [https://sarifweb.azurewebsites.net/](https://sarifweb.azurewebsites.net/).
+SARIF or the Static Analysis Results Interchange Format is an industry standard
+format for the output of static analysis tools. More information can be found on
+the official website:
+[https://sarifweb.azurewebsites.net/](https://sarifweb.azurewebsites.net/).
 
 ## Installation
 
@@ -23,7 +24,8 @@ cargo install sarif-fmt
 
 ## Usage
 
-For most cases, simply pipe a SARIF file into `sarif-fmt` (`cat ./foo.sarif | sarif-fmt`)
+For most cases, simply pipe a SARIF file into `sarif-fmt`
+(`cat ./foo.sarif | sarif-fmt`)
 
 ## Example
 
@@ -39,7 +41,7 @@ $ warning: using `Option.and_then(|x| Some(y))`, which is more succinctly expres
     │ ╰───────────────────────────────────────────────────────^
     │
     = `#[warn(clippy::bind_instead_of_map)]` on by default
-      for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#bind_instead_of_map
+      for further information visit https://rust-lang.github.io/rust-clippy/master#bind_instead_of_map
 ```
 
 License: MIT

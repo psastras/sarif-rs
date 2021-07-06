@@ -1,6 +1,6 @@
 [package]
 name = "clippy-sarif"
-version = "0.2.13"
+version = "0.2.14"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Convert clippy output to SARIF"
@@ -9,7 +9,7 @@ readme = "README.md"
 keywords = ["sarif", "clippy", "cli"]
 categories = ["command-line-utilities"]
 homepage  = "https://github.com/psastras/sarif-rs"
-documentation = "https://psastras.github.io/sarif-rs/clippy_sarif/index.html"
+documentation = "https://docs.rs/clippy_sarif"
 repository = "https://github.com/psastras/sarif-rs"
 
 [badges]
@@ -21,7 +21,7 @@ path = "src/bin.rs"
 
 [dependencies]
 anyhow = "1.0.33"
-serde-sarif = { path = "../serde-sarif", version = "0.2.13", features = ["clippy-converters"] }
+serde-sarif = { path = "../serde-sarif", version = "0.2.14", features = ["clippy-converters"] }
 
 [dependencies.clap]
 version = "3.0.0-beta.2"

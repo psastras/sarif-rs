@@ -5,14 +5,16 @@
 This crate provides a command line tool to convert `shellcheck` diagnostic
 output into SARIF.
 
-The latest [documentation can be found here](https://psastras.github.io/sarif-rs/shellcheck_sarif/index.html).
+The latest [documentation can be found here](https://docs.rs/shellcheck_sarif).
 
-shellcheck is a popular linter / static analysis tool for shell scripts. More information
-can be found on the official repository: [https://github.com/koalaman/shellcheck](https://github.com/koalaman/shellcheck)
+shellcheck is a popular linter / static analysis tool for shell scripts. More
+information can be found on the official repository:
+[https://github.com/koalaman/shellcheck](https://github.com/koalaman/shellcheck)
 
-SARIF or the Static Analysis Results Interchange Format is an industry
-standard format for the output of static analysis tools. More information
-can be found on the official website: [https://sarifweb.azurewebsites.net/](https://sarifweb.azurewebsites.net/).
+SARIF or the Static Analysis Results Interchange Format is an industry standard
+format for the output of static analysis tools. More information can be found on
+the official website:
+[https://sarifweb.azurewebsites.net/](https://sarifweb.azurewebsites.net/).
 
 ## Installation
 
@@ -24,8 +26,8 @@ cargo install shellcheck-sarif
 
 ## Usage
 
-For most cases, simply run `shellcheck` with `json` output and pipe the
-results into `shellcheck-sarif`.
+For most cases, simply run `shellcheck` with `json` output and pipe the results
+into `shellcheck-sarif`.
 
 ## Example
 
@@ -33,9 +35,9 @@ results into `shellcheck-sarif`.
 shellcheck -f json shellscript.sh | shellcheck-sarif
 ```
 
-If you are using Github Actions, SARIF is useful for integrating with
-Github Advanced Security (GHAS), which can show code alerts in the
-"Security" tab of your respository.
+If you are using Github Actions, SARIF is useful for integrating with Github
+Advanced Security (GHAS), which can show code alerts in the "Security" tab of
+your respository.
 
 After uploading `shellcheck-sarif` output to Github, `shellcheck` diagnostics
 are available in GHAS.
@@ -65,13 +67,11 @@ jobs:
       - uses: Swatinem/rust-cache@v1
       - run: cargo install shellcheck-sarif
       - run:
-          shellcheck -f json shellscript.sh |
-          shellcheck-sarif > results.sarif
+          shellcheck -f json shellscript.sh | shellcheck-sarif > results.sarif
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: results.sarif
 ```
-
 
 License: MIT

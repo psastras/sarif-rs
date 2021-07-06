@@ -1,9 +1,9 @@
-#![doc(html_root_url = "https://docs.rs/shellcheck-sarif/0.2.13")]
+#![doc(html_root_url = "https://docs.rs/shellcheck-sarif/0.2.14")]
 
 //! This crate provides a command line tool to convert `shellcheck` diagnostic
 //! output into SARIF.
 //!
-//! The latest [documentation can be found here](https://psastras.github.io/sarif-rs/shellcheck_sarif/index.html).
+//! The latest [documentation can be found here](https://docs.rs/shellcheck_sarif).
 //!
 //! shellcheck is a popular linter / static analysis tool for shell scripts. More information
 //! can be found on the official repository: [https://github.com/koalaman/shellcheck](https://github.com/koalaman/shellcheck)

@@ -1,11 +1,11 @@
-#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.13")]
+#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.14")]
 #![recursion_limit = "256"]
 //! # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 //!
 //! This crate provides a command line tool to pretty print SARIF files to
 //! easy human readable output.
 //!
-//! The latest [documentation can be found here](https://psastras.github.io/sarif-rs/sarif_fmt/index.html).
+//! The latest [documentation can be found here](https://docs.rs/sarif_fmt).
 //!
 //! SARIF or the Static Analysis Results Interchange Format is an industry
 //! standard format for the output of static analysis tools. More information
@@ -37,7 +37,7 @@
 //!     │ ╰───────────────────────────────────────────────────────^
 //!     │  
 //!     = `#[warn(clippy::bind_instead_of_map)]` on by default
-//!       for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#bind_instead_of_map
+//!       for further information visit https://rust-lang.github.io/rust-clippy/master#bind_instead_of_map
 //! ```
 
 use anyhow::Result;

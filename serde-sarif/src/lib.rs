@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/serde-sarif/0.2.13")]
+#![doc(html_root_url = "https://docs.rs/serde-sarif/0.2.14")]
 
 //! # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 //!
@@ -6,7 +6,7 @@
 //! [SARIF](https://sarifweb.azurewebsites.net/) structure. It is intended
 //! for use in Rust code which may need to read or write SARIF files.
 //!
-//! The latest [documentation can be found here](https://psastras.github.io/sarif-rs/serde_sarif/index.html).
+//! The latest [documentation can be found here](https://docs.rs/serde_sarif).
 //!
 //! serde is a popular serialization framework for Rust. More information can be
 //! found on the official repository: [https://github.com/serde-rs/serde](https://github.com/serde-rs/serde)
