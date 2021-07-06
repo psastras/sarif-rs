@@ -37,7 +37,6 @@ version-sync = "0.9"
 
 [build-dependencies]
 anyhow = "1.0.41"
-cargo-readme = "3.2.0"
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
 rustfmt = "0.10.0"

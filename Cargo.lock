@@ -185,7 +185,6 @@ name = "clippy-sarif"
 version = "0.2.13"
 dependencies = [
  "anyhow",
- "cargo-readme",
  "clap 3.0.0-beta.2",
  "serde-sarif",
  "version-sync",
@@ -362,7 +361,6 @@ name = "hadolint-sarif"
 version = "0.2.13"
 dependencies = [
  "anyhow",
- "cargo-readme",
  "clap 3.0.0-beta.2",
  "serde-sarif",
  "version-sync",
@@ -775,7 +773,6 @@ name = "sarif-fmt"
 version = "0.2.13"
 dependencies = [
  "anyhow",
- "cargo-readme",
  "clap 3.0.0-beta.2",
  "codespan-reporting",
  "duct",
@@ -865,7 +862,6 @@ name = "serde-sarif"
 version = "0.2.13"
 dependencies = [
  "anyhow",
- "cargo-readme",
  "cargo_metadata",
  "derive_builder",
  "proc-macro2",
