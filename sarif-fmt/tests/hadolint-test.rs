@@ -1,33 +1,51 @@
 use anyhow::Result;
-use assert_cmd::Command;
-use predicates::prelude::predicate;
-use serde_sarif::converters::hadolint::parse_to_string;
-use std::io::Write;
+use std::iter::FromIterator;
 use std::path::PathBuf;
-use tempfile::NamedTempFile;
 
 #[test]
 fn test_basic_lint() -> Result<()> {
-  let test_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-  let mut dockerfile = test_directory.clone();
-  dockerfile.push("tests/data/Dockerfile");
+  let cargo_manifest_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+  let cargo_workspace_directory = PathBuf::from_iter(
+    [cargo_manifest_directory.clone(), PathBuf::from("..")].iter(),
+  );
+  let nix_file = PathBuf::from_iter(
+    [
+      cargo_workspace_directory.clone(),
+      PathBuf::from("nix/hadolint.nix"),
+    ]
+    .iter(),
+  );
+  let dockerfile_file = PathBuf::from_iter(
+    [
+      cargo_manifest_directory.clone(),
+      PathBuf::from("tests/data/Dockerfile"),
+    ]
+    .iter(),
+  );
+
   let cmd = format!(
-    "nix-shell --run 'hadolint -f json {}'",
-    dockerfile.to_str().unwrap()
+    "nix-shell --run 'hadolint -f json {} | cargo run -q --bin hadolint-sarif | cargo run -q --bin sarif-fmt' {}",
+    dockerfile_file.to_str().unwrap(),
+    nix_file.to_str().unwrap(),
   );
 
   let output = duct_sh::sh_dangerous(cmd.as_str())
-    .dir(test_directory)
+    .dir(cargo_workspace_directory)
     .unchecked()
+    .stderr_to_stdout()
+    .env("NO_COLOR", "1")
     .read()?;
 
-  let sarif = parse_to_string(output.as_bytes())?;
-  let mut tmpfile: NamedTempFile = NamedTempFile::new()?;
-  tmpfile.write_all(sarif.as_bytes()).unwrap();
-  let mut cmd = Command::cargo_bin("sarif-fmt").unwrap();
-  cmd.arg(tmpfile.path());
-  let assert = cmd.assert().success();
-  assert.stderr(predicate::str::contains("Pin versions in npm."));
+  assert!(output.contains(
+    "warning: Always tag the version of an image explicitly
+  ┌─ /home/psastras/repos/sarif-rs/sarif-fmt/tests/data/Dockerfile:1:1
+  │
+1 │ FROM debian
+  │ ^^^^^^^^^^^
+  │
+  = DLDL3006
+  = For more information: https://github.com/hadolint/hadolint/wiki/DLDL3006",
+  ));
 
   Ok(())
 }

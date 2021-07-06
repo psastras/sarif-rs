@@ -30,12 +30,8 @@ serde-sarif = { path = "../serde-sarif", version = "0.2.13" }
 version = "3.0.0-beta.2"
 
 [dev-dependencies]
-assert_cmd = "1.0.7"
 duct = "0.13.5"
 duct_sh = "0.13.5"
-hadolint-sarif = { path = "../hadolint-sarif", version = "0.2.13" }
-predicates = "2.0.0"
-tempfile = "3.2.0"
 version-sync = "0.9"
 
 [build-dependencies]
