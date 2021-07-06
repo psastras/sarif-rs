@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 #[test]
 // Test that the happy path linting works
-fn test_lint() -> Result<()> {
+fn test_clippy() -> Result<()> {
   let cargo_manifest_directory =
     fs::canonicalize(PathBuf::from(env!("CARGO_MANIFEST_DIR")))?;
   let cargo_workspace_directory = fs::canonicalize(PathBuf::from_iter(
@@ -15,10 +15,22 @@ fn test_lint() -> Result<()> {
   let clippy_project_directory = fs::canonicalize(PathBuf::from_iter(
     [
       cargo_manifest_directory.clone(),
-      PathBuf::from("tests/data"),
+      PathBuf::from("./tests/data"),
     ]
     .iter(),
   ))?;
+
+  duct_sh::sh(
+    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly build --bin clippy-sarif",
+  )
+  .dir(cargo_workspace_directory.clone())
+  .run()?;
+
+  duct_sh::sh(
+    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly build --bin sarif-fmt",
+  )
+  .dir(cargo_workspace_directory.clone())
+  .run()?;
 
   let sarif_fmt_bin = fs::canonicalize(PathBuf::from_iter(
     [
@@ -35,18 +47,6 @@ fn test_lint() -> Result<()> {
     ]
     .iter(),
   ))?;
-
-  duct_sh::sh(
-    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly build --bin clippy-sarif",
-  )
-  .dir(cargo_workspace_directory.clone())
-  .run()?;
-
-  duct_sh::sh(
-    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly build --bin sarif-fmt",
-  )
-  .dir(cargo_workspace_directory.clone())
-  .run()?;
 
   let cmd = format!(
     "cargo clippy --message-format=json | {} | {}",

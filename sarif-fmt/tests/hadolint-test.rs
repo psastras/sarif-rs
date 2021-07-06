@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 #[test]
 // Test that the happy path linting works
-fn test_lint() -> Result<()> {
+fn test_hadolint() -> Result<()> {
   let cargo_manifest_directory =
     fs::canonicalize(PathBuf::from(env!("CARGO_MANIFEST_DIR")))?;
   let cargo_workspace_directory = fs::canonicalize(PathBuf::from_iter(
@@ -28,6 +28,18 @@ fn test_lint() -> Result<()> {
     .iter(),
   ))?;
 
+  duct_sh::sh(
+    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly build --bin hadolint-sarif",
+  )
+  .dir(cargo_workspace_directory.clone())
+  .run()?;
+
+  duct_sh::sh(
+    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly build --bin sarif-fmt",
+  )
+  .dir(cargo_workspace_directory.clone())
+  .run()?;
+
   let sarif_fmt_bin = fs::canonicalize(PathBuf::from_iter(
     [
       cargo_workspace_directory.clone(),
@@ -43,18 +55,6 @@ fn test_lint() -> Result<()> {
     ]
     .iter(),
   ))?;
-
-  duct_sh::sh(
-    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly build --bin hadolint-sarif",
-  )
-  .dir(cargo_workspace_directory.clone())
-  .run()?;
-
-  duct_sh::sh(
-    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly build --bin sarif-fmt",
-  )
-  .dir(cargo_workspace_directory.clone())
-  .run()?;
 
   let cmd = format!(
     "nix-shell --run 'hadolint -f json {} | {} | {}' {}",
