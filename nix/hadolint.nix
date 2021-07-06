@@ -4,7 +4,6 @@ let
 
   inputs = with pkgs; [
     hadolint
-    shellcheck
   ];
 
   shell = pkgs.mkShell {
