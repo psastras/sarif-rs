@@ -12,18 +12,10 @@ fn test_lint() -> Result<()> {
     [cargo_manifest_directory.clone(), PathBuf::from("..")].iter(),
   ))?;
 
-  let nix_file = fs::canonicalize(PathBuf::from_iter(
-    [
-      cargo_workspace_directory.clone(),
-      PathBuf::from("nix/hadolint.nix"),
-    ]
-    .iter(),
-  ))?;
-
-  let dockerfile_file = fs::canonicalize(PathBuf::from_iter(
+  let clippy_project_directory = fs::canonicalize(PathBuf::from_iter(
     [
       cargo_manifest_directory.clone(),
-      PathBuf::from("tests/data/Dockerfile"),
+      PathBuf::from("tests/data"),
     ]
     .iter(),
   ))?;
@@ -36,16 +28,16 @@ fn test_lint() -> Result<()> {
     .iter(),
   ))?;
 
-  let hadolint_sarif_bin = fs::canonicalize(PathBuf::from_iter(
+  let clippy_sarif_bin = fs::canonicalize(PathBuf::from_iter(
     [
       cargo_workspace_directory.clone(),
-      PathBuf::from("./target/debug/hadolint-sarif"),
+      PathBuf::from("./target/debug/clippy-sarif"),
     ]
     .iter(),
   ))?;
 
   duct_sh::sh(
-    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly build --bin hadolint-sarif",
+    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly build --bin clippy-sarif",
   )
   .dir(cargo_workspace_directory.clone())
   .run()?;
@@ -57,28 +49,26 @@ fn test_lint() -> Result<()> {
   .run()?;
 
   let cmd = format!(
-    "nix-shell --run 'hadolint -f json {} | {} | {}' {}",
-    dockerfile_file.to_str().unwrap(),
-    hadolint_sarif_bin.to_str().unwrap(),
-    sarif_fmt_bin.to_str().unwrap(),
-    nix_file.to_str().unwrap(),
+    "cargo clippy --message-format=json | {} | {}",
+    clippy_sarif_bin.to_str().unwrap(),
+    sarif_fmt_bin.to_str().unwrap()
   );
 
   let output = duct_sh::sh_dangerous(cmd.as_str())
-    .dir(cargo_workspace_directory)
+    .dir(clippy_project_directory)
     .unchecked()
     .env("NO_COLOR", "1")
     .read()?;
 
-  assert!(
-    output.contains("warning: Always tag the version of an image explicitly")
-  );
-  assert!(output.contains("Dockerfile:1:1"));
-  assert!(output.contains("FROM debian"));
-  assert!(output.contains("DL3006"));
   assert!(output.contains(
-    "For more information: https://github.com/hadolint/hadolint/wiki/DL3006"
+    "warning: this comparison involving the minimum or maximum element for this type contains a case that is always true or always false"
   ));
+  assert!(output.contains("src/main.rs:3:6"));
+  assert!(output.contains("if vec.len() <= 0 {}"));
+  assert!(output
+    .contains("#[deny(clippy::absurd_extreme_comparisons)]` on by default"));
+  assert!(output
+    .contains("for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#absurd_extreme_comparisons"));
 
   Ok(())
 }
