@@ -2,3 +2,4 @@ target/
 .cache/
 
 default.profraw
+public

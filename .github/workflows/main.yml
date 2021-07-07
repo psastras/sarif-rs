@@ -88,17 +88,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
         with:
-          profile: minimal
-          components: rustfmt
-      - uses: Swatinem/rust-cache@v1
-      - run: cargo doc --workspace --no-deps
+          submodules: recursive
+      - name: Install and Run Zola
+        run: |
+          sudo snap install --edge zola
+          zola build
+        working-directory: docs
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target/doc
+          publish_dir: ./docs/public
           force_orphan: true
 
   publish:
