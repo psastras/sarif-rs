@@ -34,9 +34,7 @@ $ warning: using `Option.and_then(|x| Some(y))`, which is more succinctly expres
       for further information visit https://rust-lang.github.io/rust-clippy/master#bind_instead_of_map
 ```
 
-Use SARIF to output Rust `clippy` errors to Github Advanced Security.
-
-<img src="/images/ghas.png" style="width:100%;" />
+![alt text](images/ghas.png "Title")
 
 ## Install
 

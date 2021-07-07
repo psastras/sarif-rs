@@ -1,6 +1,6 @@
 [package]
 name = "sarif-fmt"
-version = "0.2.15"
+version = "0.2.16"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "View (pretty print) SARIF files in terminal"
@@ -8,7 +8,7 @@ license = "MIT"
 readme = "README.md"
 keywords = ["sarif", "fmt", "cli", "terminal"]
 categories = ["command-line-utilities"]
-homepage  = "https://github.com/psastras/sarif-rs"
+homepage  = "https://psastras.github.io/sarif-rs/"
 documentation = "https://docs.rs/clippy_sarif"
 repository = "https://github.com/psastras/sarif-rs"
 
@@ -23,7 +23,7 @@ path = "src/bin.rs"
 anyhow = "1.0.33"
 codespan-reporting = "0.11.1"
 serde_json = "1.0.64"
-serde-sarif = { path = "../serde-sarif", version = "0.2.15" }
+serde-sarif = { path = "../serde-sarif", version = "0.2.16" }
 
 [dependencies.clap]
 version = "3.0.0-beta.2"
