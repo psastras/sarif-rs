@@ -1,6 +1,6 @@
 [package]
 name = "serde-sarif"
-version = "0.2.15"
+version = "0.2.16"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Serde serialization for SARIF files"
@@ -9,7 +9,7 @@ readme = "README.md"
 keywords = ["sarif", "serde", "serialization"]
 categories = ["encoding"]
 build = "build.rs"
-homepage  = "https://github.com/psastras/sarif-rs"
+homepage  = "https://psastras.github.io/sarif-rs/"
 documentation = "https://docs.rs/serde_sarif"
 repository = "https://github.com/psastras/sarif-rs"
 
