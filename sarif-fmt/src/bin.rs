@@ -722,7 +722,7 @@ fn main() -> Result<()> {
   };
   let reader = BufReader::new(read);
   let sarif = process(reader)?;
-  match matches.value_of("message-format").unwrap_or("pretty") {
+  match matches.value_of("message format").unwrap_or("pretty") {
     "plain" => to_writer_plain(&sarif),
     _ => to_writer_pretty(&sarif),
   }
