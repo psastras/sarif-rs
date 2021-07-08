@@ -119,7 +119,7 @@ pub enum ResultKind {
 }
 
 #[doc = "A value specifying the severity level of the result."]
-#[derive(Display, Debug, Serialize, Deserialize, EnumString)]
+#[derive(Clone, Copy, Display, Debug, Serialize, Deserialize, EnumString)]
 #[serde(untagged)]
 pub enum ResultLevel {
   #[strum(serialize = "none")]
