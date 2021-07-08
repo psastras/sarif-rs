@@ -474,17 +474,11 @@ fn to_writer_plain(sarif: &sarif::Sarif) -> Result<()> {
         let rules = vec![];
         let rules = run.tool.driver.rules.as_ref().unwrap_or(&rules);
         let level = resolve_level(rules, run, result);
-        let text = vec![
-          resolve_message_text_from_result(result, run),
-          resolve_short_description_from_result(rules, result),
-          resolve_full_description_from_result(rules, result),
-        ]
-        .iter()
-        .filter_map(|v| v.clone())
-        .collect::<Vec<_>>()
-        .join("\n");
 
-        if let Some(locations) = result.locations.as_ref() {
+        if let (Some(text), Some(locations)) = (
+          resolve_message_text_from_result(result, run),
+          result.locations.as_ref(),
+        ) {
           locations.iter().for_each(|location| {
             if let Some((file_id, range)) = location
               .physical_location
@@ -524,9 +518,7 @@ fn to_writer_plain(sarif: &sarif::Sarif) -> Result<()> {
                 );
                 diagnostics.push(diagnostic);
               } else {
-                let diagnostic =
-                  ("UNKNOWN".to_string(), level, 0, 0, text.clone());
-                diagnostics.push(diagnostic);
+                // todo: no location found
               }
             }
           });
@@ -542,7 +534,7 @@ fn to_writer_plain(sarif: &sarif::Sarif) -> Result<()> {
 
     diagnostics.iter().for_each(|diagnostic| {
       println!(
-        "{} [{}:{}:{}]\n{}\n",
+        "{} [{}:{}:{}] {}",
         diagnostic.1, diagnostic.0, diagnostic.2, diagnostic.3, diagnostic.4
       )
     });
