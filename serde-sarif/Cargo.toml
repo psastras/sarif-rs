@@ -23,7 +23,7 @@ hadolint-converters = []
 shellcheck-converters = []
 
 [dependencies]
-anyhow = "1.0.42"
+anyhow = "1.0.43"
 cargo_metadata = { version = "0.14.0", optional = true }
 derive_builder = "0.10.2"
 serde = "1.0.127"
@@ -36,7 +36,7 @@ thiserror = "1.0"
 version-sync = "0.9"
 
 [build-dependencies]
-anyhow = "1.0.42"
+anyhow = "1.0.43"
 proc-macro2 = "1.0.28"
 quote = "1.0.9"
 schemafy_lib = "0.5.2"
