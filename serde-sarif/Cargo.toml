@@ -37,7 +37,7 @@ version-sync = "0.9"
 
 [build-dependencies]
 anyhow = "1.0.43"
-proc-macro2 = "1.0.28"
+proc-macro2 = "1.0.29"
 quote = "1.0.9"
 schemafy_lib = "0.5.2"
 serde_json = "1.0.66"
