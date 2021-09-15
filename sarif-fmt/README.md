@@ -2,8 +2,6 @@
 
 # sarif-fmt
 
-# WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
-
 This crate provides a command line tool to pretty print SARIF files to easy
 human readable output.
 

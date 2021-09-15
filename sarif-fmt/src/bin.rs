@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.16")]
+#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.17")]
 #![recursion_limit = "256"]
 //! # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 //!

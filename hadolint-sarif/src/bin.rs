@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/hadolint-sarif/0.2.16")]
+#![doc(html_root_url = "https://docs.rs/hadolint-sarif/0.2.17")]
 
 //! This crate provides a command line tool to convert `hadolint` diagnostic
 //! output into SARIF.
