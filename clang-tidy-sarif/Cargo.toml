@@ -1,0 +1,30 @@
+[package]
+name = "clang-tidy-sarif"
+version = "0.2.17"
+authors = ["Paul Sastrasinh <psastras@gmail.com>"]
+edition = "2018"
+description = "Convert clang-tidy output to SARIF"
+license = "MIT"
+readme = "README.md"
+keywords = ["sarif", "clang-tidy", "clang", "lint", "cli"]
+categories = ["command-line-utilities"]
+homepage  = "https://psastras.github.io/sarif-rs/"
+documentation = "https://docs.rs/clang_tidy_sarif"
+repository = "https://github.com/psastras/sarif-rs"
+
+[badges]
+github = { repository = "psastras/sarif-rs" }
+
+[[bin]]
+name = "clang-tidy-sarif"
+path = "src/bin.rs"
+
+[dependencies]
+anyhow = "1.0.44"
+serde-sarif = { path = "../serde-sarif", version = "0.2.17", features = ["clang-tidy-converters"] }
+
+[dependencies.clap]
+version = "3.0.0-beta.2"
+
+[dev-dependencies]
+version-sync = "0.9"

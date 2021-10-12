@@ -4,5 +4,6 @@ members = [
   "hadolint-sarif",
   "shellcheck-sarif",
   "clippy-sarif",
+  "clang-tidy-sarif",
   "serde-sarif",
 ]

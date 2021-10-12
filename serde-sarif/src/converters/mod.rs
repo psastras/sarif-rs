@@ -9,3 +9,7 @@ pub mod hadolint;
 #[cfg(feature = "shellcheck-converters")]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "shellcheck-converters")))]
 pub mod shellcheck;
+
+#[cfg(feature = "clang-tidy-converters")]
+#[cfg_attr(doc_cfg, doc(cfg(feature = "clang-tidy-converters")))]
+pub mod clang_tidy;
