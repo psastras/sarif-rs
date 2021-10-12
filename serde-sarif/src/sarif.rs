@@ -251,7 +251,7 @@ impl TryFrom<&str> for Message {
   type Error = MessageBuilderError;
 
   fn try_from(message: &str) -> anyhow::Result<Self, Self::Error> {
-    MessageBuilder::default().text(message.clone()).build()
+    MessageBuilder::default().text(message).build()
   }
 }
 
