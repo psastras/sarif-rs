@@ -92,7 +92,10 @@ jobs:
           submodules: recursive
       - name: Install and Run Zola
         run: |
-          sudo snap install --edge zola
+          TEMP_DEB="$(mktemp)" &&
+          wget -O "$TEMP_DEB" 'https://github.com/barnumbirr/zola-debian/releases/download/v0.13.0/zola_0.13.0-1_amd64_debian_buster.deb' &&
+          sudo dpkg -i "$TEMP_DEB"
+          rm -f "$TEMP_DEB"
           zola build
         working-directory: docs
       - name: Deploy
