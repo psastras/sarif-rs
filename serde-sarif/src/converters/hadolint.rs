@@ -53,9 +53,9 @@ impl From<HadolintLevel> for sarif::ResultLevel {
 impl TryFrom<&HadolintResult> for sarif::ArtifactLocation {
   type Error = sarif::ArtifactLocationBuilderError;
 
-  fn try_from(span: &HadolintResult) -> Result<Self, Self::Error> {
+  fn try_from(result: &HadolintResult) -> Result<Self, Self::Error> {
     sarif::ArtifactLocationBuilder::default()
-      .uri(&span.file)
+      .uri(&result.file)
       .build()
   }
 }
@@ -63,9 +63,9 @@ impl TryFrom<&HadolintResult> for sarif::ArtifactLocation {
 impl TryFrom<&HadolintResult> for sarif::Location {
   type Error = BuilderError;
 
-  fn try_from(span: &HadolintResult) -> Result<Self, Self::Error> {
-    let artifact_location: sarif::ArtifactLocation = span.try_into()?;
-    let region: sarif::Region = span.try_into()?;
+  fn try_from(result: &HadolintResult) -> Result<Self, Self::Error> {
+    let artifact_location: sarif::ArtifactLocation = result.try_into()?;
+    let region: sarif::Region = result.try_into()?;
     Ok(
       sarif::LocationBuilder::default()
         .physical_location(
@@ -82,10 +82,10 @@ impl TryFrom<&HadolintResult> for sarif::Location {
 impl TryFrom<&HadolintResult> for sarif::Region {
   type Error = sarif::RegionBuilderError;
 
-  fn try_from(span: &HadolintResult) -> Result<Self, Self::Error> {
+  fn try_from(result: &HadolintResult) -> Result<Self, Self::Error> {
     sarif::RegionBuilder::default()
-      .start_line(span.line as i64)
-      .start_column(span.column as i64)
+      .start_line(result.line as i64)
+      .start_column(result.column as i64)
       .build()
   }
 }

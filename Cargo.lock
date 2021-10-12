@@ -82,6 +82,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "clang-tidy-sarif"
+version = "0.2.17"
+dependencies = [
+ "anyhow",
+ "clap",
+ "serde-sarif",
+ "version-sync",
+]
+
+[[package]]
 name = "clap"
 version = "3.0.0-beta.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -505,6 +515,7 @@ dependencies = [
  "derive_builder",
  "proc-macro2",
  "quote",
+ "regex",
  "schemafy_lib",
  "serde",
  "serde_json",
