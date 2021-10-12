@@ -52,6 +52,8 @@ curl -sSL https://github.com/psastras/sarif-rs/releases/download/latest-x86_64-u
 
 See each subproject for more detailed information:
 
+- `clang-tidy-sarif`: CLI tool to convert `clang-tidy` diagnostics into SARIF.
+  See the [Rust documentation](https://docs.rs/clang_tidy/).
 - `clippy-sarif`: CLI tool to convert `clippy` diagnostics into SARIF. See the
   [Rust documentation](https://docs.rs/clippy_sarif/).
 - `hadolint-sarif`: CLI tool to convert `hadolint` diagnostics into SARIF. See

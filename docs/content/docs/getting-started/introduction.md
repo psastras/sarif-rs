@@ -16,11 +16,11 @@ top = false
 
 ## Examples
 
-Parse `cargo clippy` output, convert to SARIF (`clippy-sarif`), then pretty
-print the SARIF to terminal (`sarif-fmt`).
+Parse `cargo clippy` output, convert to SARIF (`clippy-sarif`) and save the
+file, then pretty print the SARIF to terminal (`sarif-fmt`).
 
 ```sh
-$ cargo clippy --message-format=json | clippy-sarif | sarif-fmt
+$ cargo clippy --message-format=json | clippy-sarif | tee results.sarif | sarif-fmt
 $ warning: using `Option.and_then(|x| Some(y))`, which is more succinctly expressed as `map(|x| y)`
     ┌─ sarif-fmt/src/bin.rs:423:13
     │
@@ -62,6 +62,7 @@ curl -sSL https://github.com/psastras/sarif-rs/releases/download/latest-x86_64-u
 
 Below is a list of libraries and tools which are part of the `sarif-rs` project:
 
+- `clang-tidy-sarif`: CLI tool to convert `clang-tidy` diagnostics into SARIF.
 - `clippy-sarif`: CLI tool to convert `clippy` diagnostics into SARIF.
 - `hadolint-sarif`: CLI tool to convert `hadolint` diagnostics into SARIF.
 - `shellcheck-sarif`: CLI tool to convert `shellcheck` diagnostics into SARIF.
