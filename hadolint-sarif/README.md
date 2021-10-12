@@ -65,8 +65,10 @@ jobs:
           toolchain: stable
           override: true
       - uses: Swatinem/rust-cache@v1
-      - run: cargo install hadolint-sarif
-      - run: hadolint -f json Dockerfile | hadolint-sarif > results.sarif
+      - run: cargo install hadolint-sarif sarif-fmt
+      - run:
+          hadolint -f json Dockerfile | hadolint-sarif | tee results.sarif |
+          sarif-fmt
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
         with:

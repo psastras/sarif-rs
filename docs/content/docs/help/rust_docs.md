@@ -18,6 +18,7 @@ Rust documentation for each tool and library is available on docs.rs.
 
 | Tool / Library     | docs.rs Link                                                           |
 | ------------------ | ---------------------------------------------------------------------- |
+| `clang-tidy-sarif` | [https://docs.rs/clang_tidy_sarif/](https://docs.rs/clang_tidy_sarif/) |
 | `clippy-sarif`     | [https://docs.rs/clippy_sarif/](https://docs.rs/clippy_sarif/)         |
 | `hadlint-sarif`    | [https://docs.rs/hadolint_sarif/](https://docs.rs/hadolint_sarif/)     |
 | `shellcheck-sarif` | [https://docs.rs/shellcheck_sarif/](https://docs.rs/shellcheck_sarif/) |

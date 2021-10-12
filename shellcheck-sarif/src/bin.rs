@@ -61,10 +61,10 @@
 //!           toolchain: stable
 //!           override: true
 //!       - uses: Swatinem/rust-cache@v1
-//!       - run: cargo install shellcheck-sarif
+//!       - run: cargo install shellcheck-sarif sarif-fmt
 //!       - run:
 //!           shellcheck -f json shellscript.sh |
-//!           shellcheck-sarif > results.sarif
+//!           shellcheck-sarif | tee results.sarif | sarif-fmt
 //!       - name: Upload SARIF file
 //!         uses: github/codeql-action/upload-sarif@v1
 //!         with:

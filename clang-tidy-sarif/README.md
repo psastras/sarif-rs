@@ -63,10 +63,10 @@ jobs:
           toolchain: stable
           override: true
       - uses: Swatinem/rust-cache@v1
-      - run: cargo install clang-tidy-sarif
+      - run: cargo install clang-tidy-sarif sarif-fmt
       - run:
-          clang-tidy -checks=cert-* -warnings-as-errors=* main.cpp -- |
-          clang-tidy-sarif > results.sarif
+          clang-tidy -checks=cert-* -warnings-as-errors=* main.cpp -- | tee
+          results.sarif | sarif-fmt
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
         with:
