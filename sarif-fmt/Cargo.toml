@@ -1,6 +1,6 @@
 [package]
 name = "sarif-fmt"
-version = "0.2.17"
+version = "0.2.18"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "View (pretty print) SARIF files in terminal"
@@ -23,7 +23,7 @@ path = "src/bin.rs"
 anyhow = "1.0.44"
 codespan-reporting = "0.11.1"
 serde_json = "1.0.68"
-serde-sarif = { path = "../serde-sarif", version = "0.2.17" }
+serde-sarif = { path = "../serde-sarif", version = "0.2.18" }
 
 [dependencies.clap]
 version = "3.0.0-beta.2"
