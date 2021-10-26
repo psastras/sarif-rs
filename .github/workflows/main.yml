@@ -97,6 +97,7 @@ jobs:
           sudo dpkg -i "$TEMP_DEB"
           rm -f "$TEMP_DEB"
           zola build
+          cp ./static/pages/* public
         working-directory: docs
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
@@ -166,6 +167,7 @@ jobs:
           prerelease: true
           title: "latest-${{ steps.target-triple.outputs.target_triple }}"
           files: |
+            ./target/release/clang-tidy-sarif
             ./target/release/clippy-sarif
             ./target/release/hadolint-sarif
             ./target/release/shellcheck-sarif
