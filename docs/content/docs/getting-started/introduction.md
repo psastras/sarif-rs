@@ -16,11 +16,11 @@ top = false
 
 ## Examples
 
-Parse `cargo clippy` output, convert to SARIF (`clippy-sarif`) and save the
-file, then pretty print the SARIF to terminal (`sarif-fmt`).
+Parse `cargo clippy` output, convert to SARIF (`clippy-sarif`), then pretty
+print the SARIF to terminal (`sarif-fmt`).
 
-```sh
-$ cargo clippy --message-format=json | clippy-sarif | tee results.sarif | sarif-fmt
+```shell
+$ cargo clippy --message-format=json | clippy-sarif | sarif-fmt
 $ warning: using `Option.and_then(|x| Some(y))`, which is more succinctly expressed as `map(|x| y)`
     ┌─ sarif-fmt/src/bin.rs:423:13
     │
@@ -34,7 +34,17 @@ $ warning: using `Option.and_then(|x| Some(y))`, which is more succinctly expres
       for further information visit https://rust-lang.github.io/rust-clippy/master#bind_instead_of_map
 ```
 
-![alt text](images/ghas.png "Title")
+Parse `clang-tidy` output, convert to SARIF (`clang-tidy-sarif`), then print the
+SARIF results to terminal in plain text format (`sarif-fmt -f plain`)
+
+```shell
+$ clang-tidy -checks=cert-* cpp.cpp -- | clang-tidy-sarif | clang-tidy.sarif | sarif-fmt -f plain
+2 warnings generated.
+warning [cpp.cpp:4:10] 'atoi' used to convert a string to an integer value, but function will not report conversion errors; consider using 'strtol' instead [cert-err34-c]
+warning [cpp.cpp:8:3] calling 'system' uses a command processor [cert-env33-c]
+```
+
+![alt text](/sarif-rs/images/ghas.png "Example of SARIF GHAS integration")
 
 ## Install
 
