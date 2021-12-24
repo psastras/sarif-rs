@@ -24,7 +24,7 @@ anyhow = "1.0.44"
 serde-sarif = { path = "../serde-sarif", version = "0.2.20", features = ["clippy-converters"] }
 
 [dependencies.clap]
-version = "3.0.0-beta.2"
+version = "3.0.0-rc.8"
 
 [dev-dependencies]
 version-sync = "0.9"
