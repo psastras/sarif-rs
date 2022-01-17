@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v14
+      - uses: cachix/install-nix-action@v16
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -36,8 +36,7 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v1
       - name: Install cargo-llvm-cov
-        run:
-          curl -LsSf
+        run: curl -LsSf
           https://github.com/taiki-e/cargo-llvm-cov/releases/download/v0.1.0-alpha.4/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz
           | tar xzf - -C ~/.cargo/bin
       - uses: actions-rs/cargo@v1
@@ -162,8 +161,7 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag:
-            "latest-${{ steps.target-triple.outputs.target_triple }}"
+          automatic_release_tag: "latest-${{ steps.target-triple.outputs.target_triple }}"
           prerelease: true
           title: "latest-${{ steps.target-triple.outputs.target_triple }}"
           files: |

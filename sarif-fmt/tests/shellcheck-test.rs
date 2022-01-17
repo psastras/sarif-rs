@@ -1,4 +1,5 @@
 use anyhow::Result;
+use std::collections::HashMap;
 use std::fs;
 use std::iter::FromIterator;
 use std::path::PathBuf;
@@ -64,9 +65,12 @@ fn test_shellcheck() -> Result<()> {
     nix_file.to_str().unwrap(),
   );
 
+  let mut env_map: HashMap<_, _> = std::env::vars().collect();
+  env_map.insert("NO_COLOR".into(), "1".into());
   let output = duct_sh::sh_dangerous(cmd.as_str())
+    .dir(cargo_workspace_directory)
     .unchecked()
-    .env("NO_COLOR", "1")
+    .full_env(&env_map)
     .read()?;
 
   assert!(output.contains(
