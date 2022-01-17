@@ -110,7 +110,7 @@ jobs:
   publish:
     name: Publish
     needs: [check, test, fmt, clippy]
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -126,18 +126,15 @@ jobs:
         with:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
-          check-repo: true
       - uses: katyo/publish-crates@v1
         continue-on-error: true
         with:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
-          check-repo: true
       - uses: katyo/publish-crates@v1
         with:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
-          check-repo: true
   gh-release:
     name: Github Release
     needs: [check, test, fmt, clippy]
