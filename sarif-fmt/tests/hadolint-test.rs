@@ -4,7 +4,6 @@ use std::fs;
 use std::iter::FromIterator;
 use std::path::PathBuf;
 
-#[ignore]
 #[test]
 // Test that the happy path linting works
 fn test_hadolint() -> Result<()> {
