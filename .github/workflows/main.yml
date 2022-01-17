@@ -126,16 +126,18 @@ jobs:
         with:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
+          check-repo: false
       - uses: katyo/publish-crates@v1
         continue-on-error: true
         with:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
+          check-repo: false
       - uses: katyo/publish-crates@v1
         with:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
-
+          check-repo: false
   gh-release:
     name: Github Release
     needs: [check, test, fmt, clippy]
