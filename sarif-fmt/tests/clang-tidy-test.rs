@@ -5,6 +5,7 @@ use std::iter::FromIterator;
 use std::path::PathBuf;
 
 #[test]
+#[ignore]
 // Test that the happy path linting works
 fn test_clang_tidy() -> Result<()> {
   let cargo_manifest_directory =
