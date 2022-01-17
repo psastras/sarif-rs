@@ -53,7 +53,7 @@ curl -sSL https://github.com/psastras/sarif-rs/releases/download/latest-x86_64-u
 See each subproject for more detailed information:
 
 - `clang-tidy-sarif`: CLI tool to convert `clang-tidy` diagnostics into SARIF.
-  See the [Rust documentation](https://docs.rs/clang_tidy/).
+  See the [Rust documentation](https://docs.rs/clang_tidy_sarif/).
 - `clippy-sarif`: CLI tool to convert `clippy` diagnostics into SARIF. See the
   [Rust documentation](https://docs.rs/clippy_sarif/).
 - `hadolint-sarif`: CLI tool to convert `hadolint` diagnostics into SARIF. See
@@ -86,5 +86,14 @@ For more information on specific configurations, refer to the
 
 `nix` is used internally (ie. via test fixtures) to manage other dependencies
 (so you don't have to manage them yourself.)
+
+## TODOs
+
+- [ ] Stabilize the `serde-sarif` APIs
+- [ ] All around documentation improvements
+- [ ] Lots of code cleanup, especially in the CLI codebases
+- [ ] Testing
+- [ ] General CI and release flow improvements
+- [ ] Support for other converters
 
 License: MIT
