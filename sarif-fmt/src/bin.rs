@@ -768,7 +768,7 @@ fn main() -> Result<()> {
     .version(env!("CARGO_PKG_VERSION"))
     .arg(
       Arg::new("message format")
-        .about("One of plain or pretty")
+        .help("One of plain or pretty")
         .default_value("pretty")
         .short('f')
         .long("message-format")
@@ -777,7 +777,7 @@ fn main() -> Result<()> {
     )
     .arg(
       Arg::new("input")
-        .about("input file; reads from stdin if none is given")
+        .help("input file; reads from stdin if none is given")
         .takes_value(true),
     )
     .get_matches();

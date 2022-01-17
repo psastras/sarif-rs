@@ -87,12 +87,12 @@ fn main() -> Result<()> {
         .version(env!("CARGO_PKG_VERSION"))
         .arg(
             Arg::new("input")
-                .about("input file; reads from stdin if none is given")
+                .help("input file; reads from stdin if none is given")
                 .takes_value(true),
         )
         .arg(
             Arg::new("output")
-                .about("output file; writes to stdout if none is given")
+                .help("output file; writes to stdout if none is given")
                 .short('o')
                 .long("output")
                 .takes_value(true),
