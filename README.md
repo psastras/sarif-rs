@@ -87,4 +87,8 @@ For more information on specific configurations, refer to the
 `nix` is used internally (ie. via test fixtures) to manage other dependencies
 (so you don't have to manage them yourself.)
 
+### Releasing
+
+To release a new version (publish to crates.io), prefix the head commit with `release:` and update the relevant rust crate versions. Once merged into main the pipeline should pick up the change and publish a new version.
+
 License: MIT
