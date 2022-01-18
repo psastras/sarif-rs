@@ -203,3 +203,13 @@ jobs:
           allowUpdates: true
           tag: ${{ matrix.target }}-v${{steps.target-version.outputs.target_version}}
           name: ${{ matrix.target }} ${{steps.target-version.outputs.target_version}}
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: ${{steps.target-binary.outputs.target_binary}}
+          body: |
+            ${{steps.github_release.outputs.changelog}}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          tag: ${{ matrix.target }}-latest
+          name: ${{ matrix.target }} latest
+          replacesArtifacts: true
