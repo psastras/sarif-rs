@@ -63,11 +63,11 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
+          components: clippy,rustfmt
           override: true
       - uses: Swatinem/rust-cache@v1
       - run: cargo install clippy-sarif sarif-fmt
-      - run:
-          cargo clippy --all-targets --all-features --message-format=json |
+      - run: cargo clippy --all-targets --all-features --message-format=json |
           clippy-sarif | tee results.sarif | sarif-fmt
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
