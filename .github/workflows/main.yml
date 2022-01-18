@@ -1,5 +1,7 @@
 on:
   push:
+    tags-ignore:
+      - "**"
     branches:
       - main
   pull_request:
@@ -136,12 +138,20 @@ jobs:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
   gh-release:
-    name: Github Release
+    name: Github Release Upload
     needs: [check, test, fmt, clippy]
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release:')
     strategy:
       matrix:
         runs-on: [ubuntu-latest, macos-latest]
+        target:
+          [
+            clang-tidy-sarif,
+            clippy-sarif,
+            hadolint-sarif,
+            shellcheck-sarif,
+            sarif-fmt,
+          ]
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v2
@@ -153,21 +163,53 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --bins
+          args: --release --bin ${{ matrix.target }}
       - name: target triple
         id: target-triple
         run: |
           TARGET_TRIPLE=$(rustc --version --verbose | grep host | awk '{print $2}')
           echo ::set-output name=target_triple::$TARGET_TRIPLE
-      - uses: "marvinpinto/action-automatic-releases@latest"
+      - name: target version
+        id: target-version
+        run: |
+          TARGET_VERSION=$(./target/release/${{ matrix.target }} --version | awk '{print $2}')
+          echo ::set-output name=target_version::$TARGET_VERSION
+      - name: target binary
+        id: target-binary
+        run: |
+          TARGET_BINARY=./target/release/${{ matrix.target }}-${{steps.target-triple.outputs.target_triple}}
+          mv ./target/release/${{ matrix.target }} ${TARGET_BINARY}
+          echo ::set-output name=target_binary::$TARGET_BINARY
+      - name: previous tag
+        id: previous-tag
+        run: |
+          PREVIOUS_TAG=$(git tag --list --sort=-version:refname "${{ matrix.target }}-v*" | head -n 1)
+          echo ::set-output name=previous_tag::$PREVIOUS_TAG
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest-${{ steps.target-triple.outputs.target_triple }}"
-          prerelease: true
-          title: "latest-${{ steps.target-triple.outputs.target_triple }}"
-          files: |
-            ./target/release/clang-tidy-sarif
-            ./target/release/clippy-sarif
-            ./target/release/hadolint-sarif
-            ./target/release/shellcheck-sarif
-            ./target/release/sarif-fmt
+          fromTag: ${{ steps.previous-tag.outputs.previous_tag }}
+          toTag: HEAD
+          commitMode: true
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: ${{steps.target-binary.outputs.target_binary}}
+          body: |
+            ${{steps.github_release.outputs.changelog}}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          tag: ${{ matrix.target }}-v${{steps.target-version.outputs.target_version}}
+          name: ${{ matrix.target }} ${{steps.target-version.outputs.target_version}}
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: ${{steps.target-binary.outputs.target_binary}}
+          body: |
+            ${{steps.github_release.outputs.changelog}}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          tag: ${{ matrix.target }}-latest
+          name: ${{ matrix.target }} latest
+          replacesArtifacts: true

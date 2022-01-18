@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.21")]
+#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.2.26")]
 #![recursion_limit = "256"]
 //! # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 //!
@@ -17,6 +17,13 @@
 //!
 //! ```shell
 //! cargo install sarif-fmt
+//! ```
+//!
+//! or downloaded directly from Github Releases
+//!
+//!```shell
+//! # make sure to adjust the target and version (you may also want to pin to a specific version)
+//! curl -sSL https://github.com/psastras/sarif-rs/releases/download/sarif-fmt-latest/sarif-fmt-x86_64-unknown-linux-gnu -o sarif-fmt
 //! ```
 //!
 //! ## Usage

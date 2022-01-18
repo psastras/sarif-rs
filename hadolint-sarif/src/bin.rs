@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/hadolint-sarif/0.2.21")]
+#![doc(html_root_url = "https://docs.rs/hadolint-sarif/0.2.26")]
 
 //! This crate provides a command line tool to convert `hadolint` diagnostic
 //! output into SARIF.
@@ -18,6 +18,13 @@
 //!
 //! ```shell
 //! cargo install hadolint-sarif
+//! ```
+//!
+//! or downloaded directly from Github Releases
+//!
+//!```shell
+//! # make sure to adjust the target and version (you may also want to pin to a specific version)
+//! curl -sSL https://github.com/psastras/sarif-rs/releases/download/hadolint-sarif-latest/hadolint-sarif-x86_64-unknown-linux-gnu -o hadolint-sarif
 //! ```
 //!
 //! ## Usage
