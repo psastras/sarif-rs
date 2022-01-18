@@ -45,7 +45,8 @@ The latest version is
 Using `curl`,
 
 ```shell
-curl -sSL https://github.com/psastras/sarif-rs/releases/download/latest-x86_64-unknown-linux-gnu/sarif-fmt # make sure to adjust the target triplet (latest-<target_triplet>) to the correct target
+# make sure to adjust the target and version (you may also want to pin to a specific version)
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/shellcheck-sarif-latest/shellcheck-sarif-x86_64-unknown-linux-gnu -o shellcheck-sarif
 ```
 
 ## Documentation
