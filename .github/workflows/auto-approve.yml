@@ -12,9 +12,8 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
   enable-auto-merge:
     runs-on: ubuntu-latest
-    # Specifically check that dependabot (or another trusted party) created this pull-request, and that it has been labelled correctly.
-    if: github.event.pull_request.user.login == 'dependabot[bot]' && contains(github.event.pull_request.labels.*.name, 'dependencies')
     steps:
       - uses: alexwilson/enable-github-automerge-action@main
+        if: github.actor == 'dependabot[bot]'
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
