@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/serde-sarif/0.2.22")]
+#![doc(html_root_url = "https://docs.rs/serde-sarif/0.2.23")]
 
 //! # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 //!

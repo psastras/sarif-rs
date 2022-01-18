@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/shellcheck-sarif/0.2.22")]
+#![doc(html_root_url = "https://docs.rs/shellcheck-sarif/0.2.23")]
 
 //! This crate provides a command line tool to convert `shellcheck` diagnostic
 //! output into SARIF.
