@@ -59,6 +59,7 @@
 //!         with:
 //!           profile: minimal
 //!           toolchain: stable
+//!           components: clippy,rustfmt
 //!           override: true
 //!       - uses: Swatinem/rust-cache@v1
 //!       - run: cargo install clippy-sarif sarif-fmt
