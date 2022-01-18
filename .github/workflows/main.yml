@@ -176,7 +176,7 @@ jobs:
           echo ::set-output name=target_version::$TARGET_VERSION
       - name: target binary
         id: target-binary
-        run:
+        run: |
           TARGET_BINARY=./target/release/${{ matrix.target }}-${{steps.target-triple.outputs.target_triple}}
           mv ./target/release/${{ matrix.target }} ${TARGET_BINARY}
           echo ::set-output name=target_binary::$TARGET_BINARY
