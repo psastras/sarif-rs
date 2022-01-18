@@ -185,17 +185,20 @@ jobs:
         run: |
           PREVIOUS_TAG=$(git tag --list --sort=-version:refname "${{ matrix.target }}-v*" | head -n 1)
           echo ::set-output name=previous_tag::$PREVIOUS_TAG
-      - name: Changelog
-        uses: scottbrenner/generate-changelog-action@master
-        id: Changelog
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          from-tag: ${{ steps.previous-tag.outputs.previous_tag }}
-          to-tag: HEAD
+          fromTag: ${{ steps.previous-tag.outputs.previous_tag }}
+          toTag: HEAD
+          commitMode: true
       - uses: ncipollo/release-action@v1
         with:
           artifacts: ${{steps.target-binary.outputs.target_binary}}
           body: |
-            ${{ steps.Changelog.outputs.changelog }}
+            ${{steps.github_release.outputs.changelog}}
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
           tag: ${{ matrix.target }}-v${{steps.target-version.outputs.target_version}}
