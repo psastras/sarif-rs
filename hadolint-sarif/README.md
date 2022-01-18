@@ -24,6 +24,13 @@ the official website:
 cargo install hadolint-sarif
 ```
 
+or downloaded directly from Github Releases
+
+```shell
+# make sure to adjust the target and version (you may also want to pin to a specific version)
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/hadolint-sarif-latest/hadolint-sarif-x86_64-unknown-linux-gnu -o hadolint-sarif
+```
+
 ## Usage
 
 For most cases, simply run `hadolint` with `json` output and pipe the results
@@ -66,8 +73,7 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v1
       - run: cargo install hadolint-sarif sarif-fmt
-      - run:
-          hadolint -f json Dockerfile | hadolint-sarif | tee results.sarif |
+      - run: hadolint -f json Dockerfile | hadolint-sarif | tee results.sarif |
           sarif-fmt
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1

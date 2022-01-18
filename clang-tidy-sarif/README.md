@@ -22,6 +22,13 @@ the official website:
 cargo install clang-tidy-sarif
 ```
 
+or downloaded directly from Github Releases
+
+```shell
+# make sure to adjust the target and version (you may also want to pin to a specific version)
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/clang-tidy-sarif-latest/clang-tidy-sarif-x86_64-unknown-linux-gnu -o clang-tidy-sarif
+```
+
 ## Usage
 
 For most cases, simply run `clang-tidy` and pipe the results into
@@ -64,8 +71,7 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v1
       - run: cargo install clang-tidy-sarif sarif-fmt
-      - run:
-          clang-tidy -checks=cert-* -warnings-as-errors=* main.cpp -- | tee
+      - run: clang-tidy -checks=cert-* -warnings-as-errors=* main.cpp -- | tee
           results.sarif | sarif-fmt
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1

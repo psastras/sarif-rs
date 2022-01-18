@@ -19,6 +19,13 @@
 //! cargo install sarif-fmt
 //! ```
 //!
+//! or downloaded directly from Github Releases
+//!
+//!```shell
+//! # make sure to adjust the target and version (you may also want to pin to a specific version)
+//! curl -sSL https://github.com/psastras/sarif-rs/releases/download/sarif-fmt-latest/sarif-fmt-x86_64-unknown-linux-gnu -o sarif-fmt
+//! ```
+//!
 //! ## Usage
 //!
 //! For most cases, simply pipe a SARIF file into `sarif-fmt` (`cat ./foo.sarif | sarif-fmt`)

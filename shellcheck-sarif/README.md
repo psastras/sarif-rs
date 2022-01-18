@@ -24,6 +24,13 @@ the official website:
 cargo install shellcheck-sarif
 ```
 
+or downloaded directly from Github Releases
+
+```shell
+# make sure to adjust the target and version (you may also want to pin to a specific version)
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/shellcheck-sarif-latest/shellcheck-sarif-x86_64-unknown-linux-gnu -o shellcheck-sarif
+```
+
 ## Usage
 
 For most cases, simply run `shellcheck` with `json` output and pipe the results
@@ -66,8 +73,7 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v1
       - run: cargo install shellcheck-sarif sarif-fmt
-      - run:
-          shellcheck -f json shellscript.sh | shellcheck-sarif | tee
+      - run: shellcheck -f json shellscript.sh | shellcheck-sarif | tee
           results.sarif | sarif-fmt
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1

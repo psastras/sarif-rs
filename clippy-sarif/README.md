@@ -24,6 +24,13 @@ the official website:
 cargo install clippy-sarif
 ```
 
+or downloaded directly from Github Releases
+
+```shell
+# make sure to adjust the target and version (you may also want to pin to a specific version)
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/clippy-sarif-latest/clippy-sarif-x86_64-unknown-linux-gnu -o clippy-sarif
+```
+
 ## Usage
 
 For most cases, simply run `cargo clippy` with `json` output and pipe the
