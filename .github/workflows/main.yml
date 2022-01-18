@@ -180,11 +180,23 @@ jobs:
           TARGET_BINARY=./target/release/${{ matrix.target }}-${{steps.target-triple.outputs.target_triple}}
           mv ./target/release/${{ matrix.target }} ${TARGET_BINARY}
           echo ::set-output name=target_binary::$TARGET_BINARY
-      - uses: meeDamian/github-release@2.0
+      - name: previous tag
+        id: previous-tag
+        run: |
+          PREVIOUS_TAG=$(git tag --list --sort=-version:refname "${{ matrix.target }}-v*" | head -n 1)
+          echo ::set-output name=previous_tag::$PREVIOUS_TAG
+      - name: Changelog
+        uses: scottbrenner/generate-changelog-action@master
+        id: Changelog
         with:
-          allow_override: true
+          from-tag: ${{ steps.previous-tag.outputs.previous_tag }}
+          to-tag: HEAD
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: ${{steps.target-binary.outputs.target_binary}}
+          body: |
+            ${{ steps.Changelog.outputs.changelog }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
           tag: ${{ matrix.target }}-v${{steps.target-version.outputs.target_version}}
           name: ${{ matrix.target }} ${{steps.target-version.outputs.target_version}}
-          files: >
-            ${{steps.target-binary.outputs.target_binary}}

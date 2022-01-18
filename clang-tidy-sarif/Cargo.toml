@@ -1,6 +1,6 @@
 [package]
 name = "clang-tidy-sarif"
-version = "0.2.23"
+version = "0.2.24"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Convert clang-tidy output to SARIF"
@@ -21,7 +21,7 @@ path = "src/bin.rs"
 
 [dependencies]
 anyhow = "1.0.52"
-serde-sarif = { path = "../serde-sarif", version = "0.2.23", features = ["clang-tidy-converters"] }
+serde-sarif = { path = "../serde-sarif", version = "0.2.24", features = ["clang-tidy-converters"] }
 clap = "3.0.8"
 
 [dev-dependencies]
