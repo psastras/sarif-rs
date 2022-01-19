@@ -12,7 +12,7 @@ updates:
       interval: "daily"
     commit-message:
       prefix: ci
-  - package_manager: "submodules"
+  - package-ecosystem: "gitsubmodule"
     directory: /
     schedule:
       interval: "daily"
