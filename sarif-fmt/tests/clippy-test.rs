@@ -60,6 +60,10 @@ fn test_clippy() -> Result<()> {
     .env("NO_COLOR", "1")
     .read()?;
 
+  println!("==================== BEGIN TEST OUTPUT ====================");
+  println!("{}", output);
+  println!("===================== END TEST OUTPUT =====================");
+
   assert!(output.contains(
     "warning: this comparison involving the minimum or maximum element for this type contains a case that is always true or always false"
   ));

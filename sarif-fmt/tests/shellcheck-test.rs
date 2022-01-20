@@ -73,6 +73,10 @@ fn test_shellcheck() -> Result<()> {
     .full_env(&env_map)
     .read()?;
 
+  println!("==================== BEGIN TEST OUTPUT ====================");
+  println!("{}", output);
+  println!("===================== END TEST OUTPUT =====================");
+
   assert!(output.contains(
     "warning: Couldn't parse this for loop. Fix to allow more checks."
   ));

@@ -39,6 +39,14 @@ jobs:
           components: llvm-tools-preview,rustfmt,clippy
           override: true
       - uses: Swatinem/rust-cache@v1
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --bin sarif-fmt
+      - name: run fmt
+        run: |
+          cat ./foo.sarif | ./target/debug/sarif-fmt
+          cat ./foo.sarif | ./target/debug/sarif-fmt -f plain
       - name: Install cargo-llvm-cov
         run: curl -LsSf
           https://github.com/taiki-e/cargo-llvm-cov/releases/download/v0.1.15/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz
@@ -53,7 +61,6 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: lcov.info
           fail_ci_if_error: true
-
   fmt:
     name: Rustfmt
     runs-on: ubuntu-latest

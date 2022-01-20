@@ -73,6 +73,10 @@ fn test_hadolint() -> Result<()> {
     .full_env(&env_map)
     .read()?;
 
+  println!("==================== BEGIN TEST OUTPUT ====================");
+  println!("{}", output);
+  println!("===================== END TEST OUTPUT =====================");
+
   assert!(
     output.contains("warning: Always tag the version of an image explicitly")
   );

@@ -74,6 +74,10 @@ fn test_clang_tidy() -> Result<()> {
     .full_env(&env_map)
     .read()?;
 
+  println!("==================== BEGIN TEST OUTPUT ====================");
+  println!("{}", output);
+  println!("===================== END TEST OUTPUT =====================");
+
   assert!(
     output.contains("warning: 'atoi' used to convert a string to an integer value, but function will not report conversion errors; consider using 'strtol' instead [cert-err34-c]")
   );
