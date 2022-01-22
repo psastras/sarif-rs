@@ -603,6 +603,7 @@ fn to_writer_plain(sarif: &sarif::Sarif) -> Result<()> {
               }
             }
           });
+          // todo: no location found
         }
 
         Ok(())

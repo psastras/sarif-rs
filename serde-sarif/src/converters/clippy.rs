@@ -119,15 +119,32 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
           let mut writer = BufWriter::new(Vec::new());
           build_global_message(&diagnostic, &mut writer)?;
           map.insert(diagnostic_code.clone(), map.len() as i64);
-          rules.push(
-            sarif::ReportingDescriptorBuilder::default()
-              .id(diagnostic_code.clone())
-              .name(diagnostic_code.clone())
-              .full_description::<sarif::MultiformatMessageString>(
-                (&String::from_utf8(writer.into_inner()?)?).try_into()?,
+          let mut rule = sarif::ReportingDescriptorBuilder::default();
+          rule
+            .id(&diagnostic_code)
+            .full_description::<sarif::MultiformatMessageString>(
+              (&String::from_utf8(writer.into_inner()?)?).try_into()?,
+            );
+
+          // help_uri is contained in a child diagnostic with a diagnostic level == help
+          // search for the relevant child diagnostic, then extract the uri from the message
+          if let Some(help_uri) = diagnostic
+            .children
+            .iter()
+            .find(|child| matches!(child.level, DiagnosticLevel::Help))
+            .and_then(|help| {
+              let re = regex::Regex::new(
+                r"^for further information visit (?P<url>\S+)",
               )
-              .build()?,
-          )
+              .unwrap();
+              re.captures(&help.message)
+                .and_then(|captures| captures.name("url"))
+                .map(|re_match| re_match.as_str())
+            })
+          {
+            rule.help_uri(help_uri);
+          }
+          rules.push(rule.build()?);
         }
         if let Some(value) = map.get(&diagnostic_code) {
           let level: sarif::ResultLevel = (&diagnostic.level).into();
@@ -150,6 +167,7 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
   let tool_component: sarif::ToolComponent =
     sarif::ToolComponentBuilder::default()
       .name("clippy")
+      .information_uri("https://rust-lang.github.io/rust-clippy/")
       .rules(rules)
       .build()?;
   let run = sarif::RunBuilder::default()
@@ -159,6 +177,7 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
 
   let sarif = sarif::SarifBuilder::default()
     .version(sarif::Version::V2_1_0.to_string())
+    .schema(sarif::SCHEMA_URL)
     .runs(vec![run])
     .build()?;
 

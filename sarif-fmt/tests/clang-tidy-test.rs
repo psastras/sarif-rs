@@ -23,7 +23,7 @@ fn test_clang_tidy() -> Result<()> {
 
   let cpp_file = fs::canonicalize(PathBuf::from_iter(
     [
-      cargo_manifest_directory.clone(),
+      cargo_manifest_directory,
       PathBuf::from("tests/data/cpp.cpp"),
     ]
     .iter(),
