@@ -12,6 +12,10 @@ pub enum Version {
   V2_1_0,
 }
 
+// todo: should be generated / synced with schema.json
+pub static SCHEMA_URL: &str =
+  "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json";
+
 #[doc = "The role or roles played by the artifact in the analysis."]
 #[derive(Display, Debug, Serialize, Deserialize, EnumString)]
 #[serde(untagged)]

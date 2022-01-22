@@ -13,11 +13,7 @@ fn test_clippy() -> Result<()> {
   ))?;
 
   let clippy_project_directory = fs::canonicalize(PathBuf::from_iter(
-    [
-      cargo_manifest_directory.clone(),
-      PathBuf::from("./tests/data"),
-    ]
-    .iter(),
+    [cargo_manifest_directory, PathBuf::from("./tests/data")].iter(),
   ))?;
 
   duct_sh::sh(
@@ -42,7 +38,7 @@ fn test_clippy() -> Result<()> {
 
   let clippy_sarif_bin = fs::canonicalize(PathBuf::from_iter(
     [
-      cargo_workspace_directory.clone(),
+      cargo_workspace_directory,
       PathBuf::from("./target/debug/clippy-sarif"),
     ]
     .iter(),

@@ -18,7 +18,7 @@ github = { repository = "psastras/sarif-rs" }
 
 [features]
 default = []
-clippy-converters = ["cargo_metadata"]
+clippy-converters = ["cargo_metadata", "regex"]
 hadolint-converters = []
 shellcheck-converters = []
 clang-tidy-converters = ["regex"]

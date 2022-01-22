@@ -23,7 +23,7 @@ fn test_hadolint() -> Result<()> {
 
   let dockerfile_file = fs::canonicalize(PathBuf::from_iter(
     [
-      cargo_manifest_directory.clone(),
+      cargo_manifest_directory,
       PathBuf::from("tests/data/Dockerfile"),
     ]
     .iter(),
