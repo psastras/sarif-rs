@@ -1,6 +1,6 @@
 [package]
 name = "shellcheck-sarif"
-version = "0.2.26"
+version = "0.3.0"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Convert shellcheck output to SARIF"
@@ -21,7 +21,7 @@ path = "src/bin.rs"
 
 [dependencies]
 anyhow = "1.0.52"
-serde-sarif = { path = "../serde-sarif", version = "0.2.26", features = ["shellcheck-converters"] }
+serde-sarif = { path = "../serde-sarif", version = "0.3.0", features = ["shellcheck-converters"] }
 clap = "3.0.10"
 
 [dev-dependencies]
