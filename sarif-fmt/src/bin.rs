@@ -786,6 +786,7 @@ fn main() -> Result<()> {
     .arg(
       Arg::new("input")
         .help("input file; reads from stdin if none is given")
+        .allow_invalid_utf8(true)
         .takes_value(true),
     )
     .get_matches();
