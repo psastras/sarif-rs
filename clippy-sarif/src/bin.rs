@@ -96,11 +96,13 @@ fn main() -> Result<()> {
         .arg(
             Arg::new("input")
                 .help("input file; reads from stdin if none is given")
+                .allow_invalid_utf8(true)
                 .takes_value(true),
         )
         .arg(
             Arg::new("output")
                 .help("output file; writes to stdout if none is given")
+                .allow_invalid_utf8(true)
                 .short('o')
                 .long("output")
                 .takes_value(true),
