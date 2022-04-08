@@ -105,6 +105,12 @@ fn main() -> Result<()> {
                 .long("output")
                 .takes_value(true),
         )
+        .arg(
+            Arg::new("emit_rendered_diagnostics")
+                .help("emit the original error message")
+                .long("emit-rendered-diagnostics")
+                .takes_value(false),
+        )
         .get_matches();
 
   let read = match matches.value_of_os("input").map(Path::new) {
@@ -119,5 +125,9 @@ fn main() -> Result<()> {
   };
   let writer = BufWriter::new(write);
 
-  serde_sarif::converters::clippy::parse_to_writer(reader, writer)
+  serde_sarif::converters::clippy::parse_to_writer(
+    reader,
+    writer,
+    matches.is_present("emit_rendered_diagnostics"),
+  )
 }
