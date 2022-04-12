@@ -144,8 +144,10 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use std::usize;
 
-fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
-  let s: sarif::Sarif = serde_json::from_reader(reader)?;
+fn process<R: BufRead>(mut reader: R) -> Result<sarif::Sarif> {
+  let mut data = String::new();
+  reader.read_to_string(&mut data)?;
+  let s: sarif::Sarif = serde_json::from_str(&data)?;
   Ok(s)
 }
 
