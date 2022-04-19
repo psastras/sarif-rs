@@ -135,13 +135,14 @@ impl TryFrom<&ShellcheckResult> for sarif::Region {
   }
 }
 
-fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
+fn process<R: BufRead>(mut reader: R) -> Result<sarif::Sarif> {
+  let mut data = String::new();
+  reader.read_to_string(&mut data)?;
   let mut results = vec![];
   let mut map = HashMap::new();
   let mut rules = vec![];
 
-  let shellcheck_results: Vec<ShellcheckResult> =
-    serde_json::from_reader(reader)?;
+  let shellcheck_results: Vec<ShellcheckResult> = serde_json::from_str(&data)?;
   shellcheck_results
     .iter()
     .try_for_each(|result| -> Result<()> {
