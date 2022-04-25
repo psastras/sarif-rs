@@ -22,7 +22,7 @@ path = "src/bin.rs"
 [dependencies]
 anyhow = "1.0.57"
 serde-sarif = { path = "../serde-sarif", version = "0.3.0", features = ["hadolint-converters"] }
-clap = "3.1.9"
+clap = "3.1.12"
 
 [dev-dependencies]
 version-sync = "0.9"
