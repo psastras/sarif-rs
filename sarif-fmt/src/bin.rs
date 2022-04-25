@@ -122,7 +122,8 @@
 //! ```
 //!
 use anyhow::Result;
-use clap::{App, Arg};
+use clap::Arg;
+use clap::Command;
 use codespan_reporting::diagnostic;
 use codespan_reporting::diagnostic::Diagnostic;
 use codespan_reporting::diagnostic::Label;
@@ -770,7 +771,7 @@ fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
 }
 
 fn main() -> Result<()> {
-  let matches = App::new("sarif-fmt")
+  let matches = Command::new("sarif-fmt")
     .about("Pretty print SARIF results")
     .after_help(
       "The expected input is a SARIF file (ex. cat foo.sarif | sarif-fmt).",
