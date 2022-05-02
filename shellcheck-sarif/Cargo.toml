@@ -22,7 +22,7 @@ path = "src/bin.rs"
 [dependencies]
 anyhow = "1.0.57"
 serde-sarif = { path = "../serde-sarif", version = "0.3.1", features = ["shellcheck-converters"] }
-clap = "3.1.12"
+clap = "3.1.15"
 
 [dev-dependencies]
 version-sync = "0.9"
