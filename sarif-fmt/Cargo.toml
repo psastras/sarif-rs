@@ -24,7 +24,7 @@ anyhow = "1.0.57"
 codespan-reporting = "0.11.1"
 serde_json = "1.0.81"
 serde-sarif = { path = "../serde-sarif", version = "0.3.1" }
-clap = "3.1.17"
+clap = "3.1.18"
 
 [dev-dependencies]
 duct = "0.13.5"
