@@ -356,9 +356,9 @@ checksum = "d4fd5641d01c8f18a23da7b6fe29298ff4b55afcccdf78973b24cf3175fee32e"
 
 [[package]]
 name = "prettyplease"
-version = "0.1.12"
+version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e5355b9d4fc0cc607db0c2e93c7a035a32226bfa770e0c6fec504f0018015bad"
+checksum = "c3662417e650bd6af740f5b8b3501776aa10c3d5cbd10b40263ed250d3770884"
 dependencies = [
  "proc-macro2",
  "syn",
