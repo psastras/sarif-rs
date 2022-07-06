@@ -16,7 +16,7 @@ the official website:
 
 ## Installation
 
-`clang-tidy-sarif` may be insalled via `cargo`
+`clang-tidy-sarif` may be installed via `cargo`
 
 ```shell
 cargo install clang-tidy-sarif
@@ -42,7 +42,7 @@ For most cases, simply run `clang-tidy` and pipe the results into
 
 If you are using Github Actions, SARIF is useful for integrating with Github
 Advanced Security (GHAS), which can show code alerts in the "Security" tab of
-your respository.
+your repository.
 
 After uploading `clang-tidy-sarif` output to Github, `clang-tidy` diagnostics
 are available in GHAS.

@@ -14,7 +14,7 @@ the official website:
 
 ## Installation
 
-`sarif-fmt` may be insalled via `cargo`
+`sarif-fmt` may be installed via `cargo`
 
 ```shell
 cargo install sarif-fmt

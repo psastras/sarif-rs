@@ -10,7 +10,7 @@ use schemafy_lib::Schema;
 
 // Add additional items to the generated sarif.rs file
 // Currently adds: derive(Builder) to each struct
-// and apprpriate use statements at the top of the file
+// and appropriate use statements at the top of the file
 // todo: this (and other parts) need a refactor and tests
 fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
   let mut ast: syn::File = syn::parse2(input).unwrap();

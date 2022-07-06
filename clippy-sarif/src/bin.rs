@@ -14,7 +14,7 @@
 //!
 //! ## Installation
 //!
-//! `clippy-sarif` may be insalled via `cargo`
+//! `clippy-sarif` may be installed via `cargo`
 //!
 //! ```shell
 //! cargo install clippy-sarif
@@ -40,7 +40,7 @@
 //!
 //! If you are using Github Actions, SARIF is useful for integrating with
 //! Github Advanced Security (GHAS), which can show code alerts in the
-//! "Security" tab of your respository.
+//! "Security" tab of your repository.
 //!
 //! After uploading `clippy-sarif` output to Github, `clippy` diagnostics
 //! are available in GHAS.

@@ -18,7 +18,7 @@ the official website:
 
 ## Installation
 
-`shellcheck-sarif` may be insalled via `cargo`
+`shellcheck-sarif` may be installed via `cargo`
 
 ```shell
 cargo install shellcheck-sarif
@@ -44,7 +44,7 @@ shellcheck -f json shellscript.sh | shellcheck-sarif
 
 If you are using Github Actions, SARIF is useful for integrating with Github
 Advanced Security (GHAS), which can show code alerts in the "Security" tab of
-your respository.
+your repository.
 
 After uploading `shellcheck-sarif` output to Github, `shellcheck` diagnostics
 are available in GHAS.
