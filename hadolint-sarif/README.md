@@ -18,7 +18,7 @@ the official website:
 
 ## Installation
 
-`hadolint-sarif` may be insalled via `cargo`
+`hadolint-sarif` may be installed via `cargo`
 
 ```shell
 cargo install hadolint-sarif
@@ -44,7 +44,7 @@ hadolint -f json Dockerfile | hadolint-sarif
 
 If you are using Github Actions, SARIF is useful for integrating with Github
 Advanced Security (GHAS), which can show code alerts in the "Security" tab of
-your respository.
+your repository.
 
 After uploading `hadolint-sarif` output to Github, `hadolint` diagnostics are
 available in GHAS.
