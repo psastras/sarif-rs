@@ -1,5 +1,5 @@
 use std::{
-  collections::HashMap,
+  collections::{HashMap, HashSet},
   convert::From,
   convert::TryFrom,
   io::{BufRead, BufWriter, Write},
@@ -98,7 +98,13 @@ fn build_global_message<W: Write>(
     .try_for_each(|diagnostic| build_global_message(diagnostic, writer))
 }
 
-fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
+fn process<R: BufRead>(
+  reader: R,
+  emit_rendered_diagnostics: bool,
+) -> Result<sarif::Sarif> {
+  let stderr = std::io::stderr();
+  let mut stderr = stderr.lock();
+  let mut emitted_rendered_diagnostics = HashSet::new();
   let mut results = vec![];
   let mut map = HashMap::new();
   let mut rules = vec![];
@@ -106,10 +112,26 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
     .into_iter()
     .filter_map(|r| r.ok())
     .filter_map(|m| match m {
-      Message::CompilerMessage(msg) => Some(msg.message),
+      Message::CompilerMessage(msg) => {
+        // If flag is give, print the original rendered diagnostics
+        // Diagnostics can be duplicated between multiple targets (e.g., lib+docs)
+        // thus they need to be deduplicated.
+        if let Some(rendered) = &msg.message.rendered {
+          if emit_rendered_diagnostics
+            && !emitted_rendered_diagnostics.contains(&msg)
+          {
+            if let Err(err) = stderr.write_all(rendered.as_bytes()) {
+              return Some(Err(err));
+            };
+            emitted_rendered_diagnostics.insert(msg.clone());
+          }
+        }
+        Some(Ok(msg.message))
+      }
       _ => None,
     })
     .try_for_each(|diagnostic| -> Result<()> {
+      let diagnostic = diagnostic?;
       diagnostic.spans.iter().try_for_each(|span| -> Result<()> {
         let diagnostic_code = match &diagnostic.code {
           Some(diagnostic_code) => diagnostic_code.code.clone(),
@@ -193,8 +215,9 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
 pub fn parse_to_writer<R: BufRead, W: Write>(
   reader: R,
   writer: W,
+  emit_rendered_diagnostics: bool,
 ) -> Result<()> {
-  let sarif = process(reader)?;
+  let sarif = process(reader, emit_rendered_diagnostics)?;
   serde_json::to_writer_pretty(writer, &sarif)?;
   Ok(())
 }
@@ -204,8 +227,11 @@ pub fn parse_to_writer<R: BufRead, W: Write>(
 /// # Arguments
 ///
 /// * `reader` - A `BufRead` of cargo clippy output
-pub fn parse_to_string<R: BufRead>(reader: R) -> Result<String> {
-  let sarif = process(reader)?;
+pub fn parse_to_string<R: BufRead>(
+  reader: R,
+  emit_rendered_diagnostics: bool,
+) -> Result<String> {
+  let sarif = process(reader, emit_rendered_diagnostics)?;
   let json = serde_json::to_string_pretty(&sarif)?;
   Ok(json)
 }
