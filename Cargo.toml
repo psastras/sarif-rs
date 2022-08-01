@@ -7,3 +7,6 @@ members = [
   "clang-tidy-sarif",
   "serde-sarif",
 ]
+
+[profile.release]
+strip = true
