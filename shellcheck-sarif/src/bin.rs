@@ -83,7 +83,6 @@ use anyhow::Result;
 use clap::{Arg, Command};
 use std::fs::File;
 use std::io::{BufReader, BufWriter, Read, Write};
-use std::path::Path;
 
 fn main() -> Result<()> {
   let matches = Command::new("shellcheck-sarif")
@@ -95,26 +94,26 @@ fn main() -> Result<()> {
     .arg(
       Arg::new("input")
         .help("input file; reads from stdin if none is given")
-        .allow_invalid_utf8(true)
-        .takes_value(true),
+        .takes_value(true)
+        .value_parser(clap::value_parser!(std::path::PathBuf)),
     )
     .arg(
       Arg::new("output")
         .help("output file; writes to stdout if none is given")
-        .allow_invalid_utf8(true)
         .short('o')
         .long("output")
-        .takes_value(true),
+        .takes_value(true)
+        .value_parser(clap::value_parser!(std::path::PathBuf)),
     )
     .get_matches();
 
-  let read = match matches.value_of_os("input").map(Path::new) {
+  let read = match matches.get_one::<std::path::PathBuf>("input") {
     Some(path) => Box::new(File::open(path)?) as Box<dyn Read>,
     None => Box::new(std::io::stdin()) as Box<dyn Read>,
   };
   let reader = BufReader::new(read);
 
-  let write = match matches.value_of_os("output").map(Path::new) {
+  let write = match matches.get_one::<std::path::PathBuf>("output") {
     Some(path) => Box::new(File::create(path)?) as Box<dyn Write>,
     None => Box::new(std::io::stdout()) as Box<dyn Write>,
   };
