@@ -784,23 +784,28 @@ fn main() -> Result<()> {
         .short('f')
         .long("message-format")
         .value_name("FMT")
-        .takes_value(true),
+        .takes_value(true)
+        .value_parser(clap::value_parser!(String)),
     )
     .arg(
       Arg::new("input")
         .help("input file; reads from stdin if none is given")
-        .allow_invalid_utf8(true)
-        .takes_value(true),
+        .takes_value(true)
+        .value_parser(clap::value_parser!(std::path::PathBuf)),
     )
     .get_matches();
 
-  let read = match matches.value_of_os("input").map(Path::new) {
+  let read = match matches.get_one::<std::path::PathBuf>("input") {
     Some(path) => Box::new(File::open(path)?) as Box<dyn Read>,
     None => Box::new(std::io::stdin()) as Box<dyn Read>,
   };
   let reader = BufReader::new(read);
   let sarif = process(reader)?;
-  match matches.value_of("message format").unwrap_or("pretty") {
+  match matches
+    .get_one::<String>("message format")
+    .unwrap_or(&"pretty".to_string())
+    .as_ref()
+  {
     "plain" => to_writer_plain(&sarif),
     _ => to_writer_pretty(&sarif),
   }
