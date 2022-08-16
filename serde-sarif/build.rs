@@ -56,6 +56,9 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
           #[derive(Builder)]
         },
         syn::parse_quote! {
+          #[derive(Eq)]
+        },
+        syn::parse_quote! {
           #[builder(setter(into, strip_option))]
         },
       ]);
