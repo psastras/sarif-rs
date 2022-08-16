@@ -1,7 +1,10 @@
+#![allow(clippy::derive_partial_eq_without_eq)]
+
 use std::convert::TryFrom;
 use strum_macros::Display;
 use strum_macros::EnumString;
 use thiserror::Error;
+
 include!(concat!(env!("OUT_DIR"), "/sarif.rs"));
 
 #[doc = "The SARIF format version of this log file."]
