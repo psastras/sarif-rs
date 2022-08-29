@@ -22,7 +22,7 @@ path = "src/bin.rs"
 [dependencies]
 anyhow = "1.0.62"
 serde-sarif = { path = "../serde-sarif", version = "0.3.3", features = ["clippy-converters"] }
-clap = "3.2.17"
+clap = "3.2.18"
 
 [dev-dependencies]
 version-sync = "0.9"
