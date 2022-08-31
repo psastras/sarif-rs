@@ -39,7 +39,7 @@ version-sync = "0.9"
 
 [build-dependencies]
 anyhow = "1.0.63"
-prettyplease = "0.1.18"
+prettyplease = "0.1.19"
 proc-macro2 = "1.0.43"
 quote = "1.0.21"
 schemafy_lib = "0.6.0"
