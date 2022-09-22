@@ -24,6 +24,12 @@ the official website:
 cargo install shellcheck-sarif
 ```
 
+via [cargo-binstall](https://github.com/cargo-bins/cargo-binstall)
+
+```shell
+cargo binstall shellcheck-sarif
+```
+
 or downloaded directly from Github Releases
 
 ```shell

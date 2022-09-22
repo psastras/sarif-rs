@@ -20,6 +20,12 @@ the official website:
 cargo install sarif-fmt
 ```
 
+via [cargo-binstall](https://github.com/cargo-bins/cargo-binstall)
+
+```shell
+cargo binstall sarif-fmt
+```
+
 or downloaded directly from Github Releases
 
 ```shell

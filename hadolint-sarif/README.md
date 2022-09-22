@@ -24,6 +24,12 @@ the official website:
 cargo install hadolint-sarif
 ```
 
+via [cargo-binstall](https://github.com/cargo-bins/cargo-binstall)
+
+```shell
+cargo binstall hadolint-sarif
+```
+
 or downloaded directly from Github Releases
 
 ```shell

@@ -24,6 +24,12 @@ the official website:
 cargo install clippy-sarif
 ```
 
+via [cargo-binstall](https://github.com/cargo-bins/cargo-binstall)
+
+```shell
+cargo binstall clippy-sarif
+```
+
 or downloaded directly from Github Releases
 
 ```shell
