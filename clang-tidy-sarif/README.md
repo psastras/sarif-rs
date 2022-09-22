@@ -1,5 +1,7 @@
 [![Workflow Status](https://github.com/psastras/sarif-rs/workflows/main/badge.svg)](https://github.com/psastras/sarif-rs/actions?query=workflow%3A%22main%22)
 
+# clang-tidy-sarif
+
 This crate provides a command line tool to convert `clang-tidy` diagnostic
 output into SARIF.
 
@@ -20,6 +22,12 @@ the official website:
 
 ```shell
 cargo install clang-tidy-sarif
+```
+
+via [cargo-binstall](https://github.com/cargo-bins/cargo-binstall)
+
+```shell
+cargo binstall clang-tidy-sarif
 ```
 
 or downloaded directly from Github Releases

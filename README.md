@@ -28,13 +28,19 @@ $ warning: using `Option.and_then(|x| Some(y))`, which is more succinctly expres
 
 ## Install
 
-Each CLI may be installed via `cargo` or directly downloaded from the
+Each CLI may be installed via `cargo`, [cargo-binstall](https://github.com/cargo-bins/cargo-binstall) or directly downloaded from the
 corresponding Github release.
 
 ### Cargo
 
 ```shell
 cargo install <cli_name> # ex. cargo install sarif-fmt
+```
+
+### Cargo-binstall
+
+```shell
+cargo binstall <cli_name> # ex. cargo binstall sarif-fmt
 ```
 
 ### Github Releases
