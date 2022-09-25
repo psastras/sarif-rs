@@ -48,7 +48,7 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
       != None
   }
 
-  (&mut ast.items).iter_mut().for_each(|ref mut item| {
+  ast.items.iter_mut().for_each(|ref mut item| {
     if let syn::Item::Struct(s) = item {
       // add builder attributes to each struct
       s.attrs.extend(vec![
