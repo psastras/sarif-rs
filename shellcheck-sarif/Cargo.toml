@@ -26,3 +26,7 @@ clap = "3.2.22"
 
 [dev-dependencies]
 version-sync = "0.9"
+
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/{ name }-v{ version }/{ name }-{ target }"
+pkg-fmt = "bin"

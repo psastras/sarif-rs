@@ -30,3 +30,7 @@ clap = "3.2.22"
 duct = "0.13.5"
 duct_sh = "0.13.5"
 version-sync = "0.9"
+
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/{ name }-v{ version }/{ name }-{ target }"
+pkg-fmt = "bin"
