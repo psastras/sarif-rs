@@ -19,7 +19,7 @@ jobs:
         with:
           profile: minimal
           components: rustfmt
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
           command: check
@@ -32,7 +32,7 @@ jobs:
       - uses: cachix/install-nix-action@v18
         with:
           nix_path: nixpkgs=channel:nixos-20.03
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
       - uses: actions-rs/cargo@v1
@@ -55,7 +55,7 @@ jobs:
         with:
           profile: minimal
           components: rustfmt
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
           command: fmt
@@ -70,7 +70,7 @@ jobs:
         with:
           profile: minimal
           components: rustfmt,clippy
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
@@ -112,7 +112,7 @@ jobs:
         with:
           profile: minimal
           components: rustfmt
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       # hack: sometimes crates.io takes time to detect the newly published
       # crate dependency causing other crates to fail, so, try 3 times
       - uses: katyo/publish-crates@v1
@@ -151,7 +151,7 @@ jobs:
         with:
           profile: minimal
           components: rustfmt
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
           command: build
