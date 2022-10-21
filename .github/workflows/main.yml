@@ -32,17 +32,9 @@ jobs:
       - uses: cachix/install-nix-action@v18
         with:
           nix_path: nixpkgs=channel:nixos-20.03
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly-2022-10-19-x86_64-unknown-linux-gnu
-          components: llvm-tools-preview,rustfmt,clippy
-          override: true
       - uses: Swatinem/rust-cache@v1
       - name: Install cargo-llvm-cov
-        run: curl -LsSf
-          https://github.com/taiki-e/cargo-llvm-cov/releases/download/v0.1.15/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz
-          | tar xzf - -C ~/.cargo/bin
+        uses: taiki-e/install-action@cargo-llvm-cov
       - uses: actions-rs/cargo@v1
         with:
           command: llvm-cov

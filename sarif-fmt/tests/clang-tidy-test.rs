@@ -30,16 +30,14 @@ fn test_clang_tidy() -> Result<()> {
   ))?;
 
   duct_sh::sh(
-    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly-2022-10-19 build --bin clang-tidy-sarif",
+    "RUSTFLAGS='-C instrument-coverage' cargo build --bin clang-tidy-sarif",
   )
   .dir(cargo_workspace_directory.clone())
   .run()?;
 
-  duct_sh::sh(
-    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly-2022-10-19 build --bin sarif-fmt",
-  )
-  .dir(cargo_workspace_directory.clone())
-  .run()?;
+  duct_sh::sh("RUSTFLAGS='-C instrument-coverage' cargo build --bin sarif-fmt")
+    .dir(cargo_workspace_directory.clone())
+    .run()?;
 
   let sarif_fmt_bin = fs::canonicalize(PathBuf::from_iter(
     [
