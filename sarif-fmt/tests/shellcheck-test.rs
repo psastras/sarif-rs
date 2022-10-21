@@ -30,13 +30,13 @@ fn test_shellcheck() -> Result<()> {
   ))?;
 
   duct_sh::sh(
-    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly-2022-01-14 build --bin shellcheck-sarif",
+    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly-2022-10-19 build --bin shellcheck-sarif",
   )
   .dir(cargo_workspace_directory.clone())
   .run()?;
 
   duct_sh::sh(
-    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly-2022-01-14 build --bin sarif-fmt",
+    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly-2022-10-19 build --bin sarif-fmt",
   )
   .dir(cargo_workspace_directory.clone())
   .run()?;

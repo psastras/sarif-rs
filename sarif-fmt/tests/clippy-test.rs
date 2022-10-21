@@ -17,13 +17,13 @@ fn test_clippy() -> Result<()> {
   ))?;
 
   duct_sh::sh(
-    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly-2022-01-14 build --bin clippy-sarif",
+    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly-2022-10-19 build --bin clippy-sarif",
   )
   .dir(cargo_workspace_directory.clone())
   .run()?;
 
   duct_sh::sh(
-    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly-2022-01-14 build --bin sarif-fmt",
+    "RUSTFLAGS='-Z instrument-coverage' cargo +nightly-2022-10-19 build --bin sarif-fmt",
   )
   .dir(cargo_workspace_directory.clone())
   .run()?;
