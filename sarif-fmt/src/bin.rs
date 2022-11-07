@@ -784,13 +784,11 @@ fn main() -> Result<()> {
         .short('f')
         .long("message-format")
         .value_name("FMT")
-        .takes_value(true)
         .value_parser(clap::value_parser!(String)),
     )
     .arg(
       Arg::new("input")
         .help("input file; reads from stdin if none is given")
-        .takes_value(true)
         .value_parser(clap::value_parser!(std::path::PathBuf)),
     )
     .get_matches();

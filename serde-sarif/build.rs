@@ -44,8 +44,7 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
 
     vec!["Option|", "std|option|Option|", "core|option|Option|"]
       .into_iter()
-      .find(|s| idents_of_path == *s)
-      != None
+      .any(|s| idents_of_path == *s)
   }
 
   ast.items.iter_mut().for_each(|ref mut item| {

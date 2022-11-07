@@ -92,7 +92,6 @@ fn main() -> Result<()> {
     .arg(
       Arg::new("input")
         .help("input file; reads from stdin if none is given")
-        .takes_value(true)
         .value_parser(clap::value_parser!(std::path::PathBuf)),
     )
     .arg(
@@ -100,7 +99,6 @@ fn main() -> Result<()> {
         .help("output file; writes to stdout if none is given")
         .short('o')
         .long("output")
-        .takes_value(true)
         .value_parser(clap::value_parser!(std::path::PathBuf)),
     )
     .get_matches();
