@@ -11,6 +11,18 @@
         "url": "https://github.com/NixOS/nixpkgs/archive/ec7f0416685d7cc8987ced4bb38c8b92f6b0d296.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "cppcheck": {
+        "branch": "master",
+        "description": "Nix Packages collection",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "8c60992ea9ce55bd280200cbaa2a95f7cd6d34bf",
+        "sha256": "0iq7xg3lnmd252h8cnm33y7fc5g18rar81p8xnbl68k1lsqp79cm",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/8c60992ea9ce55bd280200cbaa2a95f7cd6d34bf.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "hadolint": {
         "branch": "master",
         "description": "Nix Packages collection",

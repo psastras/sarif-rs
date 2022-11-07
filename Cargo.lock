@@ -129,6 +129,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "cppcheck-sarif"
+version = "0.3.4"
+dependencies = [
+ "anyhow",
+ "clap",
+ "serde-sarif",
+ "version-sync",
+]
+
+[[package]]
 name = "darling"
 version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

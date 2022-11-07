@@ -140,6 +140,7 @@ jobs:
           [
             clang-tidy-sarif,
             clippy-sarif,
+            cppcheck-sarif,
             hadolint-sarif,
             shellcheck-sarif,
             sarif-fmt,

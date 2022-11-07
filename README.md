@@ -63,6 +63,8 @@ See each subproject for more detailed information:
   See the [Rust documentation](https://docs.rs/clang_tidy_sarif/).
 - `clippy-sarif`: CLI tool to convert `clippy` diagnostics into SARIF. See the
   [Rust documentation](https://docs.rs/clippy_sarif/).
+- `cppcheck-sarif`: CLI tool to convert `cppcheck` diagnostics into SARIF. See the
+  [Rust documentation](https://docs.rs/cppcheck_sarif/).
 - `hadolint-sarif`: CLI tool to convert `hadolint` diagnostics into SARIF. See
   the [Rust documentation](https://docs.rs/hadolint_sarif/).
 - `shellcheck-sarif`: CLI tool to convert `shellcheck` diagnostics into SARIF.

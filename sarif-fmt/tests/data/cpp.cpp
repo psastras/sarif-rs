@@ -7,3 +7,10 @@ int string_to_int(const char *num) {
 void ls() {
   system("ls");
 }
+
+void f()
+{
+    char *p;
+    *p = 0;
+}
+

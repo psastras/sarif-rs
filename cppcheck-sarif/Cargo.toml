@@ -1,0 +1,32 @@
+[package]
+name = "cppcheck-sarif"
+version = "0.3.4"
+authors = ["Paul Sastrasinh <psastras@gmail.com>"]
+edition = "2018"
+description = "Convert cppcheck output to SARIF"
+license = "MIT"
+readme = "README.md"
+keywords = ["sarif", "cppcheck", "lint", "cli"]
+categories = ["command-line-utilities"]
+homepage  = "https://psastras.github.io/sarif-rs/"
+documentation = "https://docs.rs/cppcheck_sarif"
+repository = "https://github.com/psastras/sarif-rs"
+
+[badges]
+github = { repository = "psastras/sarif-rs" }
+
+[[bin]]
+name = "cppcheck-sarif"
+path = "src/bin.rs"
+
+[dependencies]
+anyhow = "1.0.66"
+serde-sarif = { path = "../serde-sarif", version = "0.3.4", features = ["cppcheck-converters"] }
+clap = "4.0.18"
+
+[dev-dependencies]
+version-sync = "0.9"
+
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/{ name }-v{ version }/{ name }-{ target }"
+pkg-fmt = "bin"

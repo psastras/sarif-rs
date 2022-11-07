@@ -1,15 +1,15 @@
 [![Workflow Status](https://github.com/psastras/sarif-rs/workflows/main/badge.svg)](https://github.com/psastras/sarif-rs/actions?query=workflow%3A%22main%22)
 
-# clang-tidy-sarif
+# cppcheck-sarif
 
-This crate provides a command line tool to convert `clang-tidy` diagnostic
+This crate provides a command line tool to convert `cppcheck` diagnostic
 output into SARIF.
 
-The latest [documentation can be found here](https://docs.rs/clang_tidy_sarif).
+The latest [documentation can be found here](https://docs.rs/cppcheck_sarif).
 
-clang-tidy is a popular linter / static analysis tool for C++. More information
+cppcheck is a popular linter / static analysis tool for C++. More information
 can be found on the official page:
-[https://clang.llvm.org/extra/clang-tidy/](https://ng.llvm.org/extra/clang-tidy/)
+[https://cppcheck.sourceforge.io/](https://cppcheck.sourceforge.io/)
 
 SARIF or the Static Analysis Results Interchange Format is an industry standard
 format for the output of static analysis tools. More information can be found on
@@ -18,41 +18,41 @@ the official website:
 
 ## Installation
 
-`clang-tidy-sarif` may be installed via `cargo`
+`cppcheck` may be installed via `cargo`
 
 ```shell
-cargo install clang-tidy-sarif
+cargo install cppcheck-sarif
 ```
 
 via [cargo-binstall](https://github.com/cargo-bins/cargo-binstall)
 
 ```shell
-cargo binstall clang-tidy-sarif
+cargo binstall cppcheck-sarif
 ```
 
 or downloaded directly from Github Releases
 
 ```shell
 # make sure to adjust the target and version (you may also want to pin to a specific version)
-curl -sSL https://github.com/psastras/sarif-rs/releases/download/clang-tidy-sarif-latest/clang-tidy-sarif-x86_64-unknown-linux-gnu -o clang-tidy-sarif
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/cppcheck-sarif-latest/cppcheck-sarif-x86_64-unknown-linux-gnu -o cppcheck-sarif
 ```
 
 ## Usage
 
-For most cases, simply run `clang-tidy` and pipe the results into
-`clang-tidy-sarif`.
+For most cases, simply run `cppcheck` and pipe the results into
+`cppcheck-sarif`.
 
 ## Example
 
 ```shell
- clang-tidy -checks=cert-* -warnings-as-errors=* main.cpp -- | clang-tidy-sarif
+ cppcheck -checks=cert-* -warnings-as-errors=* main.cpp -- | cppcheck-sarif
 ```
 
 If you are using Github Actions, SARIF is useful for integrating with Github
 Advanced Security (GHAS), which can show code alerts in the "Security" tab of
 your repository.
 
-After uploading `clang-tidy-sarif` output to Github, `clang-tidy` diagnostics
+After uploading `cppcheck-sarif` output to Github, `cppcheck` diagnostics
 are available in GHAS.
 
 ## Example
@@ -78,9 +78,8 @@ jobs:
           toolchain: stable
           override: true
       - uses: Swatinem/rust-cache@v1
-      - run: cargo install clang-tidy-sarif sarif-fmt
-      - run: clang-tidy -checks=cert-* -warnings-as-errors=* main.cpp -- | clang-tidy-sarif | tee
-          results.sarif | sarif-fmt
+      - run: cargo install cppcheck-sarif sarif-fmt
+      - run: cppcheck main.cpp 2>&1 | cppcheck-sarif | tee results.sarif | sarif-fmt
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
         with:
