@@ -28,7 +28,7 @@ clap = "4.0.27"
 
 [dev-dependencies]
 duct = "0.13.6"
-duct_sh = "0.13.5"
+duct_sh = "0.13.6"
 version-sync = "0.9"
 
 [package.metadata.binstall]
