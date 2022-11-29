@@ -27,7 +27,7 @@ serde-sarif = { path = "../serde-sarif", version = "0.3.4" }
 clap = "4.0.27"
 
 [dev-dependencies]
-duct = "0.13.5"
+duct = "0.13.6"
 duct_sh = "0.13.5"
 version-sync = "0.9"
 
