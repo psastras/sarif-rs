@@ -84,8 +84,8 @@ impl TryFrom<&HadolintResult> for sarif::Region {
 
   fn try_from(result: &HadolintResult) -> Result<Self, Self::Error> {
     sarif::RegionBuilder::default()
-      .start_line(result.line as i64)
-      .start_column(result.column as i64)
+      .start_line(result.line)
+      .start_column(result.column)
       .build()
   }
 }
