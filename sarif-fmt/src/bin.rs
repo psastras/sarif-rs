@@ -122,8 +122,7 @@
 //! ```
 //!
 use anyhow::Result;
-use clap::Arg;
-use clap::Command;
+use clap::{Parser, ValueEnum};
 use codespan_reporting::diagnostic;
 use codespan_reporting::diagnostic::Diagnostic;
 use codespan_reporting::diagnostic::Label;
@@ -770,41 +769,39 @@ fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
   Ok(())
 }
 
-fn main() -> Result<()> {
-  let matches = Command::new("sarif-fmt")
-    .about("Pretty print SARIF results")
-    .after_help(
-      "The expected input is a SARIF file (ex. cat foo.sarif | sarif-fmt).",
-    )
-    .version(env!("CARGO_PKG_VERSION"))
-    .arg(
-      Arg::new("message format")
-        .help("One of plain or pretty")
-        .default_value("pretty")
-        .short('f')
-        .long("message-format")
-        .value_name("FMT")
-        .value_parser(clap::value_parser!(String)),
-    )
-    .arg(
-      Arg::new("input")
-        .help("input file; reads from stdin if none is given")
-        .value_parser(clap::value_parser!(std::path::PathBuf)),
-    )
-    .get_matches();
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum MessageFormat {
+  Plain,
+  Pretty,
+}
 
-  let read = match matches.get_one::<std::path::PathBuf>("input") {
+#[derive(Parser, Debug)]
+#[command(
+  version,
+  about = "Pretty print SARIF results",
+  after_help = "The expected input is a SARIF file (ex. cat foo.sarif | sarif-fmt).",
+  long_about = None
+)]
+struct Args {
+  /// One of plain or pretty
+  #[arg(short, long, value_enum, default_value = "pretty")]
+  message_format: MessageFormat,
+  /// input file; reads from stdin if none is given
+  #[arg(short, long)]
+  input: Option<std::path::PathBuf>,
+}
+
+fn main() -> Result<()> {
+  let args = Args::parse();
+
+  let read = match args.input {
     Some(path) => Box::new(File::open(path)?) as Box<dyn Read>,
     None => Box::new(std::io::stdin()) as Box<dyn Read>,
   };
   let reader = BufReader::new(read);
   let sarif = process(reader)?;
-  match matches
-    .get_one::<String>("message format")
-    .unwrap_or(&"pretty".to_string())
-    .as_ref()
-  {
-    "plain" => to_writer_plain(&sarif),
-    _ => to_writer_pretty(&sarif),
+  match args.message_format {
+    MessageFormat::Plain => to_writer_plain(&sarif),
+    MessageFormat::Pretty => to_writer_pretty(&sarif),
   }
 }
