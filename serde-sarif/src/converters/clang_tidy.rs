@@ -38,14 +38,12 @@ impl TryFrom<&ClangTidyResult> for sarif::Region {
       .start_line(
         result
           .line
-          .ok_or(sarif::RegionBuilderError::UninitializedField("line"))?
-          as i64,
+          .ok_or(sarif::RegionBuilderError::UninitializedField("line"))?,
       )
       .start_column(
         result
           .column
-          .ok_or(sarif::RegionBuilderError::UninitializedField("column"))?
-          as i64,
+          .ok_or(sarif::RegionBuilderError::UninitializedField("column"))?,
       )
       .build()
   }
