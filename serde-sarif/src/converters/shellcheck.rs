@@ -114,10 +114,10 @@ impl TryFrom<&ShellcheckReplacement> for sarif::Region {
     replacement: &ShellcheckReplacement,
   ) -> Result<Self, Self::Error> {
     sarif::RegionBuilder::default()
-      .start_line(replacement.line as i64)
-      .start_column(replacement.column as i64)
-      .end_line(replacement.end_line as i64)
-      .end_column(replacement.end_column as i64)
+      .start_line(replacement.line)
+      .start_column(replacement.column)
+      .end_line(replacement.end_line)
+      .end_column(replacement.end_column)
       .build()
   }
 }
@@ -127,10 +127,10 @@ impl TryFrom<&ShellcheckResult> for sarif::Region {
 
   fn try_from(result: &ShellcheckResult) -> Result<Self, Self::Error> {
     sarif::RegionBuilder::default()
-      .start_line(result.line as i64)
-      .start_column(result.column as i64)
-      .end_line(result.end_line as i64)
-      .end_column(result.end_column as i64)
+      .start_line(result.line)
+      .start_column(result.column)
+      .end_line(result.end_line)
+      .end_column(result.end_column)
       .build()
   }
 }
