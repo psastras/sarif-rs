@@ -115,17 +115,17 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       # hack: sometimes crates.io takes time to detect the newly published
       # crate dependency causing other crates to fail, so, try 3 times
-      - uses: katyo/publish-crates@v1
+      - uses: katyo/publish-crates@v2
         continue-on-error: true
         with:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
-      - uses: katyo/publish-crates@v1
+      - uses: katyo/publish-crates@v2
         continue-on-error: true
         with:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
-      - uses: katyo/publish-crates@v1
+      - uses: katyo/publish-crates@v2
         with:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
