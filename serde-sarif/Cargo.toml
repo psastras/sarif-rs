@@ -40,7 +40,7 @@ version-sync = "0.9"
 [build-dependencies]
 anyhow = "1.0.69"
 prettyplease = "0.1.23"
-proc-macro2 = "1.0.50"
+proc-macro2 = "1.0.51"
 quote = "1.0.23"
 schemafy_lib = "0.6.0"
 serde_json = "1.0.92"
