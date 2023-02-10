@@ -7,6 +7,7 @@ use std::path::PathBuf;
 use anyhow::Result;
 use schemafy_lib::Expander;
 use schemafy_lib::Schema;
+use syn::parse::Parser;
 
 // Add additional items to the generated sarif.rs file
 // Currently adds: derive(Builder) to each struct
@@ -26,6 +27,12 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
     0,
     syn::parse_quote! {
       use derive_builder::Builder;
+    },
+  );
+  ast.items.insert(
+    0,
+    syn::parse_quote! {
+      use std::collections::BTreeMap;
     },
   );
 
@@ -59,6 +66,24 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
         },
       ]);
 
+      // Add a field to PropertyBag to allow arbitrary JSON data
+      // The proper way to do this would be to modify the JSON schema parsing library to properly
+      // output this. This is a workaround since there's only one struct in the SARIF schema that requires this.
+      if s.ident == "PropertyBag" {
+        if let syn::Fields::Named(fields) = &mut s.fields {
+          fields.named.push(
+            syn::Field::parse_named
+              .parse2(syn::parse_quote! {
+                #[doc = r"Arbitrary properties to include in the PropertyBag"]
+                #[serde(flatten)]
+                #[builder(default = "::std::collections::BTreeMap::new()")]
+                pub additional_properties: BTreeMap<String, serde_json::Value>
+              })
+              .unwrap(),
+          );
+        }
+      }
+
       // for each struct field, if that field is Optional, set None
       // as the default value when using the builder
       (&mut s.fields).into_iter().for_each(|ref mut field| {
@@ -69,7 +94,7 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
             })
           }
         }
-      })
+      });
     }
   });
 
