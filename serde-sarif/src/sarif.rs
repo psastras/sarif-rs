@@ -271,3 +271,57 @@ impl TryFrom<ToolComponent> for Tool {
     ToolBuilder::default().driver(tool_component).build()
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  macro_rules! map {
+    ($( $key: expr => $val: expr ),*) => {{
+         let mut map = ::std::collections::BTreeMap::new();
+         $( map.insert($key, serde_json::json!($val)); )*
+         map
+    }}
+}
+
+  #[test]
+  fn test_serialize_property_bag_empty() {
+    let property_bag = PropertyBagBuilder::default().build().unwrap();
+    let json = serde_json::to_string_pretty(&property_bag).unwrap();
+    let json_expected = r#"{}"#;
+    assert_eq!(json, json_expected);
+  }
+
+  #[test]
+  fn test_serialize_property_bag_additional_properties() {
+    let property_bag = PropertyBagBuilder::default()
+      .additional_properties(map!["key1".to_string() => "value1"])
+      .build()
+      .unwrap();
+    let json = serde_json::to_string_pretty(&property_bag).unwrap();
+    let json_expected = r#"{
+  "key1": "value1"
+}"#;
+    assert_eq!(json, json_expected);
+  }
+
+  #[test]
+  fn test_deserialize_property_bag_empty() {
+    let json = r#"{}"#;
+    let property_bag: PropertyBag = serde_json::from_str(json).unwrap();
+    let property_bag_expected = PropertyBagBuilder::default().build().unwrap();
+    assert_eq!(property_bag, property_bag_expected);
+  }
+
+  #[test]
+  fn test_deserialize_property_bag_additional_properties() {
+    let json = r#"{
+      "key1": "value1"
+    }"#;
+    let property_bag: PropertyBag = serde_json::from_str(json).unwrap();
+    let property_bag_expected = PropertyBagBuilder::default()
+      .additional_properties(map!["key1".to_string() => "value1"])
+      .build()
+      .unwrap();
+    assert_eq!(property_bag, property_bag_expected);
+  }
+}
