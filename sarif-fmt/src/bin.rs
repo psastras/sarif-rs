@@ -692,7 +692,7 @@ fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
 
         if let Some(locations) = result.related_locations.as_ref() {
           locations.iter().for_each(|location| {
-            if let Some((file_id, range)) = location
+            if let Some((file_id, range, message)) = location
               .physical_location
               .as_ref()
               .and_then(|physical_location| {
@@ -707,7 +707,14 @@ fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
                             if let (Some(range_start), Some(range_end)) =
                               get_byte_range(file_id, &files, region)
                             {
-                              Some((file_id, range_start..range_end))
+                              Some((
+                                file_id,
+                                range_start..range_end,
+                                location
+                                  .message
+                                  .as_ref()
+                                  .and_then(|x| x.text.clone()),
+                              ))
                             } else {
                               None
                             }
@@ -718,7 +725,10 @@ fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
                 )
               })
             {
-              diagnostic.labels.push(Label::secondary(file_id, range));
+              diagnostic.labels.push(
+                Label::secondary(file_id, range)
+                  .with_message(message.unwrap_or("".to_string())),
+              );
             }
           });
         }
