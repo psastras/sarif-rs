@@ -78,5 +78,22 @@ fn test_clang_tidy() -> Result<()> {
   assert!(output.contains("cpp.cpp:4:10"));
   assert!(output.contains("return atoi(num);"));
 
+  assert!(output.contains("warning: Array access (from variable 'str') results in a null pointer dereference [clang-analyzer-core.NullDereference]"));
+  assert!(output.contains("cpp.cpp:8:10"));
+  assert!(output.contains("return str[0];"));
+  // 1st note for the above warning
+  assert!(output.contains("cpp.cpp:12:25"));
+  assert!(output.contains("return get_first_char(nullptr);"));
+  assert!(output.contains("Passing null pointer value via 1st parameter 'str'"));
+  // 2nd note, same line of code
+  assert!(output.contains("cpp.cpp:12:10"));
+  assert!(output.contains("Calling 'get_first_char'"));
+  // 3rd note, same line of code as the original warning
+  assert!(output.contains("cpp.cpp:8:10"));
+  assert!(output.contains("------- Array access (from variable 'str') results in a null pointer dereference"));
+
+  assert!(output.contains("calling 'system' uses a command processor"));
+  assert!(output.contains("cpp.cpp:16:3"));
+
   Ok(())
 }
