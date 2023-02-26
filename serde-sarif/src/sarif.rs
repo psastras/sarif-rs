@@ -231,6 +231,11 @@ pub enum BuilderError {
     #[from]
     source: ResultBuilderError,
   },
+  #[error(transparent)]
+  MessageBuilderError {
+    #[from]
+    source: MessageBuilderError,
+  },
 }
 
 // Note that due to the blanket implementation in core, TryFrom<AsRef<String>>
