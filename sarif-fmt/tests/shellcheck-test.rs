@@ -72,7 +72,7 @@ fn test_shellcheck() -> Result<()> {
     .read()?;
 
   assert!(output.contains(
-    "warning: Couldn't parse this for loop. Fix to allow more checks."
+    "error: Couldn't parse this for loop. Fix to allow more checks."
   ));
   assert!(output.contains("shell.sh:5:1"));
   assert!(output.contains("for f in \"*.ogg\""));
