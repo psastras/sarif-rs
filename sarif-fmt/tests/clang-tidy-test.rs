@@ -56,7 +56,7 @@ fn test_clang_tidy() -> Result<()> {
   ))?;
 
   let cmd = format!(
-    "nix-shell --run 'clang-tidy -checks=cert-* {} | {} | {}' {}",
+    "nix-shell --run 'clang-tidy -warnings-as-errors=clang* -checks=cert-* {} | {} | {}' {}",
     cpp_file.to_str().unwrap(),
     clang_tidy_sarif_bin.to_str().unwrap(),
     sarif_fmt_bin.to_str().unwrap(),
@@ -78,17 +78,17 @@ fn test_clang_tidy() -> Result<()> {
   assert!(output.contains("cpp.cpp:4:10"));
   assert!(output.contains("return atoi(num);"));
 
-  assert!(output.contains("warning: Array access (from variable 'str') results in a null pointer dereference [clang-analyzer-core.NullDereference]"));
+  assert!(output.contains("error: Array access (from variable 'str') results in a null pointer dereference [clang-analyzer-core.NullDereference,-warnings-as-errors]"));
   assert!(output.contains("cpp.cpp:8:10"));
   assert!(output.contains("return str[0];"));
-  // 1st note for the above warning
+  // 1st note for the above error
   assert!(output.contains("cpp.cpp:12:25"));
   assert!(output.contains("return get_first_char(nullptr);"));
   assert!(output.contains("Passing null pointer value via 1st parameter 'str'"));
   // 2nd note, same line of code
   assert!(output.contains("cpp.cpp:12:10"));
   assert!(output.contains("Calling 'get_first_char'"));
-  // 3rd note, same line of code as the original warning
+  // 3rd note, same line of code as the original error
   assert!(output.contains("cpp.cpp:8:10"));
   assert!(output.contains("------- Array access (from variable 'str') results in a null pointer dereference"));
 

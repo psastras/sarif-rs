@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.3.6")]
+#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.3.7")]
 #![recursion_limit = "256"]
 //! # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 //!
@@ -330,88 +330,87 @@ fn resolve_level(
   result
     .kind
     .as_ref()
-    .and_then(|value| {
-      value.as_str().and_then(|kind| match kind {
-        // If kind has the value "fail" and level is absent, then level SHALL be determined by the following procedure:
-        "fail" => match result.level.as_ref() {
-          Some(level) => level.as_str().and_then(|level| {
-            sarif::ResultLevel::from_str(level).map_or(None, Option::from)
-          }),
-          None => result.rule.as_ref().and_then(|rule| {
-            // IF rule (§3.27.7) is present THEN
-            rule.index.and_then(|rule_index| {
-              rules
-                .get(rule_index as usize)
-                //     LET theDescriptor be the reportingDescriptor object (§3.49) that it specifies.
-                //     # Is there a configuration override for the level property?
-                .and_then(|the_descriptor| {
-                  //     IF result.provenance.invocationIndex (§3.27.29, §3.48.6) is >= 0 THEN
-                  result
-                    .provenance
-                    .as_ref()
-                    .and_then(|provenance| {
-                      provenance.invocation_index.and_then(|invocation_index| {
-                        run
-                          .invocations
-                          .iter()
-                          .flatten()
-                          .collect::<Vec<_>>()
-                          .get(invocation_index as usize)
-                          // LET theInvocation be the invocation object (§3.20) that it specifies.
-                          // IF theInvocation.ruleConfigurationOverrides (§3.20.5) is present
-                          //       AND it contains a configurationOverride object (§3.51) whose
-                          //       descriptor property (§3.51.2) specifies theDescriptor THEN
-                          .and_then(|the_invocation| {
-                            the_invocation
-                              .rule_configuration_overrides
-                              .as_ref()
-                              .and_then(|rule_configuration_overrides| {
-                                rule_configuration_overrides
-                                  .iter()
-                                  .find(|v| {
-                                    v.descriptor.id.as_ref()
-                                      == Some(&the_descriptor.id)
-                                  })
-                                  .and_then(|the_override| {
-                                    the_override
-                                      .configuration
-                                      .level
-                                      .as_ref()
-                                      .and_then(|value| {
-                                        value.as_str().and_then(|level| {
-                                          sarif::ResultLevel::from_str(level)
-                                            .map_or(None, Option::from)
-                                        })
+    // 3.27.9 kind property
+    // If kind is absent, it SHALL default to "fail".
+    .map_or(Some("fail"), |k| k.as_str())
+    .and_then(|kind| match kind {
+      // If kind has the value "fail" and level is absent, then level SHALL be determined by the following procedure:
+      "fail" => match result.level.as_ref() {
+        Some(level) => level.as_str().and_then(|level| {
+          sarif::ResultLevel::from_str(level).map_or(None, Option::from)
+        }),
+        None => result.rule.as_ref().and_then(|rule| {
+          // IF rule (§3.27.7) is present THEN
+          rule.index.and_then(|rule_index| {
+            rules
+              .get(rule_index as usize)
+              //     LET theDescriptor be the reportingDescriptor object (§3.49) that it specifies.
+              //     # Is there a configuration override for the level property?
+              .and_then(|the_descriptor| {
+                //     IF result.provenance.invocationIndex (§3.27.29, §3.48.6) is >= 0 THEN
+                result
+                  .provenance
+                  .as_ref()
+                  .and_then(|provenance| {
+                    provenance.invocation_index.and_then(|invocation_index| {
+                      run
+                        .invocations
+                        .iter()
+                        .flatten()
+                        .collect::<Vec<_>>()
+                        .get(invocation_index as usize)
+                        // LET theInvocation be the invocation object (§3.20) that it specifies.
+                        // IF theInvocation.ruleConfigurationOverrides (§3.20.5) is present
+                        //       AND it contains a configurationOverride object (§3.51) whose
+                        //       descriptor property (§3.51.2) specifies theDescriptor THEN
+                        .and_then(|the_invocation| {
+                          the_invocation
+                            .rule_configuration_overrides
+                            .as_ref()
+                            .and_then(|rule_configuration_overrides| {
+                              rule_configuration_overrides
+                                .iter()
+                                .find(|v| {
+                                  v.descriptor.id.as_ref()
+                                    == Some(&the_descriptor.id)
+                                })
+                                .and_then(|the_override| {
+                                  the_override
+                                    .configuration
+                                    .level
+                                    .as_ref()
+                                    .and_then(|value| {
+                                      value.as_str().and_then(|level| {
+                                        sarif::ResultLevel::from_str(level)
+                                          .map_or(None, Option::from)
                                       })
-                                  })
-                              })
+                                    })
+                                })
+                            })
+                        })
+                    })
+                  })
+                  .or_else(|| {
+                    //         # There is no configuration override for level. Is there a default configuration for it?
+                    //         IF theDescriptor.defaultConfiguration.level (§3.49.14, §, §3.50.3) is present THEN
+                    //           SET level to theDescriptor.defaultConfiguration.level.
+                    the_descriptor.default_configuration.as_ref().and_then(
+                      |default_configuration| {
+                        default_configuration.level.as_ref().and_then(|value| {
+                          value.as_str().and_then(|level| {
+                            sarif::ResultLevel::from_str(level)
+                              .map_or(None, Option::from)
                           })
-                      })
-                    })
-                    .or_else(|| {
-                      //         # There is no configuration override for level. Is there a default configuration for it?
-                      //         IF theDescriptor.defaultConfiguration.level (§3.49.14, §, §3.50.3) is present THEN
-                      //           SET level to theDescriptor.defaultConfiguration.level.
-                      the_descriptor.default_configuration.as_ref().and_then(
-                        |default_configuration| {
-                          default_configuration.level.as_ref().and_then(
-                            |value| {
-                              value.as_str().and_then(|level| {
-                                sarif::ResultLevel::from_str(level)
-                                  .map_or(None, Option::from)
-                              })
-                            },
-                          )
-                        },
-                      )
-                    })
-                })
-            })
-          }),
-        },
-        // If kind (§3.27.9) has any value other than "fail", then if level is absent, it SHALL default to "none", and if it is present, it SHALL have the value "none".
-        _ => Some(sarif::ResultLevel::None),
-      })
+                        })
+                      },
+                    )
+                  })
+              })
+          })
+        }),
+      },
+      // If kind (§3.27.9) has any value other than "fail", then if level is absent, it SHALL default to "none", and if it is present, it SHALL have the value "none".
+      _ => Some(sarif::ResultLevel::None),
     })
     // IF level has not yet been set THEN
     //     SET level to "warning".
