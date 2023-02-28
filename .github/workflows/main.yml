@@ -10,132 +10,119 @@ on:
 name: main
 
 jobs:
-  check:
-    name: Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          components: rustfmt
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
-        with:
-          command: check
+  # check:
+  #   name: Check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: minimal
+  #         components: rustfmt
+  #     - uses: Swatinem/rust-cache@v2
+  #     - uses: actions-rs/cargo@v1
+  #       with:
+  #         command: check
 
-  test:
-    name: Test Suite
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: cachix/install-nix-action@v19
-        with:
-          nix_path: nixpkgs=channel:nixos-20.03
-      - uses: Swatinem/rust-cache@v2
-      - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@cargo-llvm-cov
-      - uses: actions-rs/cargo@v1
-        with:
-          command: llvm-cov
-          args: --all-features --workspace --lcov --output-path lcov.info
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: lcov.info
-          fail_ci_if_error: true
+  # test:
+  #   name: Test Suite
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: cachix/install-nix-action@v19
+  #       with:
+  #         nix_path: nixpkgs=channel:nixos-20.03
+  #     - uses: Swatinem/rust-cache@v2
+  #     - name: Install cargo-llvm-cov
+  #       uses: taiki-e/install-action@cargo-llvm-cov
+  #     - uses: actions-rs/cargo@v1
+  #       with:
+  #         command: llvm-cov
+  #         args: --all-features --workspace --lcov --output-path lcov.info
+  #     - name: Upload coverage to Codecov
+  #       uses: codecov/codecov-action@v3
+  #       with:
+  #         token: ${{ secrets.CODECOV_TOKEN }}
+  #         files: lcov.info
+  #         fail_ci_if_error: true
 
-  fmt:
-    name: Rustfmt
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          components: rustfmt
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+  # fmt:
+  #   name: Rustfmt
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: minimal
+  #         components: rustfmt
+  #     - uses: Swatinem/rust-cache@v2
+  #     - uses: actions-rs/cargo@v1
+  #       with:
+  #         command: fmt
+  #         args: --all -- --check
 
-  clippy:
-    name: Clippy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          components: rustfmt,clippy
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
+  # clippy:
+  #   name: Clippy
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: minimal
+  #         components: rustfmt,clippy
+  #     - uses: Swatinem/rust-cache@v2
+  #     - uses: actions-rs/cargo@v1
+  #       with:
+  #         command: clippy
+  #         args: -- -D warnings
 
-  docs:
-    name: Docs
-    needs: [check, test, fmt, clippy]
-    if: ${{ github.ref == 'refs/heads/main' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-      - name: Install and Run Zola
-        run: |
-          TEMP_DEB="$(mktemp)" &&
-          wget -O "$TEMP_DEB" 'https://github.com/barnumbirr/zola-debian/releases/download/v0.13.0/zola_0.13.0-1_amd64_debian_buster.deb' &&
-          sudo dpkg -i "$TEMP_DEB"
-          rm -f "$TEMP_DEB"
-          zola build
-          cp ./static/pages/* public
-        working-directory: docs
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/public
-          force_orphan: true
+  # docs:
+  #   name: Docs
+  #   needs: [check, test, fmt, clippy]
+  #   if: ${{ github.ref == 'refs/heads/main' }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         submodules: recursive
+  #     - name: Install and Run Zola
+  #       run: |
+  #         TEMP_DEB="$(mktemp)" &&
+  #         wget -O "$TEMP_DEB" 'https://github.com/barnumbirr/zola-debian/releases/download/v0.13.0/zola_0.13.0-1_amd64_debian_buster.deb' &&
+  #         sudo dpkg -i "$TEMP_DEB"
+  #         rm -f "$TEMP_DEB"
+  #         zola build
+  #         cp ./static/pages/* public
+  #       working-directory: docs
+  #     - name: Deploy
+  #       uses: peaceiris/actions-gh-pages@v3
+  #       with:
+  #         github_token: ${{ secrets.GITHUB_TOKEN }}
+  #         publish_dir: ./docs/public
+  #         force_orphan: true
 
-  publish:
-    name: Publish
-    needs: [check, test, fmt, clippy]
-    if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release:')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          components: rustfmt
-      - uses: Swatinem/rust-cache@v2
-      # hack: sometimes crates.io takes time to detect the newly published
-      # crate dependency causing other crates to fail, so, try 3 times
-      - uses: katyo/publish-crates@v2
-        continue-on-error: true
-        with:
-          registry-token: ${{ secrets.CRATES_IO_TOKEN }}
-          args: --no-verify
-      - uses: katyo/publish-crates@v2
-        continue-on-error: true
-        with:
-          registry-token: ${{ secrets.CRATES_IO_TOKEN }}
-          args: --no-verify
-      - uses: katyo/publish-crates@v2
-        with:
-          registry-token: ${{ secrets.CRATES_IO_TOKEN }}
-          args: --no-verify
-  gh-release:
-    name: Github Release Upload
-    needs: [check, test, fmt, clippy]
+  # publish:
+  #   name: Publish
+  #   needs: [check, test, fmt, clippy]
+  #   if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release:')
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: minimal
+  #     - uses: Swatinem/rust-cache@v2
+  #     - uses: katyo/publish-crates@v2
+  #       with:
+  #         registry-token: ${{ secrets.CRATES_IO_TOKEN }}
+  #         args: --no-verify
+
+  darwin-release:
+    name: Darwin Release
+    # needs: [check, test, fmt, clippy]
     if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release:')
     strategy:
       matrix:
-        runs-on: [ubuntu-latest, macos-latest]
         target:
           [
             clang-tidy-sarif,
@@ -144,64 +131,96 @@ jobs:
             shellcheck-sarif,
             sarif-fmt,
           ]
-    runs-on: ${{ matrix.runs-on }}
+        platform: [x86_64-apple-darwin, aarch64-apple-darwin]
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          components: rustfmt
+          target: ${{ matrix.platform }}
+          override: true
       - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --bin ${{ matrix.target }}
-      - name: target triple
-        id: target-triple
-        run: |
-          TARGET_TRIPLE=$(rustc --version --verbose | grep host | awk '{print $2}')
-          echo ::set-output name=target_triple::$TARGET_TRIPLE
-      - name: target version
-        id: target-version
-        run: |
-          TARGET_VERSION=$(./target/release/${{ matrix.target }} --version | awk '{print $2}')
-          echo ::set-output name=target_version::$TARGET_VERSION
+          use-cross: true
+          args: --release --target ${{ matrix.platform }} --bin ${{ matrix.target }}
       - name: target binary
         id: target-binary
         run: |
-          TARGET_BINARY=./target/release/${{ matrix.target }}-${{steps.target-triple.outputs.target_triple}}
+          TARGET_VERSION=$(./target/release/${{ matrix.target }} --version | awk '{print $2}')
+          TARGET_BINARY=./target/release/${{ matrix.target }}-${{ matrix.platform }}
           mv ./target/release/${{ matrix.target }} ${TARGET_BINARY}
           echo ::set-output name=target_binary::$TARGET_BINARY
-      - name: previous tag
-        id: previous-tag
+          echo ::set-output name=target_version::$TARGET_VERSION
+          ls ./target/release
+
+  linux-release:
+    name: Linux Release
+    # needs: [check, test, fmt, clippy]
+    # if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release:')
+    strategy:
+      matrix:
+        target:
+          [
+            clang-tidy-sarif,
+            clippy-sarif,
+            hadolint-sarif,
+            shellcheck-sarif,
+            sarif-fmt,
+          ]
+        platform:
+          [
+            x86_64-unknown-linux-gnu,
+            aarch64-unknown-linux-gnu,
+            x86_64-unknown-linux-musl,
+            aarch64-unknown-linux-musl,
+          ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v19
+        with:
+          nix_path: nixpkgs=channel:nixos-22.11
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          target: ${{ matrix.platform }}
+          override: true
+      - uses: Swatinem/rust-cache@v2
+      - name: target binary
+        run: mkdir -p build
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          use-cross: true
+          args: --release --target ${{ matrix.platform }} --target-dir build --bin ${{ matrix.target }}
+      - name: target binary
+        id: target-binary
         run: |
-          PREVIOUS_TAG=$(git tag --list --sort=-version:refname "${{ matrix.target }}-v*" | head -n 1)
-          echo ::set-output name=previous_tag::$PREVIOUS_TAG
-      - name: Build Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          fromTag: ${{ steps.previous-tag.outputs.previous_tag }}
-          toTag: HEAD
-          commitMode: true
-      - uses: ncipollo/release-action@v1
-        with:
-          artifacts: ${{steps.target-binary.outputs.target_binary}}
-          body: |
-            ${{steps.github_release.outputs.changelog}}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          allowUpdates: true
-          tag: ${{ matrix.target }}-v${{steps.target-version.outputs.target_version}}
-          name: ${{ matrix.target }} ${{steps.target-version.outputs.target_version}}
-      - uses: ncipollo/release-action@v1
-        with:
-          artifacts: ${{steps.target-binary.outputs.target_binary}}
-          body: |
-            ${{steps.github_release.outputs.changelog}}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          allowUpdates: true
-          tag: ${{ matrix.target }}-latest
-          name: ${{ matrix.target }} latest
-          replacesArtifacts: true
+          ls -l
+          ls -l build
+          nix-env -iA dasel -f '<nixpkgs>'
+          TARGET_VERSION=$(cat ./${{ matrix.target }}/Cargo.toml | dasel -r toml 'package.version')
+          TARGET_BINARY=${{ matrix.target }}-${{ matrix.platform }}
+          mv ${{ matrix.target }} ${TARGET_BINARY}
+          echo ::set-output name=target_binary::$TARGET_BINARY
+          echo ::set-output name=target_version::$TARGET_VERSION
+          echo $TARGET_VERSION
+          ls -l
+      # - uses: ncipollo/release-action@v1
+      #   with:
+      #     artifacts: ${{steps.target-binary.outputs.target_binary}}
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     allowUpdates: true
+      #     tag: ${{ matrix.target }}-v${{steps.target-version.outputs.target_version}}
+      #     name: ${{ matrix.target }} ${{steps.target-version.outputs.target_version}}
+      # - uses: ncipollo/release-action@v1
+      #   with:
+      #     artifacts: ${{steps.target-binary.outputs.target_binary}}
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     allowUpdates: true
+      #     tag: ${{ matrix.target }}-latest
+      #     name: ${{ matrix.target }} latest
+      #     replacesArtifacts: true
