@@ -55,7 +55,7 @@ fn test_clippy() -> Result<()> {
     .read()?;
 
   assert!(output.contains(
-    "warning: this comparison involving the minimum or maximum element for this type contains a case that is always true or always false"
+    "error: this comparison involving the minimum or maximum element for this type contains a case that is always true or always false"
   ));
   assert!(output.contains("src/main.rs:3:6"));
   assert!(output.contains("if vec.len() <= 0 {}"));
