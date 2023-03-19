@@ -68,16 +68,18 @@ impl TryFrom<&DiagnosticSpan> for sarif::Location {
   fn try_from(span: &DiagnosticSpan) -> Result<Self, Self::Error> {
     let artifact_location: sarif::ArtifactLocation = span.try_into()?;
     let region: sarif::Region = span.try_into()?;
-    Ok(
-      sarif::LocationBuilder::default()
-        .physical_location(
-          sarif::PhysicalLocationBuilder::default()
-            .artifact_location(artifact_location)
-            .region(region)
-            .build()?,
-        )
+    let mut location_builder = sarif::LocationBuilder::default();
+    location_builder.physical_location(
+      sarif::PhysicalLocationBuilder::default()
+        .artifact_location(artifact_location)
+        .region(region)
         .build()?,
-    )
+    );
+    if let Some(label) = span.label.as_ref() {
+      location_builder
+        .message(sarif::MessageBuilder::default().text(label).build()?);
+    }
+    Ok(location_builder.build()?)
   }
 }
 
