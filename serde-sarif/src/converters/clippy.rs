@@ -110,56 +110,69 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
       _ => None,
     })
     .try_for_each(|diagnostic| -> Result<()> {
-      diagnostic.spans.iter().try_for_each(|span| -> Result<()> {
-        let diagnostic_code = match &diagnostic.code {
-          Some(diagnostic_code) => diagnostic_code.code.clone(),
-          _ => "".into(),
-        };
-        if !map.contains_key(&diagnostic_code) {
-          let mut writer = BufWriter::new(Vec::new());
-          build_global_message(&diagnostic, &mut writer)?;
-          map.insert(diagnostic_code.clone(), map.len() as i64);
-          let mut rule = sarif::ReportingDescriptorBuilder::default();
-          rule
-            .id(&diagnostic_code)
-            .full_description::<sarif::MultiformatMessageString>(
-              (&String::from_utf8(writer.into_inner()?)?).try_into()?,
-            );
-
-          // help_uri is contained in a child diagnostic with a diagnostic level == help
-          // search for the relevant child diagnostic, then extract the uri from the message
-          if let Some(help_uri) = diagnostic
-            .children
-            .iter()
-            .find(|child| matches!(child.level, DiagnosticLevel::Help))
-            .and_then(|help| {
-              let re = regex::Regex::new(
-                r"^for further information visit (?P<url>\S+)",
-              )
-              .unwrap();
-              re.captures(&help.message)
-                .and_then(|captures| captures.name("url"))
-                .map(|re_match| re_match.as_str())
-            })
-          {
-            rule.help_uri(help_uri);
-          }
-          rules.push(rule.build()?);
-        }
-        if let Some(value) = map.get(&diagnostic_code) {
-          let level: sarif::ResultLevel = (&diagnostic.level).into();
-          results.push(
-            sarif::ResultBuilder::default()
-              .rule_id(diagnostic_code)
-              .rule_index(*value)
-              .message::<sarif::Message>((&diagnostic).try_into()?)
-              .locations(vec![span.try_into()?])
-              .level(level.to_string())
-              .build()?,
+      let diagnostic_code = match &diagnostic.code {
+        Some(diagnostic_code) => diagnostic_code.code.clone(),
+        _ => "".into(),
+      };
+      if !map.contains_key(&diagnostic_code) {
+        let mut writer = BufWriter::new(Vec::new());
+        build_global_message(&diagnostic, &mut writer)?;
+        map.insert(diagnostic_code.clone(), map.len() as i64);
+        let mut rule = sarif::ReportingDescriptorBuilder::default();
+        rule
+          .id(&diagnostic_code)
+          .full_description::<sarif::MultiformatMessageString>(
+            (&String::from_utf8(writer.into_inner()?)?).try_into()?,
           );
+
+        // help_uri is contained in a child diagnostic with a diagnostic level == help
+        // search for the relevant child diagnostic, then extract the uri from the message
+        if let Some(help_uri) = diagnostic
+          .children
+          .iter()
+          .find(|child| matches!(child.level, DiagnosticLevel::Help))
+          .and_then(|help| {
+            let re =
+              regex::Regex::new(r"^for further information visit (?P<url>\S+)")
+                .unwrap();
+            re.captures(&help.message)
+              .and_then(|captures| captures.name("url"))
+              .map(|re_match| re_match.as_str())
+          })
+        {
+          rule.help_uri(help_uri);
         }
-        Ok(())
-      })?;
+        rules.push(rule.build()?);
+      }
+
+      if let Some(value) = map.get(&diagnostic_code) {
+        let level: sarif::ResultLevel = (&diagnostic.level).into();
+        results.push(
+          sarif::ResultBuilder::default()
+            .rule_id(diagnostic_code)
+            .rule_index(*value)
+            .message::<sarif::Message>((&diagnostic).try_into()?)
+            .level(level.to_string())
+            .build()?,
+        );
+
+        let result = results.last_mut().unwrap();
+        diagnostic.spans.iter().try_for_each(|span| -> Result<()> {
+          let location = sarif::Location::try_from(span)?;
+          if span.is_primary {
+            match result.locations.as_mut() {
+              Some(locations) => locations.push(location),
+              None => result.locations = Some(vec![location]),
+            }
+          } else {
+            match result.related_locations.as_mut() {
+              Some(related_locations) => related_locations.push(location),
+              None => result.related_locations = Some(vec![location]),
+            }
+          }
+          Ok(())
+        })?;
+      }
 
       Ok(())
     })?;
