@@ -110,6 +110,10 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
       _ => None,
     })
     .try_for_each(|diagnostic| -> Result<()> {
+      if diagnostic.spans.is_empty() {
+        return Ok(());
+      }
+
       let diagnostic_code = match &diagnostic.code {
         Some(diagnostic_code) => diagnostic_code.code.clone(),
         _ => "".into(),
@@ -146,7 +150,7 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
       }
 
       if let Some(value) = map.get(&diagnostic_code) {
-        let level: sarif::ResultLevel = (&diagnostic.level).into();
+        let level = sarif::ResultLevel::from(&diagnostic.level);
         results.push(
           sarif::ResultBuilder::default()
             .rule_id(diagnostic_code)
