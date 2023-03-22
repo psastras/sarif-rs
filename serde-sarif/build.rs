@@ -39,15 +39,11 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
   // Checks if the type is an Option type (returns true if yes, false otherwise)
   fn path_is_option(path: &syn::Path) -> bool {
     let idents_of_path =
-      path
-        .segments
-        .iter()
-        .into_iter()
-        .fold(String::new(), |mut acc, v| {
-          acc.push_str(&v.ident.to_string());
-          acc.push('|');
-          acc
-        });
+      path.segments.iter().fold(String::new(), |mut acc, v| {
+        acc.push_str(&v.ident.to_string());
+        acc.push('|');
+        acc
+      });
 
     vec!["Option|", "std|option|Option|", "core|option|Option|"]
       .into_iter()
