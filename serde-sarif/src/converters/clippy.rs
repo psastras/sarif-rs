@@ -103,7 +103,6 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
   let mut map = HashMap::new();
   let mut rules = vec![];
   Message::parse_stream(reader)
-    .into_iter()
     .filter_map(|r| r.ok())
     .filter_map(|m| match m {
       Message::CompilerMessage(msg) => Some(msg.message),
