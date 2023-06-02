@@ -627,8 +627,13 @@ fn to_writer_plain(sarif: &sarif::Sarif) -> Result<()> {
   Ok(())
 }
 
-fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
-  let mut writer = StandardStream::stdout(ColorChoice::Auto);
+fn to_writer_pretty(sarif: &sarif::Sarif, always_ansi: bool) -> Result<()> {
+  let mut color_choice = ColorChoice::Auto;
+  if always_ansi == true {
+    color_choice = ColorChoice::AlwaysAnsi;
+  }
+
+  let mut writer = StandardStream::stdout(color_choice);
   let mut files = SimpleFiles::new();
   let config = codespan_reporting::term::Config::default();
   let mut message_counter = (0, 0, 0);
@@ -798,6 +803,9 @@ struct Args {
   /// input file; reads from stdin if none is given
   #[arg(short, long)]
   input: Option<std::path::PathBuf>,
+  /// Always ANSI coloring (useful for CI)
+  #[arg(short, long)]
+  always_ansi: bool,
 }
 
 fn main() -> Result<()> {
@@ -811,6 +819,6 @@ fn main() -> Result<()> {
   let sarif = process(reader)?;
   match args.message_format {
     MessageFormat::Plain => to_writer_plain(&sarif),
-    MessageFormat::Pretty => to_writer_pretty(&sarif),
+    MessageFormat::Pretty => to_writer_pretty(&sarif, args.always_ansi),
   }
 }
