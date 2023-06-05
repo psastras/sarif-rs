@@ -627,10 +627,13 @@ fn to_writer_plain(sarif: &sarif::Sarif) -> Result<()> {
   Ok(())
 }
 
-fn to_writer_pretty(sarif: &sarif::Sarif, always_ansi: bool) -> Result<()> {
-  let mut color_choice = ColorChoice::Auto;
-  if always_ansi == true {
-    color_choice = ColorChoice::AlwaysAnsi;
+fn to_writer_pretty(sarif: &sarif::Sarif, color: ColorOption) -> Result<()> {
+  let color_choice;
+  match color {
+    ColorOption::Always => color_choice = ColorChoice::Always,
+    ColorOption::AlwaysAnsi => color_choice = ColorChoice::AlwaysAnsi,
+    ColorOption::Auto => color_choice = ColorChoice::Auto,
+    ColorOption::Never => color_choice = ColorChoice::Never,
   }
 
   let mut writer = StandardStream::stdout(color_choice);
@@ -789,6 +792,15 @@ enum MessageFormat {
   Pretty,
 }
 
+/// Read the docs of termcolor's ColorChoice
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum ColorOption {
+  Always,
+  AlwaysAnsi,
+  Auto,
+  Never,
+}
+
 #[derive(Parser, Debug)]
 #[command(
   version,
@@ -803,9 +815,9 @@ struct Args {
   /// input file; reads from stdin if none is given
   #[arg(short, long)]
   input: Option<std::path::PathBuf>,
-  /// Always ANSI coloring (useful for CI)
-  #[arg(short, long)]
-  always_ansi: bool,
+  /// Allows to override coloring engine, e.g. to force color in CI/CD environments
+  #[arg(short, long, value_enum, default_value = "auto")]
+  color: ColorOption,
 }
 
 fn main() -> Result<()> {
@@ -819,6 +831,6 @@ fn main() -> Result<()> {
   let sarif = process(reader)?;
   match args.message_format {
     MessageFormat::Plain => to_writer_plain(&sarif),
-    MessageFormat::Pretty => to_writer_pretty(&sarif, args.always_ansi),
+    MessageFormat::Pretty => to_writer_pretty(&sarif, args.color),
   }
 }
