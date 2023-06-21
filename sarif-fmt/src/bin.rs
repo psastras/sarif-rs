@@ -628,13 +628,12 @@ fn to_writer_plain(sarif: &sarif::Sarif) -> Result<()> {
 }
 
 fn to_writer_pretty(sarif: &sarif::Sarif, color: ColorOption) -> Result<()> {
-  let color_choice;
-  match color {
-    ColorOption::Always => color_choice = ColorChoice::Always,
-    ColorOption::AlwaysAnsi => color_choice = ColorChoice::AlwaysAnsi,
-    ColorOption::Auto => color_choice = ColorChoice::Auto,
-    ColorOption::Never => color_choice = ColorChoice::Never,
-  }
+  let color_choice = match color {
+    ColorOption::Always => ColorChoice::Always,
+    ColorOption::AlwaysAnsi => ColorChoice::AlwaysAnsi,
+    ColorOption::Auto => ColorChoice::Auto,
+    ColorOption::Never => ColorChoice::Never,
+  };
 
   let mut writer = StandardStream::stdout(color_choice);
   let mut files = SimpleFiles::new();
