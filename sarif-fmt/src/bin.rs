@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.3.7")]
+#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.4.0")]
 #![recursion_limit = "256"]
 //! # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
 //!
@@ -627,8 +627,15 @@ fn to_writer_plain(sarif: &sarif::Sarif) -> Result<()> {
   Ok(())
 }
 
-fn to_writer_pretty(sarif: &sarif::Sarif) -> Result<()> {
-  let mut writer = StandardStream::stdout(ColorChoice::Auto);
+fn to_writer_pretty(sarif: &sarif::Sarif, color: ColorOption) -> Result<()> {
+  let color_choice = match color {
+    ColorOption::Always => ColorChoice::Always,
+    ColorOption::AlwaysAnsi => ColorChoice::AlwaysAnsi,
+    ColorOption::Auto => ColorChoice::Auto,
+    ColorOption::Never => ColorChoice::Never,
+  };
+
+  let mut writer = StandardStream::stdout(color_choice);
   let mut files = SimpleFiles::new();
   let config = codespan_reporting::term::Config::default();
   let mut message_counter = (0, 0, 0);
@@ -784,6 +791,15 @@ enum MessageFormat {
   Pretty,
 }
 
+/// Read the docs of termcolor's ColorChoice
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum ColorOption {
+  Always,
+  AlwaysAnsi,
+  Auto,
+  Never,
+}
+
 #[derive(Parser, Debug)]
 #[command(
   version,
@@ -798,6 +814,9 @@ struct Args {
   /// input file; reads from stdin if none is given
   #[arg(short, long)]
   input: Option<std::path::PathBuf>,
+  /// Allows to override coloring engine, e.g. to force color in CI/CD environments
+  #[arg(short, long, value_enum, default_value = "auto")]
+  color: ColorOption,
 }
 
 fn main() -> Result<()> {
@@ -811,6 +830,6 @@ fn main() -> Result<()> {
   let sarif = process(reader)?;
   match args.message_format {
     MessageFormat::Plain => to_writer_plain(&sarif),
-    MessageFormat::Pretty => to_writer_pretty(&sarif),
+    MessageFormat::Pretty => to_writer_pretty(&sarif, args.color),
   }
 }

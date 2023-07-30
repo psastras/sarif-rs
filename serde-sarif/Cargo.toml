@@ -1,6 +1,6 @@
 [package]
 name = "serde-sarif"
-version = "0.3.7"
+version = "0.4.0"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Serde serialization for SARIF files"
@@ -24,24 +24,24 @@ shellcheck-converters = []
 clang-tidy-converters = ["regex"]
 
 [dependencies]
-anyhow = "1.0.69"
-cargo_metadata = { version = "0.15.3", optional = true }
+anyhow = "1.0.70"
+cargo_metadata = { version = "0.15.4", optional = true }
 derive_builder = "0.12.0"
-regex =  { version = "1.7.1", optional = true }
-serde = "1.0.152"
-serde_json = "1.0.93"
+regex =  { version = "1.7.3", optional = true }
+serde = "1.0.160"
+serde_json = "1.0.96"
 strum = "0.24"
 strum_macros = "0.24"
-thiserror = "1.0.38"
+thiserror = "1.0.40"
 
 [dev-dependencies]
 version-sync = "0.9"
 
 [build-dependencies]
-anyhow = "1.0.69"
-prettyplease = "0.1.23"
-proc-macro2 = "1.0.51"
+anyhow = "1.0.70"
+prettyplease = "0.2.10"
+proc-macro2 = "1.0.64"
 quote = "1.0.23"
 schemafy_lib = "0.6.0"
-serde_json = "1.0.93"
-syn = "1.0.108"
+serde_json = "1.0.96"
+syn = "2.0.23"

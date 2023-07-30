@@ -106,11 +106,8 @@ fn parse_clang_tidy_line(
 fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
   let mut results = vec![];
   // Create an iterator over all the ClangTidyResult items
-  let mut clang_tidy_result_iter = reader
-    .lines()
-    .into_iter()
-    .filter_map(parse_clang_tidy_line)
-    .peekable();
+  let mut clang_tidy_result_iter =
+    reader.lines().filter_map(parse_clang_tidy_line).peekable();
 
   while let Some(result) = clang_tidy_result_iter.next() {
     let location: sarif::Location = (&result).try_into()?;

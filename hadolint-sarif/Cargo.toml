@@ -1,6 +1,6 @@
 [package]
 name = "hadolint-sarif"
-version = "0.3.7"
+version = "0.4.0"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Convert hadolint output to SARIF"
@@ -20,9 +20,9 @@ name = "hadolint-sarif"
 path = "src/bin.rs"
 
 [dependencies]
-anyhow = "1.0.69"
-serde-sarif = { path = "../serde-sarif", version = "0.3.7", features = ["hadolint-converters"] }
-clap = { version = "4.1.8", features = ["derive"] }
+anyhow = "1.0.70"
+serde-sarif = { path = "../serde-sarif", version = "0.4.0", features = ["hadolint-converters"] }
+clap = { version = "4.2.2", features = ["derive"] }
 
 [dev-dependencies]
 version-sync = "0.9"
