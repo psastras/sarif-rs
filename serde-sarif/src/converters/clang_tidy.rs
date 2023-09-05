@@ -76,7 +76,7 @@ fn parse_clang_tidy_line(
   line: Result<String, std::io::Error>,
 ) -> Option<ClangTidyResult> {
   let re = Regex::new(
-    r#"^(?P<file>([a-zA-Z]:|)[\w/\.\- \\]+):(?P<line>\d+):(?P<column>\d+):\s+(?P<level>error|warning|info|note):\s+(?P<message>.+)(?:\s+(?P<rules>\[[\w\-,\.]+\]))?$"#,
+    r"^(?P<file>([a-zA-Z]:|)[\w/\.\- \\]+):(?P<line>\d+):(?P<column>\d+):\s+(?P<level>error|warning|info|note):\s+(?P<message>.+)(?:\s+(?P<rules>\[[\w\-,\.]+\]))?$"
   ).unwrap();
   let line = line.unwrap();
   let caps = re.captures(&line);
