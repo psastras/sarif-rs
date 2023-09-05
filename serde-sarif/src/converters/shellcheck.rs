@@ -156,6 +156,10 @@ fn process<R: BufRead>(mut reader: R) -> Result<sarif::Sarif> {
             .short_description::<sarif::MultiformatMessageString>(
               (&format!("SC{}", result.code)).try_into()?,
             )
+            .help_uri(&format!(
+              "https://www.shellcheck.net/wiki/SC{}",
+              result.code
+            ))
             .full_description::<sarif::MultiformatMessageString>(
               (&format!(
                 "For more information: https://www.shellcheck.net/wiki/SC{}",
