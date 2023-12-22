@@ -28,7 +28,7 @@ clap = { version = "4.4.11", features = ["derive"] }
 
 [dev-dependencies]
 duct = "0.13.7"
-duct_sh = "0.13.6"
+duct_sh = "0.13.7"
 version-sync = "0.9"
 
 [package.metadata.binstall]
