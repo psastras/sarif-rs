@@ -24,7 +24,7 @@ shellcheck-converters = []
 clang-tidy-converters = ["regex"]
 
 [dependencies]
-anyhow = "1.0.76"
+anyhow = "1.0.77"
 cargo_metadata = { version = "0.18.1", optional = true }
 derive_builder = "0.12.0"
 regex =  { version = "1.10.2", optional = true }
@@ -38,7 +38,7 @@ thiserror = "1.0.52"
 version-sync = "0.9"
 
 [build-dependencies]
-anyhow = "1.0.76"
+anyhow = "1.0.77"
 prettyplease = "0.2.15"
 proc-macro2 = "1.0.71"
 quote = "1.0.33"
