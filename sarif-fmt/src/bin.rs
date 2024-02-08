@@ -777,7 +777,7 @@ fn to_writer_pretty(sarif: &sarif::Sarif, color: ColorOption) -> Result<()> {
     writer.reset()?;
     writer.set_color(ColorSpec::new().set_bold(true))?;
     writer.write_all(
-      format!(": {} errors emitted\n", message_counter.1).as_bytes(),
+      format!(": {} errors emitted\n", message_counter.2).as_bytes(),
     )?;
     writer.reset()?;
   }
