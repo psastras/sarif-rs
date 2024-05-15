@@ -28,7 +28,7 @@ anyhow = "1.0.81"
 cargo_metadata = { version = "0.18.1", optional = true }
 derive_builder = "0.20.0"
 regex =  { version = "1.10.4", optional = true }
-serde = "1.0.197"
+serde = "1.0.202"
 serde_json = "1.0.115"
 strum = "0.26"
 strum_macros = "0.26"
