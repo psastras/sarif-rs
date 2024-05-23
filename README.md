@@ -55,6 +55,12 @@ Using `curl`,
 curl -sSL https://github.com/psastras/sarif-rs/releases/download/shellcheck-sarif-latest/shellcheck-sarif-x86_64-unknown-linux-gnu -o shellcheck-sarif
 ```
 
+### Fedora Linux
+
+```shell
+sudo dnf install <cli_name> # ex. cargo binstall sarif-fmt
+```
+
 ## Documentation
 
 See each subproject for more detailed information:
