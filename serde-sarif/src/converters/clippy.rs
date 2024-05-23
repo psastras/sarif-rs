@@ -5,7 +5,7 @@ use std::{
   io::{BufRead, BufWriter, Write},
 };
 
-use crate::sarif::{self, BuilderError};
+use crate::sarif::{self, BuilderError, Location};
 use anyhow::Result;
 use cargo_metadata::{
   self,
@@ -114,7 +114,7 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
       diagnostic.spans.iter().try_for_each(|span| -> Result<()> {
         let diagnostic_code = match &diagnostic.code {
           Some(diagnostic_code) => diagnostic_code.code.clone(),
-          _ => "".into(),
+          _ => String::new(),
         };
         if !map.contains_key(&diagnostic_code) {
           let mut writer = BufWriter::new(Vec::new());
@@ -147,6 +147,7 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
           }
           rules.push(rule.build()?);
         }
+
         if let Some(value) = map.get(&diagnostic_code) {
           let level: sarif::ResultLevel = (&diagnostic.level).into();
           results.push(
@@ -156,6 +157,7 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
               .message::<sarif::Message>((&diagnostic).try_into()?)
               .locations(vec![span.try_into()?])
               .level(level.to_string())
+              .related_locations(get_related_locations(&diagnostic)?)
               .build()?,
           );
         }
@@ -183,6 +185,27 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
     .build()?;
 
   Ok(sarif)
+}
+
+/// Collects all the locations in the diagnostic's children spans
+fn get_related_locations(
+  diagnostic: &Diagnostic,
+) -> Result<Vec<Location>, anyhow::Error> {
+  let mut related_locations = vec![];
+  for child in &diagnostic.children {
+    let mut message = child.message.clone();
+    for child_span in &child.spans {
+      let mut child_loc: Location = child_span.try_into()?;
+      if child_span.suggested_replacement.is_some() {
+        let replacement = child_span.suggested_replacement.as_ref().unwrap();
+        message.push_str(&format!(" \"{replacement}\""));
+      }
+
+      child_loc.message = Some(sarif::Message::try_from(&message)?);
+      related_locations.push(child_loc);
+    }
+  }
+  Ok(related_locations)
 }
 
 /// Returns [sarif::Sarif] serialized into a JSON stream
