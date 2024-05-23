@@ -95,6 +95,9 @@ struct Args {
   /// input file; reads from stdin if none is given
   #[arg(short, long)]
   input: Option<std::path::PathBuf>,
+  /// input format; json or json1; defaults to 'json'
+  #[arg(short, long, default_value = "json")]
+  format: Option<String>,
   /// output file; writes to stdout if none is given
   #[arg(short, long)]
   output: Option<std::path::PathBuf>,
@@ -109,11 +112,16 @@ fn main() -> Result<()> {
   };
   let reader = BufReader::new(read);
 
+  let format = match args.format {
+    Some(format) => format,
+    None => "json".to_string(),
+  };
+
   let write = match args.output {
     Some(path) => Box::new(File::create(path)?) as Box<dyn Write>,
     None => Box::new(std::io::stdout()) as Box<dyn Write>,
   };
   let writer = BufWriter::new(write);
 
-  serde_sarif::converters::shellcheck::parse_to_writer(reader, writer)
+  serde_sarif::converters::shellcheck::parse_to_writer(reader, writer, format)
 }
