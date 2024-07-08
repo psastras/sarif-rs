@@ -280,7 +280,10 @@ pub fn parse_to_writer<R: BufRead, W: Write>(
 ///
 /// * `reader` - A `BufRead` of shellcheck output
 /// * `format` - The format of the input
-pub fn parse_to_string<R: BufRead>(reader: R, format: String) -> Result<String> {
+pub fn parse_to_string<R: BufRead>(
+  reader: R,
+  format: String,
+) -> Result<String> {
   let sarif = process(reader, format)?;
   let json = serde_json::to_string_pretty(&sarif)?;
   Ok(json)
