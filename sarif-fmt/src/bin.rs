@@ -142,7 +142,6 @@ use std::io::{BufRead, BufReader, Read};
 use std::path::Path;
 use std::path::PathBuf;
 use std::str::FromStr;
-use std::usize;
 
 fn process<R: BufRead>(mut reader: R) -> Result<sarif::Sarif> {
   let mut data = String::new();
