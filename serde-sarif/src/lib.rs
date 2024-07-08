@@ -1,7 +1,5 @@
 #![doc(html_root_url = "https://docs.rs/serde-sarif/0.4.2")]
 
-//! # WARNING: VERY UNSTABLE (EARLY IMPLEMENTATION)
-//!
 //! This crate provides a type safe [serde](https://serde.rs/) compatible
 //! [SARIF](https://sarifweb.azurewebsites.net/) structure. It is intended
 //! for use in Rust code which may need to read or write SARIF files.
