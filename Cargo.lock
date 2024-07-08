@@ -155,7 +155,7 @@ dependencies = [
  "heck 0.5.0",
  "proc-macro2",
  "quote",
- "syn 2.0.58",
+ "syn 2.0.69",
 ]
 
 [[package]]
@@ -211,7 +211,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "strsim 0.10.0",
- "syn 2.0.58",
+ "syn 2.0.69",
 ]
 
 [[package]]
@@ -222,7 +222,7 @@ checksum = "c5a91391accf613803c2a9bf9abccdbaa07c54b4244a5b64883f9c3c137c86be"
 dependencies = [
  "darling_core",
  "quote",
- "syn 2.0.58",
+ "syn 2.0.69",
 ]
 
 [[package]]
@@ -243,7 +243,7 @@ dependencies = [
  "darling",
  "proc-macro2",
  "quote",
- "syn 2.0.58",
+ "syn 2.0.69",
 ]
 
 [[package]]
@@ -253,7 +253,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "206868b8242f27cecce124c19fd88157fbd0dd334df2587f36417bafbc85097b"
 dependencies = [
  "derive_builder_core",
- "syn 2.0.58",
+ "syn 2.0.69",
 ]
 
 [[package]]
@@ -400,12 +400,12 @@ checksum = "478c572c3d73181ff3c2539045f6eb99e5491218eae919370993b890cdbdd98e"
 
 [[package]]
 name = "prettyplease"
-version = "0.2.17"
+version = "0.2.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8d3928fb5db768cb86f891ff014f0144589297e3c6a1aba6ed7cecfdace270c7"
+checksum = "5f12335488a2f3b0a83b14edad48dca9879ce89b2edd10e80237e4e852dd645e"
 dependencies = [
  "proc-macro2",
- "syn 2.0.58",
+ "syn 2.0.69",
 ]
 
 [[package]]
@@ -553,7 +553,7 @@ dependencies = [
  "serde_json",
  "strum",
  "strum_macros",
- "syn 2.0.58",
+ "syn 2.0.69",
  "thiserror",
  "version-sync",
 ]
@@ -566,7 +566,7 @@ checksum = "6048858004bcff69094cd972ed40a32500f153bd3be9f716b2eed2e8217c4838"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.58",
+ "syn 2.0.69",
 ]
 
 [[package]]
@@ -637,7 +637,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "rustversion",
- "syn 2.0.58",
+ "syn 2.0.69",
 ]
 
 [[package]]
@@ -653,9 +653,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.58"
+version = "2.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "44cfb93f38070beee36b3fef7d4f5a16f27751d94b187b666a5cc5e9b0d30687"
+checksum = "201fcda3845c23e8212cd466bfebf0bd20694490fc0356ae8e428e0824a915a6"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -688,7 +688,7 @@ checksum = "c61f3ba182994efc43764a46c018c347bc492c79f024e705f46567b418f6d4f7"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.58",
+ "syn 2.0.69",
 ]
 
 [[package]]
@@ -813,7 +813,7 @@ dependencies = [
  "pulldown-cmark",
  "regex",
  "semver",
- "syn 2.0.58",
+ "syn 2.0.69",
  "toml",
  "url",
 ]
