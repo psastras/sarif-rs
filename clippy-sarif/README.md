@@ -88,4 +88,16 @@ jobs:
           sarif_file: results.sarif
 ```
 
+In some cases, the path to the file contained in the SARIF report [may be different than what is expected](https://github.com/psastras/sarif-rs/issues/370). This can happen for example if running `clippy-sarif` from a different folder than the crate folder. In this case consider using a tool like `jq` to amend to path:
+
+## Example
+
+```bash
+cat results.sarif \
+    | jq --arg pwd "some_folder/my_crate" '.runs[].results[].locations[].physicalLocation.artifactLocation.uri |= $pwd + "/" + .' \
+    > results.sarif.tmp
+```
+
+Note that this maybe be fixed in a future release.
+
 License: MIT
