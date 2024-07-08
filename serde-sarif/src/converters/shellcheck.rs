@@ -32,6 +32,12 @@ struct ShellcheckResult {
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize, Builder)]
 #[builder(setter(into, strip_option))]
+struct JSON1Format {
+  comments: Vec<ShellcheckResult>,
+}
+
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize, Builder)]
+#[builder(setter(into, strip_option))]
 struct ShellcheckFix {
   replacements: Vec<ShellcheckReplacement>,
 }
@@ -135,14 +141,20 @@ impl TryFrom<&ShellcheckResult> for sarif::Region {
   }
 }
 
-fn process<R: BufRead>(mut reader: R) -> Result<sarif::Sarif> {
+fn process<R: BufRead>(mut reader: R, format: String) -> Result<sarif::Sarif> {
   let mut data = String::new();
   reader.read_to_string(&mut data)?;
   let mut results = vec![];
   let mut map = HashMap::new();
   let mut rules = vec![];
 
-  let shellcheck_results: Vec<ShellcheckResult> = serde_json::from_str(&data)?;
+  let shellcheck_results: Vec<ShellcheckResult> = if format != "json1" {
+    serde_json::from_str(&data)?
+  } else {
+    let json1_format: JSON1Format = serde_json::from_str(&data)?;
+    json1_format.comments
+  };
+
   shellcheck_results
     .iter()
     .try_for_each(|result| -> Result<()> {
@@ -251,11 +263,13 @@ fn process<R: BufRead>(mut reader: R) -> Result<sarif::Sarif> {
 ///
 /// * `reader` - A `BufRead` of cargo output
 /// * `writer` - A `Writer` to write the results to
+/// * `format` - The format of the input
 pub fn parse_to_writer<R: BufRead, W: Write>(
   reader: R,
   writer: W,
+  format: String,
 ) -> Result<()> {
-  let sarif = process(reader)?;
+  let sarif = process(reader, format)?;
   serde_json::to_writer_pretty(writer, &sarif)?;
   Ok(())
 }
@@ -265,8 +279,12 @@ pub fn parse_to_writer<R: BufRead, W: Write>(
 /// # Arguments
 ///
 /// * `reader` - A `BufRead` of shellcheck output
-pub fn parse_to_string<R: BufRead>(reader: R) -> Result<String> {
-  let sarif = process(reader)?;
+/// * `format` - The format of the input
+pub fn parse_to_string<R: BufRead>(
+  reader: R,
+  format: String,
+) -> Result<String> {
+  let sarif = process(reader, format)?;
   let json = serde_json::to_string_pretty(&sarif)?;
   Ok(json)
 }

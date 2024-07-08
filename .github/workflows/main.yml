@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: cachix/install-nix-action@v25
+      - uses: cachix/install-nix-action@V27
         with:
           nix_path: nixpkgs=channel:nixos-20.03
       - uses: Swatinem/rust-cache@v2
@@ -37,11 +37,11 @@ jobs:
           command: llvm-cov
           args: --all-features --workspace --lcov --output-path lcov.info
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: lcov.info
-          fail_ci_if_error: true
+          fail_ci_if_error: false
 
   fmt:
     name: Rustfmt
@@ -86,7 +86,7 @@ jobs:
           cp ./static/pages/* public
         working-directory: docs
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/public
