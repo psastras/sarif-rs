@@ -10,7 +10,7 @@ use schemafy_lib::Schema;
 use syn::parse::Parser;
 
 // Add additional items to the generated sarif.rs file
-// Currently adds: derive(Builder) to each struct
+// Currently adds: derive(TypedBuilder) to each struct
 // and appropriate use statements at the top of the file
 // todo: this (and other parts) need a refactor and tests
 fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
@@ -26,7 +26,7 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
   ast.items.insert(
     0,
     syn::parse_quote! {
-      use derive_builder::Builder;
+      use typed_builder::TypedBuilder;
     },
   );
   ast.items.insert(
@@ -50,15 +50,29 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
       .any(|s| idents_of_path == *s)
   }
 
+  // Checks if the type is a collection type (returns true if yes, false otherwise)
+  fn path_is_vec(path: &syn::Path) -> bool {
+    let idents_of_path =
+      path.segments.iter().fold(String::new(), |mut acc, v| {
+        acc.push_str(&v.ident.to_string());
+        acc.push('|');
+        acc
+      });
+
+    vec!["Vec|", "std|vec|Vec|"]
+      .into_iter()
+      .any(|s| idents_of_path.starts_with(s))
+  }
+
   ast.items.iter_mut().for_each(|ref mut item| {
     if let syn::Item::Struct(s) = item {
       // add builder attributes to each struct
       s.attrs.extend(vec![
         syn::parse_quote! {
-          #[derive(Builder)]
+          #[derive(TypedBuilder)]
         },
         syn::parse_quote! {
-          #[builder(setter(into, strip_option))]
+          #[builder(field_defaults(setter(into)))]
         },
       ]);
 
@@ -72,7 +86,7 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
               .parse2(syn::parse_quote! {
                 #[doc = r"Arbitrary properties to include in the PropertyBag"]
                 #[serde(flatten)]
-                #[builder(default = "::std::collections::BTreeMap::new()")]
+                #[builder(default = ::std::collections::BTreeMap::new())]
                 pub additional_properties: BTreeMap<String, serde_json::Value>
               })
               .unwrap(),
@@ -86,7 +100,11 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
         if let syn::Type::Path(typepath) = &field.ty {
           if path_is_option(&typepath.path) {
             field.attrs.push(syn::parse_quote! {
-              #[builder(setter(into, strip_option), default)]
+              #[builder(setter(strip_option), default)]
+            })
+          } else if path_is_vec(&typepath.path) {
+            field.attrs.push(syn::parse_quote! {
+              #[builder(default)]
             })
           }
         }

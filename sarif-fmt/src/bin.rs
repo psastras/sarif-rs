@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.5.0")]
+#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.5.1")]
 #![recursion_limit = "256"]
 //! This crate provides a command line tool to pretty print SARIF files to
 //! easy human readable output.
@@ -34,13 +34,13 @@
 //! $ cargo clippy --message-format=json | clippy-sarif | sarif-fmt
 //! $ warning: using `Option.and_then(|x| Some(y))`, which is more succinctly expressed as `map(|x| y)`
 //!     ┌─ sarif-fmt/src/bin.rs:423:13
-//!     │  
+//!     │
 //! 423 │ ╭             the_rule
 //! 424 │ │               .full_description
 //! 425 │ │               .as_ref()
 //! 426 │ │               .and_then(|mfms| Some(mfms.text.clone()))
 //!     │ ╰───────────────────────────────────────────────────────^
-//!     │  
+//!     │
 //!     = `#[warn(clippy::bind_instead_of_map)]` on by default
 //!       for further information visit https://rust-lang.github.io/rust-clippy/master#bind_instead_of_map
 //! ```

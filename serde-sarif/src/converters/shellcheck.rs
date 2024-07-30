@@ -1,21 +1,19 @@
 use std::{
   collections::HashMap,
-  convert::TryFrom,
   io::{BufRead, Write},
   str::FromStr,
 };
 
 use strum_macros::Display;
 use strum_macros::EnumString;
+use typed_builder::TypedBuilder;
 
-use crate::sarif::{self, BuilderError, ResultLevel};
+use crate::sarif::{self, ResultLevel};
 use anyhow::Result;
-use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
-use std::convert::TryInto;
 
-#[derive(Clone, PartialEq, Debug, Deserialize, Serialize, Builder)]
-#[builder(setter(into, strip_option))]
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize, TypedBuilder)]
+#[builder(field_defaults(setter(into)))]
 struct ShellcheckResult {
   file: String,
   line: i64,
@@ -27,23 +25,26 @@ struct ShellcheckResult {
   level: String,
   code: i64,
   message: String,
+  #[builder(setter(strip_option), default)]
   fix: Option<ShellcheckFix>,
 }
 
-#[derive(Clone, PartialEq, Debug, Deserialize, Serialize, Builder)]
-#[builder(setter(into, strip_option))]
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize, TypedBuilder)]
+#[builder(field_defaults(setter(into)))]
 struct JSON1Format {
+  #[builder(setter(transform = |i: impl IntoIterator<Item = impl Into<ShellcheckResult>>| i.into_iter().map(Into::into).collect()))]
   comments: Vec<ShellcheckResult>,
 }
 
-#[derive(Clone, PartialEq, Debug, Deserialize, Serialize, Builder)]
-#[builder(setter(into, strip_option))]
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize, TypedBuilder)]
+#[builder(field_defaults(setter(into)))]
 struct ShellcheckFix {
+  #[builder(setter(transform = |i: impl IntoIterator<Item = impl Into<ShellcheckReplacement>>| i.into_iter().map(Into::into).collect()))]
   replacements: Vec<ShellcheckReplacement>,
 }
 
-#[derive(Clone, PartialEq, Debug, Deserialize, Serialize, Builder)]
-#[builder(setter(into, strip_option))]
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize, TypedBuilder)]
+#[builder(field_defaults(setter(into)))]
 struct ShellcheckReplacement {
   line: i64,
   #[serde(rename = "endLine")]
@@ -84,42 +85,30 @@ impl From<ShellcheckLevel> for sarif::ResultLevel {
   }
 }
 
-impl TryFrom<&ShellcheckResult> for sarif::ArtifactLocation {
-  type Error = sarif::ArtifactLocationBuilderError;
+impl From<&ShellcheckResult> for sarif::ArtifactLocation {
+  fn from(result: &ShellcheckResult) -> Self {
+    sarif::ArtifactLocation::builder().uri(&result.file).build()
+  }
+}
 
-  fn try_from(result: &ShellcheckResult) -> Result<Self, Self::Error> {
-    sarif::ArtifactLocationBuilder::default()
-      .uri(&result.file)
+impl From<&ShellcheckResult> for sarif::Location {
+  fn from(result: &ShellcheckResult) -> Self {
+    let artifact_location = sarif::ArtifactLocation::from(result);
+    let region = sarif::Region::from(result);
+    sarif::Location::builder()
+      .physical_location(
+        sarif::PhysicalLocation::builder()
+          .artifact_location(artifact_location)
+          .region(region)
+          .build(),
+      )
       .build()
   }
 }
 
-impl TryFrom<&ShellcheckResult> for sarif::Location {
-  type Error = BuilderError;
-
-  fn try_from(result: &ShellcheckResult) -> Result<Self, Self::Error> {
-    let artifact_location: sarif::ArtifactLocation = result.try_into()?;
-    let region: sarif::Region = result.try_into()?;
-    Ok(
-      sarif::LocationBuilder::default()
-        .physical_location(
-          sarif::PhysicalLocationBuilder::default()
-            .artifact_location(artifact_location)
-            .region(region)
-            .build()?,
-        )
-        .build()?,
-    )
-  }
-}
-
-impl TryFrom<&ShellcheckReplacement> for sarif::Region {
-  type Error = sarif::RegionBuilderError;
-
-  fn try_from(
-    replacement: &ShellcheckReplacement,
-  ) -> Result<Self, Self::Error> {
-    sarif::RegionBuilder::default()
+impl From<&ShellcheckReplacement> for sarif::Region {
+  fn from(replacement: &ShellcheckReplacement) -> Self {
+    sarif::Region::builder()
       .start_line(replacement.line)
       .start_column(replacement.column)
       .end_line(replacement.end_line)
@@ -128,11 +117,9 @@ impl TryFrom<&ShellcheckReplacement> for sarif::Region {
   }
 }
 
-impl TryFrom<&ShellcheckResult> for sarif::Region {
-  type Error = sarif::RegionBuilderError;
-
-  fn try_from(result: &ShellcheckResult) -> Result<Self, Self::Error> {
-    sarif::RegionBuilder::default()
+impl From<&ShellcheckResult> for sarif::Region {
+  fn from(result: &ShellcheckResult) -> Self {
+    sarif::Region::builder()
       .start_line(result.line)
       .start_column(result.column)
       .end_line(result.end_line)
@@ -162,24 +149,19 @@ fn process<R: BufRead>(mut reader: R, format: String) -> Result<sarif::Sarif> {
       if !map.contains_key(&result.code.to_string()) {
         map.insert(result.code.to_string(), map.len() as i64);
         rules.push(
-          sarif::ReportingDescriptorBuilder::default()
+          sarif::ReportingDescriptor::builder()
             .id(result.code.to_string())
             .name(result.code.to_string())
-            .short_description::<sarif::MultiformatMessageString>(
-              (&format!("SC{}", result.code)).try_into()?,
-            )
-            .help_uri(&format!(
+            .short_description(&format!("SC{}", result.code))
+            .help_uri(format!(
               "https://www.shellcheck.net/wiki/SC{}",
               result.code
             ))
-            .full_description::<sarif::MultiformatMessageString>(
-              (&format!(
-                "For more information: https://www.shellcheck.net/wiki/SC{}",
-                result.code
-              ))
-                .try_into()?,
-            )
-            .build()?,
+            .full_description(&format!(
+              "For more information: https://www.shellcheck.net/wiki/SC{}",
+              result.code
+            ))
+            .build(),
         );
       }
       if let Some(value) = map.get(&result.code.to_string()) {
@@ -189,14 +171,10 @@ fn process<R: BufRead>(mut reader: R, format: String) -> Result<sarif::Sarif> {
           fix
             .replacements
             .iter()
-            .map(|fix| -> Result<sarif::Fix> {
-              Ok(
-                sarif::FixBuilder::default()
-                  .description::<sarif::Message>((&fix.replacement).try_into()?)
-                  .build()?,
-              )
+            .map(|fix| {
+              sarif::Fix::builder().description(&fix.replacement).build()
             })
-            .filter_map(|v| v.ok())
+            // .filter_map(|v| v.ok())
             .collect()
         } else {
           vec![]
@@ -205,56 +183,49 @@ fn process<R: BufRead>(mut reader: R, format: String) -> Result<sarif::Sarif> {
           fix
             .replacements
             .iter()
-            .map(|replacement| -> Result<sarif::Location> {
-              let region: sarif::Region = replacement.try_into()?;
-              let artifact_location: sarif::ArtifactLocation =
-                result.try_into()?;
-              Ok(
-                sarif::LocationBuilder::default()
-                  .physical_location(
-                    sarif::PhysicalLocationBuilder::default()
-                      .artifact_location(artifact_location)
-                      .region(region)
-                      .build()?,
-                  )
-                  .build()?,
-              )
+            .map(|replacement| {
+              sarif::Location::builder()
+                .physical_location(
+                  sarif::PhysicalLocation::builder()
+                    .artifact_location(result)
+                    .region(replacement)
+                    .build(),
+                )
+                .build()
             })
-            .filter_map(|v| v.ok())
             .collect()
         } else {
           vec![]
         };
         results.push(
-          sarif::ResultBuilder::default()
+          sarif::Result::builder()
             .rule_id(result.code.to_string())
             .rule_index(*value)
-            .message::<sarif::Message>((&result.message).try_into()?)
-            .locations(vec![result.try_into()?])
+            .message(&result.message)
+            .locations(vec![result.into()])
             .related_locations(related_locations)
             .fixes(fixes)
             .level(level.to_string())
-            .build()?,
+            .build(),
         );
       }
       Ok(())
     })?;
-  let tool_component: sarif::ToolComponent =
-    sarif::ToolComponentBuilder::default()
-      .name("shellcheck")
-      .rules(rules)
-      .build()?;
-  let run = sarif::RunBuilder::default()
-    .tool::<sarif::Tool>(tool_component.try_into()?)
+  let tool_component: sarif::ToolComponent = sarif::ToolComponent::builder()
+    .name("shellcheck")
+    .rules(rules)
+    .build();
+  let run = sarif::Run::builder()
+    .tool(tool_component)
     .results(results)
-    .build()?;
+    .build();
 
-  let sarif = sarif::SarifBuilder::default()
-    .version(sarif::Version::V2_1_0.to_string())
-    .runs(vec![run])
-    .build()?;
-
-  Ok(sarif)
+  Ok(
+    sarif::Sarif::builder()
+      .version(sarif::Version::V2_1_0.to_string())
+      .runs(vec![run])
+      .build(),
+  )
 }
 
 /// Returns [sarif::Sarif] serialized into a JSON stream

@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/serde-sarif/0.5.0")]
+#![doc(html_root_url = "https://docs.rs/serde-sarif/0.6.0")]
 
 //! This crate provides a type safe [serde](https://serde.rs/) compatible
 //! [SARIF](https://sarifweb.azurewebsites.net/) structure. It is intended
@@ -40,13 +40,15 @@
 //! ## Example
 //!
 //! ```rust
-//! use serde_sarif::sarif::MessageBuilder;
+//! use serde_sarif::sarif::Message;
 //!
-//! let message = MessageBuilder::default()
+//! let message = Message::default()
 //!   .id("id")
-//!   .build()
-//!   .unwrap();
+//!   .build();
 //! ```
+//!
+//! This uses [`TypedBuilder`](typed_builder::TypedBuilder)
+//! for compile time type checking.
 //!
 //! ## Internal Implementation Details
 //!
@@ -66,15 +68,10 @@
 //! ```
 //!
 //! ### Converters
-//! - **clang-tidy-converters** Provides conversions between clang tidy and SARIF
-//!   types
-//! - **clippy-converters** Provides conversions between Clippy
-//!    and SARIF types
-//! - **hadolint-converters** Provides conversions between hadolint
-//!    and SARIF types
-//! - **shellcheck-converters** Provides conversions between shellcheck
-//!    and SARIF types
-//!
+//! - **clang-tidy-converters** Provides conversions between clang tidy and SARIF types
+//! - **clippy-converters** Provides conversions between Clippy and SARIF types
+//! - **hadolint-converters** Provides conversions between hadolint and SARIF types
+//! - **shellcheck-converters** Provides conversions between shellcheck and SARIF types
 
 pub mod converters;
 pub mod sarif;

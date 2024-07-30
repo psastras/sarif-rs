@@ -1,6 +1,5 @@
 #![allow(clippy::derive_partial_eq_without_eq)]
 
-use std::convert::TryFrom;
 use strum_macros::Display;
 use strum_macros::EnumString;
 use thiserror::Error;
@@ -17,7 +16,7 @@ pub enum Version {
 
 // todo: should be generated / synced with schema.json
 pub static SCHEMA_URL: &str =
-  "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json";
+  "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0.json";
 
 #[doc = "The role or roles played by the artifact in the analysis."]
 #[derive(Display, Debug, Serialize, Deserialize, EnumString)]
@@ -203,77 +202,38 @@ pub enum ToolComponentContents {
   NonLocalizedData,
 }
 
-// todo: implement for other error types, probably convert to procmacro
 #[derive(Error, Debug)]
 pub enum BuilderError {
-  #[error(transparent)]
-  LocationBuilderError {
-    #[from]
-    source: LocationBuilderError,
-  },
-  #[error(transparent)]
-  PhysicalLocationBuilderError {
-    #[from]
-    source: PhysicalLocationBuilderError,
-  },
-  #[error(transparent)]
-  RegionBuilderError {
-    #[from]
-    source: RegionBuilderError,
-  },
-  #[error(transparent)]
-  ArtifactLocationBuilderError {
-    #[from]
-    source: ArtifactLocationBuilderError,
-  },
-  #[error(transparent)]
-  ResultBuilderError {
-    #[from]
-    source: ResultBuilderError,
-  },
-  #[error(transparent)]
-  MessageBuilderError {
-    #[from]
-    source: MessageBuilderError,
-  },
+  #[error("uninitialized field: {0}")]
+  UninitializedField(&'static str),
 }
 
 // Note that due to the blanket implementation in core, TryFrom<AsRef<String>>
 // results in a compiler error.
 // https://github.com/rust-lang/rust/issues/50133
-impl TryFrom<&String> for MultiformatMessageString {
-  type Error = MultiformatMessageStringBuilderError;
-
-  fn try_from(message: &String) -> anyhow::Result<Self, Self::Error> {
-    MultiformatMessageStringBuilder::default()
+impl From<&String> for MultiformatMessageString {
+  fn from(message: &String) -> Self {
+    MultiformatMessageString::builder()
       .text(message.clone())
       .build()
   }
 }
 
-impl TryFrom<&String> for Message {
-  type Error = MessageBuilderError;
-
-  fn try_from(message: &String) -> anyhow::Result<Self, Self::Error> {
-    MessageBuilder::default().text(message.clone()).build()
+impl From<&String> for Message {
+  fn from(message: &String) -> Self {
+    Message::builder().text(message.clone()).build()
   }
 }
 
-impl TryFrom<&str> for Message {
-  type Error = MessageBuilderError;
-
-  fn try_from(message: &str) -> anyhow::Result<Self, Self::Error> {
-    MessageBuilder::default().text(message).build()
+impl From<&str> for Message {
+  fn from(message: &str) -> Self {
+    Message::builder().text(message).build()
   }
 }
 
-impl TryFrom<ToolComponent> for Tool {
-  type Error = ToolBuilderError;
-
-  fn try_from(
-    tool_component: ToolComponent,
-  ) -> anyhow::Result<Self, Self::Error> {
-    ToolBuilder::default().driver(tool_component).build()
+impl From<ToolComponent> for Tool {
+  fn from(tool_component: ToolComponent) -> Self {
+    Tool::builder().driver(tool_component).build()
   }
 }
 
@@ -290,7 +250,7 @@ mod tests {
 
   #[test]
   fn test_serialize_property_bag_empty() {
-    let property_bag = PropertyBagBuilder::default().build().unwrap();
+    let property_bag = PropertyBag::builder().build();
     let json = serde_json::to_string_pretty(&property_bag).unwrap();
     let json_expected = r#"{}"#;
     assert_eq!(json, json_expected);
@@ -298,10 +258,9 @@ mod tests {
 
   #[test]
   fn test_serialize_property_bag_additional_properties() {
-    let property_bag = PropertyBagBuilder::default()
+    let property_bag = PropertyBag::builder()
       .additional_properties(map!["key1".to_string() => "value1"])
-      .build()
-      .unwrap();
+      .build();
     let json = serde_json::to_string_pretty(&property_bag).unwrap();
     let json_expected = r#"{
   "key1": "value1"
@@ -313,7 +272,7 @@ mod tests {
   fn test_deserialize_property_bag_empty() {
     let json = r#"{}"#;
     let property_bag: PropertyBag = serde_json::from_str(json).unwrap();
-    let property_bag_expected = PropertyBagBuilder::default().build().unwrap();
+    let property_bag_expected = PropertyBag::builder().build();
     assert_eq!(property_bag, property_bag_expected);
   }
 
@@ -323,10 +282,9 @@ mod tests {
       "key1": "value1"
     }"#;
     let property_bag: PropertyBag = serde_json::from_str(json).unwrap();
-    let property_bag_expected = PropertyBagBuilder::default()
+    let property_bag_expected = PropertyBag::builder()
       .additional_properties(map!["key1".to_string() => "value1"])
-      .build()
-      .unwrap();
+      .build();
     assert_eq!(property_bag, property_bag_expected);
   }
 }
