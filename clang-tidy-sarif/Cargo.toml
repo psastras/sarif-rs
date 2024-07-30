@@ -1,6 +1,6 @@
 [package]
 name = "clang-tidy-sarif"
-version = "0.5.1"
+version = "0.6.0"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Convert clang-tidy output to SARIF"

@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.5.1")]
+#![doc(html_root_url = "https://docs.rs/sarif-fmt/0.6.0")]
 #![recursion_limit = "256"]
 //! This crate provides a command line tool to pretty print SARIF files to
 //! easy human readable output.
