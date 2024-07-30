@@ -39,18 +39,20 @@ assert_eq!(
 
 Because many of the [sarif::Sarif] structures contain a lot of optional fields,
 it is often convenient to use the builder pattern to contstruct these structs.
-Each structure has a builder with a default.
+Each structure has a builder method to accomplish this.
 
 ## Example
 
 ```rust
-use serde_sarif::sarif::MessageBuilder;
+use serde_sarif::sarif::Message;
 
-let message = MessageBuilder::default()
+let message = Message::builder()
   .id("id")
-  .build()
-  .unwrap();
+  .build();
 ```
+
+This uses [`TypedBuilder`](https://docs.rs/typed-builder/latest/typed_builder/derive.TypedBuilder.html)
+for compile time type checking.
 
 ## Internal Implementation Details
 
@@ -59,7 +61,7 @@ JSON schema, this is done at build time (via the buildscript).
 
 ## Crate Features
 
-This crate contains different features which may be enabled depndending on your
+This crate contains different features which may be enabled depending on your
 use case.
 
 ### Example

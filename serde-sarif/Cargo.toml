@@ -1,6 +1,6 @@
 [package]
 name = "serde-sarif"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Serde serialization for SARIF files"
@@ -16,23 +16,26 @@ repository = "https://github.com/psastras/sarif-rs"
 [badges]
 github = { repository = "psastras/sarif-rs" }
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(doc_cfg)'] }
+
 [features]
 default = []
-clippy-converters = ["cargo_metadata", "regex"]
-hadolint-converters = []
-shellcheck-converters = []
-clang-tidy-converters = ["regex"]
+clippy-converters = ["cargo_metadata", "regex", "anyhow"]
+hadolint-converters = ["anyhow"]
+shellcheck-converters = ["anyhow"]
+clang-tidy-converters = ["regex", "anyhow"]
 
 [dependencies]
-anyhow = "1.0.86"
+anyhow = { version = "1.0.86", optional = true }
 cargo_metadata = { version = "0.18.1", optional = true }
-derive_builder = "0.20.0"
 regex =  { version = "1.10.5", optional = true }
 serde = "1.0.204"
 serde_json = "1.0.121"
 strum = "0.26"
 strum_macros = "0.26"
 thiserror = "1.0.63"
+typed-builder = "0.19.1"
 
 [dev-dependencies]
 version-sync = "0.9"

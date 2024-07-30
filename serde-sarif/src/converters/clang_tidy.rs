@@ -1,17 +1,20 @@
 use crate::sarif::{self};
 use anyhow::Result;
-use derive_builder::Builder;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 use std::convert::TryInto;
 use std::io::{BufRead, Write};
+use typed_builder::TypedBuilder;
 
-#[derive(Clone, PartialEq, Debug, Deserialize, Serialize, Builder)]
-#[builder(setter(into, strip_option))]
+#[derive(Clone, PartialEq, Debug, Deserialize, Serialize, TypedBuilder)]
+#[builder(field_defaults(setter(into)))]
 struct ClangTidyResult {
+  #[builder(setter(strip_option), default)]
   pub file: Option<String>,
+  #[builder(setter(strip_option), default)]
   pub line: Option<i64>,
+  #[builder(setter(strip_option), default)]
   pub column: Option<i64>,
   pub level: String,
   pub message: String,
@@ -19,33 +22,33 @@ struct ClangTidyResult {
 }
 
 impl TryFrom<&ClangTidyResult> for sarif::ArtifactLocation {
-  type Error = sarif::ArtifactLocationBuilderError;
+  type Error = sarif::BuilderError;
 
   fn try_from(result: &ClangTidyResult) -> Result<Self, Self::Error> {
-    sarif::ArtifactLocationBuilder::default()
-      .uri(result.file.as_ref().ok_or(
-        sarif::ArtifactLocationBuilderError::UninitializedField("file"),
-      )?)
-      .build()
+    result
+      .file
+      .as_ref()
+      .ok_or(sarif::BuilderError::UninitializedField("file"))
+      .map(|uri| sarif::ArtifactLocation::builder().uri(uri).build())
   }
 }
 
 impl TryFrom<&ClangTidyResult> for sarif::Region {
-  type Error = sarif::RegionBuilderError;
+  type Error = sarif::BuilderError;
 
   fn try_from(result: &ClangTidyResult) -> Result<Self, Self::Error> {
-    sarif::RegionBuilder::default()
-      .start_line(
-        result
-          .line
-          .ok_or(sarif::RegionBuilderError::UninitializedField("line"))?,
-      )
-      .start_column(
-        result
-          .column
-          .ok_or(sarif::RegionBuilderError::UninitializedField("column"))?,
-      )
-      .build()
+    let start_line = result
+      .line
+      .ok_or(sarif::BuilderError::UninitializedField("line"))?;
+    let start_column = result
+      .column
+      .ok_or(sarif::BuilderError::UninitializedField("column"))?;
+    Ok(
+      sarif::Region::builder()
+        .start_line(start_line)
+        .start_column(start_column)
+        .build(),
+    )
   }
 }
 
@@ -53,22 +56,23 @@ impl TryFrom<&ClangTidyResult> for sarif::Location {
   type Error = sarif::BuilderError;
 
   fn try_from(result: &ClangTidyResult) -> Result<Self, Self::Error> {
-    let artifact_location: sarif::ArtifactLocation = result.try_into()?;
-    let region: sarif::Region = result.try_into()?;
-    let mut builder = sarif::LocationBuilder::default();
-    builder.physical_location(
-      sarif::PhysicalLocationBuilder::default()
+    let artifact_location = sarif::ArtifactLocation::try_from(result)?;
+    let region = sarif::Region::try_from(result)?;
+    let location = sarif::Location::builder().physical_location(
+      sarif::PhysicalLocation::builder()
         .artifact_location(artifact_location)
         .region(region)
-        .build()?,
+        .build(),
     );
+
     // Notes are converted to 'location' items with the message stored along with the location.
     // For other types of items (error, warning, info), the message will be stored inside the
     // 'result', so we skip it here.
-    if result.level == "note" {
-      builder.message::<sarif::Message>((&result.message).try_into()?);
-    }
-    Ok(builder.build()?)
+    Ok(if result.level == "note" {
+      location.message(&result.message).build()
+    } else {
+      location.build()
+    })
   }
 }
 
@@ -131,30 +135,31 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
         }
       }
     }
-    let mut builder = sarif::ResultBuilder::default();
-    builder
-      .message::<sarif::Message>((&message).try_into()?)
+
+    let builder = sarif::Result::builder()
+      .message(&message)
       .locations(vec![location])
       .level(result.level);
-    if !related_locations.is_empty() {
-      builder.related_locations(related_locations);
-    }
-    results.push(builder.build()?);
+    let result = if !related_locations.is_empty() {
+      builder.related_locations(related_locations).build()
+    } else {
+      builder.build()
+    };
+
+    results.push(result);
   }
 
   let tool_component: sarif::ToolComponent =
-    sarif::ToolComponentBuilder::default()
-      .name("clang-tidy")
-      .build()?;
-  let run = sarif::RunBuilder::default()
-    .tool::<sarif::Tool>(tool_component.try_into()?)
+    sarif::ToolComponent::builder().name("clang-tidy").build();
+  let run = sarif::Run::builder()
+    .tool(tool_component)
     .results(results)
-    .build()?;
+    .build();
 
-  let sarif = sarif::SarifBuilder::default()
+  let sarif = sarif::Sarif::builder()
     .version(sarif::Version::V2_1_0.to_string())
     .runs(vec![run])
-    .build()?;
+    .build();
 
   Ok(sarif)
 }

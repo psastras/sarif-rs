@@ -1,46 +1,36 @@
 use std::{
   collections::HashMap,
   convert::From,
-  convert::TryFrom,
   io::{BufRead, BufWriter, Write},
 };
 
-use crate::sarif::{self, BuilderError, Location};
+use crate::sarif::{self, Location};
 use anyhow::Result;
 use cargo_metadata::{
   self,
   diagnostic::{Diagnostic, DiagnosticLevel, DiagnosticSpan},
   Message,
 };
-use std::convert::TryInto;
 
 // TODO: refactor, add features, etc.
 
-impl TryFrom<&Diagnostic> for sarif::Message {
-  type Error = sarif::MessageBuilderError;
-
-  fn try_from(diagnostic: &Diagnostic) -> Result<Self, Self::Error> {
-    sarif::MessageBuilder::default()
-      .text(diagnostic.message.clone())
-      .build()
+impl From<&Diagnostic> for sarif::Message {
+  fn from(diagnostic: &Diagnostic) -> Self {
+    sarif::Message::builder().text(&diagnostic.message).build()
   }
 }
 
-impl TryFrom<&DiagnosticSpan> for sarif::ArtifactLocation {
-  type Error = sarif::ArtifactLocationBuilderError;
-
-  fn try_from(span: &DiagnosticSpan) -> Result<Self, Self::Error> {
-    sarif::ArtifactLocationBuilder::default()
+impl From<&DiagnosticSpan> for sarif::ArtifactLocation {
+  fn from(span: &DiagnosticSpan) -> Self {
+    sarif::ArtifactLocation::builder()
       .uri(&span.file_name)
       .build()
   }
 }
 
-impl TryFrom<&DiagnosticSpan> for sarif::Region {
-  type Error = sarif::RegionBuilderError;
-
-  fn try_from(span: &DiagnosticSpan) -> Result<Self, Self::Error> {
-    sarif::RegionBuilder::default()
+impl From<&DiagnosticSpan> for sarif::Region {
+  fn from(span: &DiagnosticSpan) -> Self {
+    sarif::Region::builder()
       .byte_offset(span.byte_start)
       .byte_length(span.byte_end - span.byte_start)
       .start_line(span.line_start as i64)
@@ -62,24 +52,24 @@ impl From<&DiagnosticLevel> for sarif::ResultLevel {
   }
 }
 
-impl TryFrom<&DiagnosticSpan> for sarif::Location {
-  type Error = BuilderError;
-
-  fn try_from(span: &DiagnosticSpan) -> Result<Self, Self::Error> {
-    let artifact_location: sarif::ArtifactLocation = span.try_into()?;
-    let region: sarif::Region = span.try_into()?;
-    let mut location_builder = sarif::LocationBuilder::default();
-    location_builder.physical_location(
-      sarif::PhysicalLocationBuilder::default()
+impl From<&DiagnosticSpan> for sarif::Location {
+  fn from(span: &DiagnosticSpan) -> Self {
+    let artifact_location = sarif::ArtifactLocation::from(span);
+    let region = sarif::Region::from(span);
+    let location = sarif::Location::builder().physical_location(
+      sarif::PhysicalLocation::builder()
         .artifact_location(artifact_location)
         .region(region)
-        .build()?,
+        .build(),
     );
+
     if let Some(label) = span.label.as_ref() {
-      location_builder
-        .message(sarif::MessageBuilder::default().text(label).build()?);
+      location
+        .message(sarif::Message::builder().text(label).build())
+        .build()
+    } else {
+      location.build()
     }
-    Ok(location_builder.build()?)
   }
 }
 
@@ -120,16 +110,14 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
           let mut writer = BufWriter::new(Vec::new());
           build_global_message(&diagnostic, &mut writer)?;
           map.insert(diagnostic_code.clone(), map.len() as i64);
-          let mut rule = sarif::ReportingDescriptorBuilder::default();
-          rule
+
+          let rule = sarif::ReportingDescriptor::builder()
             .id(&diagnostic_code)
-            .full_description::<sarif::MultiformatMessageString>(
-              (&String::from_utf8(writer.into_inner()?)?).try_into()?,
-            );
+            .full_description(&String::from_utf8(writer.into_inner()?)?);
 
           // help_uri is contained in a child diagnostic with a diagnostic level == help
           // search for the relevant child diagnostic, then extract the uri from the message
-          if let Some(help_uri) = diagnostic
+          let help_uri = diagnostic
             .children
             .iter()
             .find(|child| matches!(child.level, DiagnosticLevel::Help))
@@ -141,24 +129,28 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
               re.captures(&help.message)
                 .and_then(|captures| captures.name("url"))
                 .map(|re_match| re_match.as_str())
-            })
-          {
-            rule.help_uri(help_uri);
-          }
-          rules.push(rule.build()?);
+            });
+
+          let rule = if let Some(help_uri) = help_uri {
+            rule.help_uri(help_uri).build()
+          } else {
+            rule.build()
+          };
+
+          rules.push(rule);
         }
 
         if let Some(value) = map.get(&diagnostic_code) {
           let level: sarif::ResultLevel = (&diagnostic.level).into();
           results.push(
-            sarif::ResultBuilder::default()
+            sarif::Result::builder()
               .rule_id(diagnostic_code)
               .rule_index(*value)
-              .message::<sarif::Message>((&diagnostic).try_into()?)
-              .locations(vec![span.try_into()?])
+              .message(&diagnostic)
+              .locations(vec![span.into()])
               .level(level.to_string())
               .related_locations(get_related_locations(&diagnostic)?)
-              .build()?,
+              .build(),
           );
         }
         Ok(())
@@ -167,22 +159,21 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
       Ok(())
     })?;
 
-  let tool_component: sarif::ToolComponent =
-    sarif::ToolComponentBuilder::default()
-      .name("clippy")
-      .information_uri("https://rust-lang.github.io/rust-clippy/")
-      .rules(rules)
-      .build()?;
-  let run = sarif::RunBuilder::default()
-    .tool::<sarif::Tool>(tool_component.try_into()?)
+  let tool_component: sarif::ToolComponent = sarif::ToolComponent::builder()
+    .name("clippy")
+    .information_uri("https://rust-lang.github.io/rust-clippy/")
+    .rules(rules)
+    .build();
+  let run = sarif::Run::builder()
+    .tool(tool_component)
     .results(results)
-    .build()?;
+    .build();
 
-  let sarif = sarif::SarifBuilder::default()
+  let sarif = sarif::Sarif::builder()
     .version(sarif::Version::V2_1_0.to_string())
     .schema(sarif::SCHEMA_URL)
     .runs(vec![run])
-    .build()?;
+    .build();
 
   Ok(sarif)
 }
@@ -195,13 +186,13 @@ fn get_related_locations(
   for child in &diagnostic.children {
     let mut message = child.message.clone();
     for child_span in &child.spans {
-      let mut child_loc: Location = child_span.try_into()?;
+      let mut child_loc: Location = child_span.into();
       if child_span.suggested_replacement.is_some() {
         let replacement = child_span.suggested_replacement.as_ref().unwrap();
         message.push_str(&format!(" \"{replacement}\""));
       }
 
-      child_loc.message = Some(sarif::Message::try_from(&message)?);
+      child_loc.message = Some(sarif::Message::from(&message));
       related_locations.push(child_loc);
     }
   }
