@@ -1,0 +1,18 @@
+Error while trying to load a compilation database:
+Could not auto-detect compilation database for file "./sarif-fmt/tests/data/cpp.cpp"
+No compilation database found in /Users/paul.sastrasinh/oss-repos/sarif-rs/sarif-fmt/tests/data or any parent directory
+fixed-compilation-database: Error while opening fixed database: No such file or directory
+json-compilation-database: Error while opening JSON database: No such file or directory
+Running without flags.
+1 warning generated.
+sarif-fmt/tests/data/cpp.cpp:8:10: warning: Array access (from variable 'str') results in a null pointer dereference [clang-analyzer-core.NullDereference]
+  return str[0];
+         ^
+sarif-fmt/tests/data/cpp.cpp:12:25: note: Passing null pointer value via 1st parameter 'str'
+  return get_first_char(nullptr);
+                        ^~~~~~~
+sarif-fmt/tests/data/cpp.cpp:12:10: note: Calling 'get_first_char'
+  return get_first_char(nullptr);
+         ^~~~~~~~~~~~~~~~~~~~~~~
+sarif-fmt/tests/data/cpp.cpp:8:10: note: Array access (from variable 'str') results in a null pointer dereference
+  return str[0];

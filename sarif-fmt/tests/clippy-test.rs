@@ -12,17 +12,13 @@ fn test_clippy() -> Result<()> {
     [cargo_manifest_directory.clone(), PathBuf::from("..")].iter(),
   ))?;
 
-  let clippy_project_directory = fs::canonicalize(PathBuf::from_iter(
-    [cargo_manifest_directory, PathBuf::from("./tests/data")].iter(),
-  ))?;
-
   duct_sh::sh(
-    "RUSTFLAGS='-C instrument-coverage' cargo build --bin clippy-sarif",
+    "cargo build --bin clippy-sarif",
   )
   .dir(cargo_workspace_directory.clone())
   .run()?;
 
-  duct_sh::sh("RUSTFLAGS='-C instrument-coverage' cargo build --bin sarif-fmt")
+  duct_sh::sh("cargo build --bin sarif-fmt")
     .dir(cargo_workspace_directory.clone())
     .run()?;
 
@@ -36,20 +32,37 @@ fn test_clippy() -> Result<()> {
 
   let clippy_sarif_bin = fs::canonicalize(PathBuf::from_iter(
     [
-      cargo_workspace_directory,
+      cargo_workspace_directory.clone(),
       PathBuf::from("./target/debug/clippy-sarif"),
     ]
     .iter(),
   ))?;
 
+  let clippy_output = fs::canonicalize(PathBuf::from_iter(
+    [
+      cargo_workspace_directory.clone(),
+      PathBuf::from("./sarif-fmt/tests/data/clippy.out"),
+    ]
+    .iter(),
+  ))?;
+
+  let data_dir = fs::canonicalize(PathBuf::from_iter(
+    [
+      cargo_workspace_directory.clone(),
+      PathBuf::from("./sarif-fmt/tests/data"),
+    ]
+    .iter(),
+  ))?;
+
   let cmd = format!(
-    "cargo clippy --message-format=json | {} | {}",
+    "{} {} | {}",
     clippy_sarif_bin.to_str().unwrap(),
-    sarif_fmt_bin.to_str().unwrap()
+    clippy_output.to_str().unwrap(),
+    sarif_fmt_bin.to_str().unwrap(),
   );
 
   let output = duct_sh::sh_dangerous(cmd.as_str())
-    .dir(clippy_project_directory)
+    .dir(data_dir)
     .unchecked()
     .env("NO_COLOR", "1")
     .read()?;

@@ -13,29 +13,13 @@ fn test_shellcheck() -> Result<()> {
     [cargo_manifest_directory.clone(), PathBuf::from("..")].iter(),
   ))?;
 
-  let nix_file = fs::canonicalize(PathBuf::from_iter(
-    [
-      cargo_workspace_directory.clone(),
-      PathBuf::from("nix/shellcheck.nix"),
-    ]
-    .iter(),
-  ))?;
-
-  let shell_file = fs::canonicalize(PathBuf::from_iter(
-    [
-      cargo_manifest_directory,
-      PathBuf::from("tests/data/shell.sh"),
-    ]
-    .iter(),
-  ))?;
-
   duct_sh::sh(
-    "RUSTFLAGS='-C instrument-coverage' cargo build --bin shellcheck-sarif",
+    "cargo build --bin shellcheck-sarif",
   )
   .dir(cargo_workspace_directory.clone())
   .run()?;
 
-  duct_sh::sh("RUSTFLAGS='-C instrument-coverage' cargo build --bin sarif-fmt")
+  duct_sh::sh("cargo build --bin sarif-fmt")
     .dir(cargo_workspace_directory.clone())
     .run()?;
 
@@ -55,12 +39,19 @@ fn test_shellcheck() -> Result<()> {
     .iter(),
   ))?;
 
+  let shellcheck_output = fs::canonicalize(PathBuf::from_iter(
+    [
+      cargo_workspace_directory.clone(),
+      PathBuf::from("./sarif-fmt/tests/data/shellcheck.out"),
+    ]
+    .iter(),
+  ))?;
+
   let cmd = format!(
-    "nix-shell --run 'shellcheck -f json {} | {} | {}' {}",
-    shell_file.to_str().unwrap(),
+    "{} {} | {}",
     shellcheck_sarif_bin.to_str().unwrap(),
+    shellcheck_output.to_str().unwrap(),
     sarif_fmt_bin.to_str().unwrap(),
-    nix_file.to_str().unwrap(),
   );
 
   let mut env_map: HashMap<_, _> = std::env::vars().collect();

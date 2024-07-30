@@ -3,3 +3,5 @@ target/
 
 *.profraw
 public
+result
+.direnv
