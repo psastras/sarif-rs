@@ -10,83 +10,47 @@ on:
 name: main
 
 jobs:
-  check:
-    name: Check
-    runs-on: ubuntu-latest
+  build-test:
+    strategy:
+      matrix:
+        runs-on: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
+      - uses: DeterminateSystems/nix-installer-action@v7
+      - uses: DeterminateSystems/magic-nix-cache-action@v7
+      - name: Run `nixci build`
+        run: |
+          nix run nixpkgs#nixci -- \
+            --extra-access-tokens ${{ secrets.GITHUB_TOKEN }} \
+            -v \
+            build
+      - name: Collect artifacts
+        id: collect-artifacts
+        run: |
+          ALL=$(nix eval --raw '.#all.outPath')/bin/*
+          echo ::set-output name=all::$ALL
+      - uses: actions/upload-artifact@v4
         with:
-          command: check
-
-  test:
-    name: Test Suite
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: cachix/install-nix-action@V27
-        with:
-          nix_path: nixpkgs=channel:nixos-20.03
-      - uses: Swatinem/rust-cache@v2
-      - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@cargo-llvm-cov
-      - uses: actions-rs/cargo@v1
-        with:
-          command: llvm-cov
-          args: --all-features --workspace --lcov --output-path lcov.info
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: lcov.info
-          fail_ci_if_error: false
-
-  fmt:
-    name: Rustfmt
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-
-  clippy:
-    name: Clippy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
+          name: ${{ matrix.runs-on }}
+          path: ${{steps.collect-artifacts.outputs.all}}
 
   docs:
-    name: Docs
-    needs: [check, test, fmt, clippy]
+    needs: [build-test]
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Install and Run Zola
+      - uses: DeterminateSystems/nix-installer-action@v7
+      - uses: DeterminateSystems/magic-nix-cache-action@v7
+      - name: Run Zola
         run: |
-          TEMP_DEB="$(mktemp)" &&
-          wget -O "$TEMP_DEB" 'https://github.com/barnumbirr/zola-debian/releases/download/v0.13.0/zola_0.13.0-1_amd64_debian_buster.deb' &&
-          sudo dpkg -i "$TEMP_DEB"
-          rm -f "$TEMP_DEB"
           zola build
           cp ./static/pages/* public
         working-directory: docs
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
+      - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/public
@@ -94,32 +58,21 @@ jobs:
 
   publish:
     name: Publish
-    needs: [check, test, fmt, clippy]
+    needs: [build-test]
     if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      # hack: sometimes crates.io takes time to detect the newly published
-      # crate dependency causing other crates to fail, so, try 3 times
       - uses: katyo/publish-crates@v2
         continue-on-error: true
         with:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
-      - uses: katyo/publish-crates@v2
-        continue-on-error: true
-        with:
-          registry-token: ${{ secrets.CRATES_IO_TOKEN }}
-          args: --no-verify
-      - uses: katyo/publish-crates@v2
-        with:
-          registry-token: ${{ secrets.CRATES_IO_TOKEN }}
-          args: --no-verify
+  
   gh-release:
     name: Github Release Upload
-    needs: [check, test, fmt, clippy]
+    needs: [build-test]
     if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release:')
     strategy:
       matrix:
@@ -135,8 +88,9 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
+      - uses: DeterminateSystems/nix-installer-action@v7
+      - uses: DeterminateSystems/magic-nix-cache-action@v7
       - uses: actions-rs/cargo@v1
         with:
           command: build
@@ -162,20 +116,23 @@ jobs:
         run: |
           PREVIOUS_TAG=$(git tag --list --sort=-version:refname "${{ matrix.target }}-v*" | head -n 1)
           echo ::set-output name=previous_tag::$PREVIOUS_TAG
-      - name: Build Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ncipollo/release-action@v1
         with:
-          fromTag: ${{ steps.previous-tag.outputs.previous_tag }}
-          toTag: HEAD
-          commitMode: true
+          artifacts: ${{steps.target-binary.outputs.target_binary}}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          tag: ${{ matrix.target }}-v${{steps.target-version.outputs.target_version}}
+          name: ${{ matrix.target }} ${{steps.target-version.outputs.target_version}}
+      - name: changelog
+        id: changelog
+        run: |
+          CHANGELOG=$(git-cliff -c ${{ matrix.target }}/cliff.toml)
+          echo ::set-output name=changelog::$CHANGELOG
       - uses: ncipollo/release-action@v1
         with:
           artifacts: ${{steps.target-binary.outputs.target_binary}}
           body: |
-            ${{steps.github_release.outputs.changelog}}
+            ${{steps.changelog.outputs.changelog}}
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
           tag: ${{ matrix.target }}-v${{steps.target-version.outputs.target_version}}
@@ -184,7 +141,7 @@ jobs:
         with:
           artifacts: ${{steps.target-binary.outputs.target_binary}}
           body: |
-            ${{steps.github_release.outputs.changelog}}
+            ${{steps.changelog.outputs.changelog}}
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
           tag: ${{ matrix.target }}-latest

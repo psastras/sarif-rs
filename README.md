@@ -1,5 +1,4 @@
 [![Workflow Status](https://github.com/psastras/sarif-rs/workflows/main/badge.svg)](https://github.com/psastras/sarif-rs/actions?query=workflow%3A%22main%22)
-[![codecov](https://codecov.io/gh/psastras/sarif-rs/branch/main/graph/badge.svg?token=KSXYAZGS5U)](https://codecov.io/gh/psastras/sarif-rs)
 
 # sarif-rs
 
@@ -61,6 +60,12 @@ curl -sSL https://github.com/psastras/sarif-rs/releases/download/shellcheck-sari
 sudo dnf install <cli_name> # ex. cargo binstall sarif-fmt
 ```
 
+### Nix
+
+```shell
+nix --accept-flake-config profile install github:psastras/sarif-rs
+```
+
 ## Documentation
 
 See each subproject for more detailed information:
@@ -83,13 +88,15 @@ See each subproject for more detailed information:
 
 Before you begin, ensure the following programs are available on your machine:
 
-- [`cargo`](https://rustup.rs/)
 - [`nix`](https://nixos.org/download.html#nix-quick-install)
 
-Assuming `cargo` is installed on your machine, the standard `cargo` commands can
-be run to build and test all projects in the workspace:
+
+### Using Cargo
+
+Enter the development shell provisioned by `nix` and build / test the project:
 
 ```shell
+nix develop
 cargo build
 cargo test
 ```
@@ -97,20 +104,20 @@ cargo test
 For more information on specific configurations, refer to the
 [`cargo` documentation](https://doc.rust-lang.org/cargo).
 
-`nix` is used internally (ie. via test fixtures) to manage other dependencies
-(so you don't have to manage them yourself.)
+### Using Nix
+
+Enter the development shell provisioned by `nix` and build / test the project:
+
+```shell
+# build all crates
+nix build
+
+# optionally, you may build a single crate
+nix build ".#sarif-fmt"
+```
 
 ### Releasing
 
 To release a new version (publish to crates.io), prefix the head commit with `release:` and update the relevant rust crate versions. Once merged into main the pipeline should pick up the change and publish a new version.
-
-## TODOs
-
-- [ ] Stabilize the `serde-sarif` APIs
-- [ ] All around documentation improvements
-- [ ] Lots of code cleanup, especially in the CLI codebases
-- [ ] Testing
-- [ ] General CI and release flow improvements
-- [ ] Support for other converters
 
 License: MIT

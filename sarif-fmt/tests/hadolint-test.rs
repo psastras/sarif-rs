@@ -13,29 +13,13 @@ fn test_hadolint() -> Result<()> {
     [cargo_manifest_directory.clone(), PathBuf::from("..")].iter(),
   ))?;
 
-  let nix_file = fs::canonicalize(PathBuf::from_iter(
-    [
-      cargo_workspace_directory.clone(),
-      PathBuf::from("nix/hadolint.nix"),
-    ]
-    .iter(),
-  ))?;
-
-  let dockerfile_file = fs::canonicalize(PathBuf::from_iter(
-    [
-      cargo_manifest_directory,
-      PathBuf::from("tests/data/Dockerfile"),
-    ]
-    .iter(),
-  ))?;
-
   duct_sh::sh(
-    "RUSTFLAGS='-C instrument-coverage' cargo build --bin hadolint-sarif",
+    "cargo build --bin hadolint-sarif",
   )
   .dir(cargo_workspace_directory.clone())
   .run()?;
 
-  duct_sh::sh("RUSTFLAGS='-C instrument-coverage' cargo build --bin sarif-fmt")
+  duct_sh::sh("cargo build --bin sarif-fmt")
     .dir(cargo_workspace_directory.clone())
     .run()?;
 
@@ -55,12 +39,19 @@ fn test_hadolint() -> Result<()> {
     .iter(),
   ))?;
 
+  let hadolint_output = fs::canonicalize(PathBuf::from_iter(
+    [
+      cargo_workspace_directory.clone(),
+      PathBuf::from("./sarif-fmt/tests/data/hadolint.out"),
+    ]
+    .iter(),
+  ))?;
+
   let cmd = format!(
-    "nix-shell --run 'hadolint -f json {} | {} | {}' {}",
-    dockerfile_file.to_str().unwrap(),
+    "{} {} | {}",
     hadolint_sarif_bin.to_str().unwrap(),
+    hadolint_output.to_str().unwrap(),
     sarif_fmt_bin.to_str().unwrap(),
-    nix_file.to_str().unwrap(),
   );
 
   let mut env_map: HashMap<_, _> = std::env::vars().collect();
@@ -70,7 +61,7 @@ fn test_hadolint() -> Result<()> {
     .unchecked()
     .full_env(&env_map)
     .read()?;
-
+  print!("{}", output);
   assert!(
     output.contains("warning: Always tag the version of an image explicitly")
   );
