@@ -48,7 +48,7 @@ fn test_hadolint() -> Result<()> {
   ))?;
 
   let cmd = format!(
-    "{} {} | {}",
+    "{} -i {} | {}",
     hadolint_sarif_bin.to_str().unwrap(),
     hadolint_output.to_str().unwrap(),
     sarif_fmt_bin.to_str().unwrap(),

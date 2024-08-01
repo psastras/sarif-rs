@@ -55,7 +55,7 @@ fn test_clippy() -> Result<()> {
   ))?;
 
   let cmd = format!(
-    "{} {} | {}",
+    "{} -i {} | {}",
     clippy_sarif_bin.to_str().unwrap(),
     clippy_output.to_str().unwrap(),
     sarif_fmt_bin.to_str().unwrap(),

@@ -93,12 +93,14 @@ use std::io::{BufReader, BufWriter, Read, Write};
 )]
 struct Args {
   /// input file; reads from stdin if none is given
+  #[arg(short, long)]
   input: Option<std::path::PathBuf>,
   /// input format; json or json1; defaults to 'json'
   #[arg(short, long, default_value = "json")]
   format: Option<String>,
   
   /// output file; writes to stdout if none is given
+  #[arg(short, long)]
   output: Option<std::path::PathBuf>,
 }
 
