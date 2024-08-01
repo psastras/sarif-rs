@@ -5,6 +5,7 @@ on:
     types: [completed]
 
 name: sarif
+permissions: write-all
 
 jobs:
   upload-sarif:
