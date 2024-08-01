@@ -47,7 +47,7 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@v7
       - name: Run Zola
         run: |
-          zola build
+          nix develop --command zola build
           cp ./static/pages/* public
         working-directory: docs
       - uses: peaceiris/actions-gh-pages@v4
