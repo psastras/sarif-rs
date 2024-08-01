@@ -3,7 +3,6 @@ name: auto approve
 on: pull_request_target
 permissions: write-all
 
-
 jobs:
   auto-approve:
     runs-on: ubuntu-latest

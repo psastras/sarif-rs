@@ -96,51 +96,32 @@ jobs:
         with:
           command: build
           args: --release --bin ${{ matrix.target }}
-      - name: target triple
-        id: target-triple
+      - name: targets
+        id: targets
         run: |
           TARGET_TRIPLE=$(rustc --version --verbose | grep host | awk '{print $2}')
           echo ::set-output name=target_triple::$TARGET_TRIPLE
-      - name: target version
-        id: target-version
-        run: |
           TARGET_VERSION=$(./target/release/${{ matrix.target }} --version | awk '{print $2}')
           echo ::set-output name=target_version::$TARGET_VERSION
-      - name: target binary
-        id: target-binary
-        run: |
-          TARGET_BINARY=./target/release/${{ matrix.target }}-${{steps.target-triple.outputs.target_triple}}
+          TARGET_BINARY=./target/release/${{ matrix.target }}-${TARGET_TRIPLE}
           mv ./target/release/${{ matrix.target }} ${TARGET_BINARY}
           echo ::set-output name=target_binary::$TARGET_BINARY
-      - name: previous tag
-        id: previous-tag
-        run: |
-          PREVIOUS_TAG=$(git tag --list --sort=-version:refname "${{ matrix.target }}-v*" | head -n 1)
-          echo ::set-output name=previous_tag::$PREVIOUS_TAG
-      - uses: ncipollo/release-action@v1
-        with:
-          artifacts: ${{steps.target-binary.outputs.target_binary}}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          allowUpdates: true
-          tag: ${{ matrix.target }}-v${{steps.target-version.outputs.target_version}}
-          name: ${{ matrix.target }} ${{steps.target-version.outputs.target_version}}
       - name: changelog
         id: changelog
         run: |
-          CHANGELOG=$(git-cliff -c ${{ matrix.target }}/cliff.toml)
+          CHANGELOG=$(nix develop --command git-cliff -c ${{ matrix.target }}/cliff.toml) --unreleased --tag ${{ matrix.target }}-v${{steps.targets.outputs.target_version}}
           echo ::set-output name=changelog::$CHANGELOG
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: ${{steps.target-binary.outputs.target_binary}}
+          artifacts: ${{steps.targets.outputs.target_binary}}
           body: |
             ${{steps.changelog.outputs.changelog}}
           token: ${{ secrets.GITHUB_TOKEN }}
-          allowUpdates: true
-          tag: ${{ matrix.target }}-v${{steps.target-version.outputs.target_version}}
-          name: ${{ matrix.target }} ${{steps.target-version.outputs.target_version}}
+          tag: ${{ matrix.target }}-v${{steps.targets.outputs.target_version}}
+          name: ${{ matrix.target }} ${{steps.targets.outputs.target_version}}
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: ${{steps.target-binary.outputs.target_binary}}
+          artifacts: ${{steps.targets.outputs.target_binary}}
           body: |
             ${{steps.changelog.outputs.changelog}}
           token: ${{ secrets.GITHUB_TOKEN }}
