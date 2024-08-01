@@ -48,7 +48,7 @@ fn test_clang_tidy() -> Result<()> {
   ))?;
 
   let cmd = format!(
-    "{} {} | {}",
+    "{} -i {} | {}",
     clang_tidy_sarif_bin.to_str().unwrap(),
     clang_tidy_output.to_str().unwrap(),
     sarif_fmt_bin.to_str().unwrap(),

@@ -48,7 +48,7 @@ fn test_shellcheck() -> Result<()> {
   ))?;
 
   let cmd = format!(
-    "{} {} | {}",
+    "{} -i {} | {}",
     shellcheck_sarif_bin.to_str().unwrap(),
     shellcheck_output.to_str().unwrap(),
     sarif_fmt_bin.to_str().unwrap(),
