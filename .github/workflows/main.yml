@@ -8,6 +8,7 @@ on:
 
 # ignore gh-pages
 name: main
+permissions: write-all
 
 jobs:
   build-test:
