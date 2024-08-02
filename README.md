@@ -1,6 +1,6 @@
 [![Workflow Status](https://github.com/psastras/sarif-rs/workflows/main/badge.svg)](https://github.com/psastras/sarif-rs/actions?query=workflow%3A%22main%22)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/psastras/sarif-rs/badge)](https://scorecard.dev/viewer/?uri=github.com/psastras/sarif-rs)
-
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9282/badge)](https://www.bestpractices.dev/projects/9282)
 
 # sarif-rs
 
