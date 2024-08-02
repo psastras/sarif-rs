@@ -113,6 +113,7 @@ jobs:
         run: |
           nix develop --command git-cliff -c ${{ matrix.target }}/cliff.toml --unreleased --tag ${{ matrix.target }}-v${{steps.targets.outputs.target_version}} --output CHANGELOG.md
       - name: latest
+        continue-on-error: true
         run: |
           git push --delete origin ${{ matrix.target }}-latest
       - uses: ncipollo/release-action@v1
