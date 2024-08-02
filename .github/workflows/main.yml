@@ -89,6 +89,8 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: Swatinem/rust-cache@v2
       - uses: DeterminateSystems/nix-installer-action@v13
       - uses: DeterminateSystems/magic-nix-cache-action@v7
@@ -109,7 +111,8 @@ jobs:
       - name: changelog
         id: changelog
         run: |
-          CHANGELOG=$(nix develop --command git-cliff -c ${{ matrix.target }}/cliff.toml --unreleased --tag ${{ matrix.target }}-v${{steps.targets.outputs.target_version}})
+          nix develop --command git-cliff -c ${{ matrix.target }}/cliff.toml --unreleased --tag ${{ matrix.target }}-v${{steps.targets.outputs.target_version}} --output CHANGELOG.md
+          CHANGELOG=$(cat CHANGELOG.md)
           echo ::set-output name=changelog::$CHANGELOG
       - uses: ncipollo/release-action@v1
         with:
@@ -117,6 +120,7 @@ jobs:
           body: |
             ${{steps.changelog.outputs.changelog}}
           token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
           tag: ${{ matrix.target }}-v${{steps.targets.outputs.target_version}}
           name: ${{ matrix.target }} ${{steps.targets.outputs.target_version}}
       - uses: ncipollo/release-action@v1
