@@ -112,13 +112,10 @@ jobs:
         id: changelog
         run: |
           nix develop --command git-cliff -c ${{ matrix.target }}/cliff.toml --unreleased --tag ${{ matrix.target }}-v${{steps.targets.outputs.target_version}} --output CHANGELOG.md
-          CHANGELOG=$(cat CHANGELOG.md)
-          echo ::set-output name=changelog::$CHANGELOG
       - uses: ncipollo/release-action@v1
         with:
           artifacts: ${{steps.targets.outputs.target_binary}}
-          body: |
-            ${{steps.changelog.outputs.changelog}}
+          bodyFile: CHANGELOG.md
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
           tag: ${{ matrix.target }}-v${{steps.targets.outputs.target_version}}
