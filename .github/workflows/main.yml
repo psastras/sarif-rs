@@ -57,8 +57,8 @@ jobs:
           publish_dir: ./docs/public
           force_orphan: true
 
-  publish:
-    name: Publish
+  crates-publish:
+    name: Publish to crates.io
     needs: [build-test]
     if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
@@ -71,8 +71,20 @@ jobs:
           registry-token: ${{ secrets.CRATES_IO_TOKEN }}
           args: --no-verify
   
-  gh-release:
-    name: Github Release Upload
+  fh-publish:
+    name: Publish to FlakeHub
+    needs: [build-test]
+    if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release:')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/flakehub-push@main
+        with:
+          visibility: public
+
+  gh-publish:
+    name: Publish to Github
     needs: [build-test]
     if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release:')
     strategy:

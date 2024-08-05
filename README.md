@@ -64,9 +64,13 @@ sudo dnf install <cli_name> # ex. cargo binstall sarif-fmt
 
 ### Nix
 
+Through the `nix` cli,
+
 ```shell
 nix --accept-flake-config profile install github:psastras/sarif-rs
 ```
+
+Or [from FlakeHub](https://flakehub.com/flake/psastras/sarif-rs).
 
 ## Documentation
 
