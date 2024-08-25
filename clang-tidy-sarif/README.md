@@ -9,12 +9,12 @@ The latest [documentation can be found here](https://docs.rs/clang_tidy_sarif).
 
 clang-tidy is a popular linter / static analysis tool for C++. More information
 can be found on the official page:
-[https://clang.llvm.org/extra/clang-tidy/](https://ng.llvm.org/extra/clang-tidy/)
+[https://clang.llvm.org/extra/clang-tidy/](https://clang.llvm.org/extra/clang-tidy/)
 
 SARIF or the Static Analysis Results Interchange Format is an industry standard
 format for the output of static analysis tools. More information can be found on
 the official website:
-[https://sarifweb.azurewebsites.net/](https://ifweb.azurewebsites.net/).
+[https://sarifweb.azurewebsites.net/](https://sarifweb.azurewebsites.net/).
 
 ## Installation
 
