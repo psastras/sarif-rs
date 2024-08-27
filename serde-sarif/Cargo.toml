@@ -42,7 +42,7 @@ version-sync = "0.9"
 
 [build-dependencies]
 anyhow = "1.0.86"
-prettyplease = "0.2.20"
+prettyplease = "0.2.22"
 proc-macro2 = "1.0.86"
 quote = "1.0.37"
 schemafy_lib = "0.6.0"
