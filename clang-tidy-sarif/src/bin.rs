@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/clang-tidy-sarif/0.6.5")]
+#![doc(html_root_url = "https://docs.rs/clang-tidy-sarif/0.6.6")]
 
 //! This crate provides a command line tool to convert `clang-tidy` diagnostic
 //! output into SARIF.

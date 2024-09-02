@@ -30,7 +30,7 @@ or downloaded directly from Github Releases
 
 ```shell
 # make sure to adjust the target and version (you may also want to pin to a specific version)
-curl -sSL https://github.com/psastras/sarif-rs/releases/download/sarif-fmt-v0.6.5/sarif-fmt-x86_64-unknown-linux-gnu -o sarif-fmt
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/sarif-fmt-v0.6.6/sarif-fmt-x86_64-unknown-linux-gnu -o sarif-fmt
 ```
 
 ### Fedora Linux
