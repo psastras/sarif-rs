@@ -34,7 +34,21 @@ or downloaded directly from Github Releases
 
 ```shell
 # make sure to adjust the target and version (you may also want to pin to a specific version)
-curl -sSL https://github.com/psastras/sarif-rs/releases/download/hadolint-sarif-latest/hadolint-sarif-x86_64-unknown-linux-gnu -o hadolint-sarif
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/shellcheck-sarif-v0.6.5/hadolint-sarif-x86_64-unknown-linux-gnu -o hadolint-sarif
+```
+
+### Fedora Linux
+
+```shell
+sudo dnf install <cli_name> # ex. cargo binstall hadolint-sarif
+```
+
+### Nix
+
+Through the `nix` cli,
+
+```shell
+nix --accept-flake-config profile install github:psastras/sarif-rs#hadolint-sarif
 ```
 
 ## Usage

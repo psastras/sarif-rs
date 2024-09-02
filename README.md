@@ -53,7 +53,7 @@ Using `curl`,
 
 ```shell
 # make sure to adjust the target and version (you may also want to pin to a specific version)
-curl -sSL https://github.com/psastras/sarif-rs/releases/download/shellcheck-sarif-latest/shellcheck-sarif-x86_64-unknown-linux-gnu -o shellcheck-sarif
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/shellcheck-sarif-v0.6.5/shellcheck-sarif-x86_64-unknown-linux-gnu -o shellcheck-sarif
 ```
 
 ### Fedora Linux
@@ -95,7 +95,6 @@ See each subproject for more detailed information:
 Before you begin, ensure the following programs are available on your machine:
 
 - [`nix`](https://nixos.org/download.html#nix-quick-install)
-
 
 ### Using Cargo
 
