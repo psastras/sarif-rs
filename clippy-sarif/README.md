@@ -34,7 +34,21 @@ or downloaded directly from Github Releases
 
 ```shell
 # make sure to adjust the target and version (you may also want to pin to a specific version)
-curl -sSL https://github.com/psastras/sarif-rs/releases/download/clippy-sarif-latest/clippy-sarif-x86_64-unknown-linux-gnu -o clippy-sarif
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/clippy-sarif-v0.6.5/clippy-sarif-x86_64-unknown-linux-gnu -o clippy-sarif
+```
+
+### Fedora Linux
+
+```shell
+sudo dnf install <cli_name> # ex. cargo binstall clippy-sarif
+```
+
+### Nix
+
+Through the `nix` cli,
+
+```shell
+nix --accept-flake-config profile install github:psastras/sarif-rs#clippy-sarif
 ```
 
 ## Usage

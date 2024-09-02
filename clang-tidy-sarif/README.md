@@ -34,7 +34,21 @@ or downloaded directly from Github Releases
 
 ```shell
 # make sure to adjust the target and version (you may also want to pin to a specific version)
-curl -sSL https://github.com/psastras/sarif-rs/releases/download/clang-tidy-sarif-latest/clang-tidy-sarif-x86_64-unknown-linux-gnu -o clang-tidy-sarif
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/clang-tidy-sarif-v0.6.5/clang-tidy-sarif-x86_64-unknown-linux-gnu -o clang-tidy-sarif
+```
+
+### Fedora Linux
+
+```shell
+sudo dnf install <cli_name> # ex. cargo binstall clang-tidy-sarif
+```
+
+### Nix
+
+Through the `nix` cli,
+
+```shell
+nix --accept-flake-config profile install github:psastras/sarif-rs#clang-tidy-sarif
 ```
 
 ## Usage

@@ -30,7 +30,21 @@ or downloaded directly from Github Releases
 
 ```shell
 # make sure to adjust the target and version (you may also want to pin to a specific version)
-curl -sSL https://github.com/psastras/sarif-rs/releases/download/sarif-fmt-latest/sarif-fmt-x86_64-unknown-linux-gnu -o sarif-fmt
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/sarif-fmt-v0.6.5/sarif-fmt-x86_64-unknown-linux-gnu -o sarif-fmt
+```
+
+### Fedora Linux
+
+```shell
+sudo dnf install <cli_name> # ex. cargo binstall sarif-fmt
+```
+
+### Nix
+
+Through the `nix` cli,
+
+```shell
+nix --accept-flake-config profile install github:psastras/sarif-rs#sarif-fmt
 ```
 
 ## Usage
