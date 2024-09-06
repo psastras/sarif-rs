@@ -20,7 +20,7 @@ name = "clang-tidy-sarif"
 path = "src/bin.rs"
 
 [dependencies]
-anyhow = "1.0.86"
+anyhow = "1.0.87"
 serde-sarif = { path = "../serde-sarif", version = "0.6.6", features = ["clang-tidy-converters"] }
 clap = { version = "4.5.17", features = ["derive"] }
 duct = "0.13.7"
