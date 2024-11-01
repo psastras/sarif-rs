@@ -27,7 +27,7 @@ shellcheck-converters = ["anyhow"]
 clang-tidy-converters = ["regex", "anyhow"]
 
 [dependencies]
-anyhow = { version = "1.0.91", optional = true }
+anyhow = { version = "1.0.92", optional = true }
 cargo_metadata = { version = "0.18.1", optional = true }
 regex =  { version = "1.11.1", optional = true }
 serde = "1.0.214"
@@ -41,7 +41,7 @@ typed-builder = "0.20.0"
 version-sync = "0.9"
 
 [build-dependencies]
-anyhow = "1.0.91"
+anyhow = "1.0.92"
 prettyplease = "0.2.25"
 proc-macro2 = "1.0.89"
 quote = "1.0.37"
