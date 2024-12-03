@@ -34,7 +34,7 @@ serde = "1.0.215"
 serde_json = "1.0.133"
 strum = "0.26"
 strum_macros = "0.26"
-thiserror = "2.0.3"
+thiserror = "2.0.4"
 typed-builder = "0.20.0"
 
 [dev-dependencies]
