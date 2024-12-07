@@ -34,7 +34,7 @@
 //! ```
 //!
 //! Because many of the [sarif::Sarif] structures contain a lot of optional fields, it is
-//! often convenient to use the builder pattern to contstruct these structs. Each
+//! often convenient to use the builder pattern to construct these structs. Each
 //! structure has a builder with a default.
 //!
 //! ## Example
@@ -57,7 +57,7 @@
 //!
 //! ## Crate Features
 //!
-//! This crate contains different features which may be enabled depndending on your
+//! This crate contains different features which may be enabled depending on your
 //! use case.
 //!
 //! ### Example
