@@ -20,9 +20,9 @@ name = "shellcheck-sarif"
 path = "src/bin.rs"
 
 [dependencies]
-anyhow = "1.0.93"
+anyhow = "1.0.94"
 serde-sarif = { path = "../serde-sarif", version = "0.6.6", features = ["shellcheck-converters"] }
-clap = { version = "4.5.21", features = ["derive"] }
+clap = { version = "4.5.23", features = ["derive"] }
 
 [dev-dependencies]
 version-sync = "0.9"
