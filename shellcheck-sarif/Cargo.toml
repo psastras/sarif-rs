@@ -1,6 +1,6 @@
 [package]
 name = "shellcheck-sarif"
-version = "0.6.6"
+version = "0.7.0"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Convert shellcheck output to SARIF"
@@ -8,7 +8,7 @@ license = "MIT"
 readme = "README.md"
 keywords = ["sarif", "shellcheck", "shell", "cli"]
 categories = ["command-line-utilities"]
-homepage  = "https://psastras.github.io/sarif-rs/"
+homepage = "https://psastras.github.io/sarif-rs/"
 documentation = "https://docs.rs/shellcheck_sarif"
 repository = "https://github.com/psastras/sarif-rs"
 
@@ -21,7 +21,9 @@ path = "src/bin.rs"
 
 [dependencies]
 anyhow = "1.0.94"
-serde-sarif = { path = "../serde-sarif", version = "0.6.6", features = ["shellcheck-converters"] }
+serde-sarif = { path = "../serde-sarif", version = "0.7.0", features = [
+    "shellcheck-converters",
+] }
 clap = { version = "4.5.23", features = ["derive"] }
 
 [dev-dependencies]

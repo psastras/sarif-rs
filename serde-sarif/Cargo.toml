@@ -1,6 +1,6 @@
 [package]
 name = "serde-sarif"
-version = "0.6.6"
+version = "0.7.0"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Serde serialization for SARIF files"
@@ -9,7 +9,7 @@ readme = "README.md"
 keywords = ["sarif", "serde", "serialization"]
 categories = ["encoding"]
 build = "build.rs"
-homepage  = "https://psastras.github.io/sarif-rs/"
+homepage = "https://psastras.github.io/sarif-rs/"
 documentation = "https://docs.rs/serde_sarif"
 repository = "https://github.com/psastras/sarif-rs"
 
@@ -29,7 +29,7 @@ clang-tidy-converters = ["regex", "anyhow"]
 [dependencies]
 anyhow = { version = "1.0.94", optional = true }
 cargo_metadata = { version = "0.19.1", optional = true }
-regex =  { version = "1.11.1", optional = true }
+regex = { version = "1.11.1", optional = true }
 serde = "1.0.216"
 serde_json = "1.0.133"
 strum = "0.26"
