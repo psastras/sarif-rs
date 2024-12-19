@@ -94,6 +94,22 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
         }
       }
 
+      // Rewrite Result::kind and Result::level to use ResultKind and
+      // ResultLevel instead of serde_json::Value.
+      // This is a workaround for schemafy's inability to produce appropriate
+      // exhaustive enums here.
+      if s.ident == "Result" {
+        if let syn::Fields::Named(fields) = &mut s.fields {
+          for field in fields.named.iter_mut() {
+            if field.ident.as_ref().unwrap() == "kind" {
+              field.ty = syn::parse_quote! { Option<ResultKind> };
+            } else if field.ident.as_ref().unwrap() == "level" {
+              field.ty = syn::parse_quote! { Option<ResultLevel> };
+            }
+          }
+        }
+      }
+
       // for each struct field, if that field is Optional, set None
       // as the default value when using the builder
       (&mut s.fields).into_iter().for_each(|ref mut field| {

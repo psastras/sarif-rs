@@ -79,7 +79,9 @@ pub enum ReportingConfigurationLevel {
 }
 
 #[doc = "A value that categorizes results by evaluation state."]
-#[derive(Display, Debug, Serialize, Deserialize, EnumString)]
+#[derive(
+  Clone, Display, Debug, Serialize, Deserialize, EnumString, PartialEq,
+)]
 #[serde(rename_all = "camelCase")]
 #[strum(serialize_all = "camelCase")]
 pub enum ResultKind {
@@ -92,7 +94,9 @@ pub enum ResultKind {
 }
 
 #[doc = "A value specifying the severity level of the result."]
-#[derive(Clone, Copy, Display, Debug, Serialize, Deserialize, EnumString)]
+#[derive(
+  Clone, Copy, Display, Debug, Serialize, Deserialize, EnumString, PartialEq,
+)]
 #[serde(rename_all = "camelCase")]
 #[strum(serialize_all = "camelCase")]
 pub enum ResultLevel {
