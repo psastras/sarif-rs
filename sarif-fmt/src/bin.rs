@@ -335,7 +335,7 @@ fn resolve_level(
   match kind {
     // If kind has the value "fail" and level is absent, then level SHALL be determined by the following procedure:
     ResultKind::Fail => match result.level.as_ref() {
-      Some(level) => Some(level.clone()),
+      Some(level) => Some(*level),
       None => result.rule.as_ref().and_then(|rule| {
         // IF rule (§3.27.7) is present THEN
         rule.index.and_then(|rule_index| {
