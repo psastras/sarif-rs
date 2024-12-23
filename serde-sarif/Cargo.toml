@@ -31,7 +31,7 @@ anyhow = { version = "1.0.95", optional = true }
 cargo_metadata = { version = "0.19.1", optional = true }
 regex = { version = "1.11.1", optional = true }
 serde = "1.0.216"
-serde_json = "1.0.133"
+serde_json = "1.0.134"
 strum = "0.26"
 strum_macros = "0.26"
 thiserror = "2.0.9"
@@ -46,5 +46,5 @@ prettyplease = "0.2.25"
 proc-macro2 = "1.0.92"
 quote = "1.0.37"
 schemafy_lib = "0.6.0"
-serde_json = "1.0.133"
+serde_json = "1.0.134"
 syn = "2.0.91"
