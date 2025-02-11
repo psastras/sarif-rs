@@ -20,11 +20,11 @@ name = "sarif-fmt"
 path = "src/bin.rs"
 
 [dependencies]
-anyhow = "1.0.94"
+anyhow = "1.0.95"
 codespan-reporting = "0.11.1"
 serde-sarif = { path = "../serde-sarif", version = "0.7.0" }
-serde_json = "1.0.133"
-clap = { version = "4.5.23", features = ["derive"] }
+serde_json = "1.0.138"
+clap = { version = "4.5.28", features = ["derive"] }
 
 [dev-dependencies]
 duct = "0.13.7"
