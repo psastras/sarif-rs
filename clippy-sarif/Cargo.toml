@@ -20,7 +20,7 @@ name = "clippy-sarif"
 path = "src/bin.rs"
 
 [dependencies]
-anyhow = "1.0.96"
+anyhow = "1.0.97"
 serde-sarif = { path = "../serde-sarif", version = "0.7.0", features = [
     "clippy-converters",
 ] }
