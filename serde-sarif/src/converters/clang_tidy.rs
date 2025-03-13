@@ -80,7 +80,7 @@ fn parse_clang_tidy_line(
   line: Result<String, std::io::Error>,
 ) -> Option<ClangTidyResult> {
   let re = Regex::new(
-    r"^(?P<file>([a-zA-Z]:|)[\w/\.\- \\]+):(?P<line>\d+):(?P<column>\d+):\s+(?P<level>error|warning|info|note):\s+(?P<message>.+)(?:\s+(?P<rules>\[[\w\-,\.]+\]))?$"
+    r"^(?P<file>([a-zA-Z]:|)[\w/\.\- \\]+):(?P<line>\d+):(?P<column>\d+):\s+(?P<level>error|warning|info|note):\s+(?P<message>.+?)(?:\s+\[(?P<rules>[^\]]+)\])?$"
   ).unwrap();
   let line = line.unwrap();
   let caps = re.captures(&line);
@@ -114,9 +114,11 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
     reader.lines().filter_map(parse_clang_tidy_line).peekable();
 
   while let Some(result) = clang_tidy_result_iter.next() {
+    // The first check alias is used as the ruleId for the result
+    let rule_id = result.rules.split(',').next().unwrap_or_default();
+
     let location: sarif::Location = (&result).try_into()?;
     let mut related_locations = vec![];
-    let message = format!("{} {}", result.message, result.rules);
 
     // Since clang-tidy emits "note" items which have to be folded into
     // the previous error/warning/info items, look ahead at the next items
@@ -137,7 +139,8 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
     }
 
     let builder = sarif::Result::builder()
-      .message(&message)
+      .rule_id(rule_id)
+      .message(&result.message)
       .locations(vec![location])
       .level(result.level);
     let result = if !related_locations.is_empty() {
