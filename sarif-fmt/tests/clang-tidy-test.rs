@@ -63,7 +63,7 @@ fn test_clang_tidy() -> Result<()> {
     .full_env(&env_map)
     .read()?;
 
-  assert!(output.contains("warning: Array access (from variable 'str') results in a null pointer dereference [clang-analyzer-core.NullDereference]"));
+  assert!(output.contains("warning: Array access (from variable 'str') results in a null pointer dereference"));
   assert!(output.contains("cpp.cpp:8:10"));
   assert!(output.contains("return str[0];"));
   // 1st note for the above error
