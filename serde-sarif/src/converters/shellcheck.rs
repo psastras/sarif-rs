@@ -205,7 +205,7 @@ fn process<R: BufRead>(mut reader: R, format: String) -> Result<sarif::Sarif> {
             .locations(vec![result.into()])
             .related_locations(related_locations)
             .fixes(fixes)
-            .level(level.to_string())
+            .level(level)
             .build(),
         );
       }

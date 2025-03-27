@@ -112,7 +112,7 @@ fn process<R: BufRead>(mut reader: R) -> Result<sarif::Sarif> {
             .rule_index(*value)
             .message(&result.message)
             .locations(vec![result.into()])
-            .level(level.to_string())
+            .level(level)
             .build(),
         );
       }
