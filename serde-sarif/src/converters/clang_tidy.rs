@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 use std::convert::TryInto;
 use std::io::{BufRead, Write};
+use std::str::FromStr;
 use typed_builder::TypedBuilder;
 
 #[derive(Clone, PartialEq, Debug, Deserialize, Serialize, TypedBuilder)]
@@ -142,7 +143,7 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
       .rule_id(rule_id)
       .message(&result.message)
       .locations(vec![location])
-      .level(result.level);
+      .level(sarif::ResultLevel::from_str(&result.level)?);
     let result = if !related_locations.is_empty() {
       builder.related_locations(related_locations).build()
     } else {

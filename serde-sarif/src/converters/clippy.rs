@@ -148,7 +148,7 @@ fn process<R: BufRead>(reader: R) -> Result<sarif::Sarif> {
               .rule_index(*value)
               .message(&diagnostic)
               .locations(vec![span.into()])
-              .level(level.to_string())
+              .level(level)
               .related_locations(get_related_locations(&diagnostic)?)
               .build(),
           );
