@@ -115,9 +115,15 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
       (&mut s.fields).into_iter().for_each(|ref mut field| {
         if let syn::Type::Path(typepath) = &field.ty {
           if path_is_option(&typepath.path) {
+            #[cfg(not(feature = "opt-builder"))]
             field.attrs.push(syn::parse_quote! {
               #[builder(setter(strip_option), default)]
-            })
+            });
+
+            #[cfg(feature = "opt-builder")]
+            field.attrs.push(syn::parse_quote! {
+              #[builder(setter(strip_option(fallback_prefix = "opt_")), default)]
+            });
           } else if path_is_vec(&typepath.path) {
             field.attrs.push(syn::parse_quote! {
               #[builder(default)]
