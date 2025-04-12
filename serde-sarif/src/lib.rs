@@ -72,6 +72,12 @@
 //! - **clippy-converters** Provides conversions between Clippy and SARIF types
 //! - **hadolint-converters** Provides conversions between hadolint and SARIF types
 //! - **shellcheck-converters** Provides conversions between shellcheck and SARIF types
+//!
+//! ### Other
+//!
+//! - **opt-builder** Enables
+//!   [`TypedBuilder`](typed_builder::TypedBuilder)
+//!   fallback setters for easier conditional building
 
 pub mod converters;
 pub mod sarif;

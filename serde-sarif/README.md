@@ -80,4 +80,10 @@ serde-sarif = { version = "*", features = ["clippy-converters"] }
 - **shellcheck-converters** Provides conversions between shellcheck and SARIF
   types
 
+### Other
+
+- **opt-builder** Enables 
+  [`TypedBuilder`](https://docs.rs/typed-builder/latest/typed_builder/derive.TypedBuilder.html#customization-with-attributes)s
+  fallback setters for easier conditional building
+
 License: MIT
