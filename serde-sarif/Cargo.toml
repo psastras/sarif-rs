@@ -25,6 +25,7 @@ clippy-converters = ["cargo_metadata", "regex", "anyhow"]
 hadolint-converters = ["anyhow"]
 shellcheck-converters = ["anyhow"]
 clang-tidy-converters = ["regex", "anyhow"]
+opt-builder = []
 
 [dependencies]
 anyhow = { version = "1.0.97", optional = true }
