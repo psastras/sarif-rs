@@ -28,7 +28,7 @@ clang-tidy-converters = ["regex", "anyhow"]
 opt-builder = []
 
 [dependencies]
-anyhow = { version = "1.0.97", optional = true }
+anyhow = { version = "1.0.98", optional = true }
 cargo_metadata = { version = "0.19.2", optional = true }
 regex = { version = "1.11.1", optional = true }
 serde = "1.0.219"
@@ -42,7 +42,7 @@ typed-builder = "0.21.0"
 version-sync = "0.9"
 
 [build-dependencies]
-anyhow = "1.0.97"
+anyhow = "1.0.98"
 prettyplease = "0.2.32"
 proc-macro2 = "1.0.94"
 quote = "1.0.40"

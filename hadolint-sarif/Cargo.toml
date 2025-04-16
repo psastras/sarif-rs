@@ -20,11 +20,11 @@ name = "hadolint-sarif"
 path = "src/bin.rs"
 
 [dependencies]
-anyhow = "1.0.97"
+anyhow = "1.0.98"
 serde-sarif = { path = "../serde-sarif", version = "0.7.0", features = [
     "hadolint-converters",
 ] }
-clap = { version = "4.5.35", features = ["derive"] }
+clap = { version = "4.5.36", features = ["derive"] }
 
 [dev-dependencies]
 version-sync = "0.9"
