@@ -1,5 +1,6 @@
 use crate::sarif::{self};
 use anyhow::Result;
+use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
@@ -80,11 +81,13 @@ impl TryFrom<&ClangTidyResult> for sarif::Location {
 fn parse_clang_tidy_line(
   line: Result<String, std::io::Error>,
 ) -> Option<ClangTidyResult> {
-  let re = Regex::new(
+  static RE: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(
     r"^(?P<file>([a-zA-Z]:|)[\w/\.\- \\]+):(?P<line>\d+):(?P<column>\d+):\s+(?P<level>error|warning|info|note):\s+(?P<message>.+?)(?:\s+\[(?P<rules>[^\]]+)\])?$"
-  ).unwrap();
+  ).unwrap()
+  });
   let line = line.unwrap();
-  let caps = re.captures(&line);
+  let caps = RE.captures(&line);
   if let Some(caps) = caps {
     if let Some(message) = caps.name("message") {
       return Some(ClangTidyResult {
