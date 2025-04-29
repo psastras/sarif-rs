@@ -24,7 +24,7 @@ default = []
 clippy-converters = ["cargo_metadata", "regex", "anyhow"]
 hadolint-converters = ["anyhow"]
 shellcheck-converters = ["anyhow"]
-clang-tidy-converters = ["regex", "anyhow"]
+clang-tidy-converters = ["regex", "anyhow", "once_cell"]
 opt-builder = []
 
 [dependencies]
@@ -37,6 +37,7 @@ strum = "0.27"
 strum_macros = "0.27"
 thiserror = "2.0.12"
 typed-builder = "0.21.0"
+once_cell = { version = "1.21.3", optional = true }
 
 [dev-dependencies]
 version-sync = "0.9"
