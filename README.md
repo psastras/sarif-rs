@@ -82,6 +82,8 @@ See each subproject for more detailed information:
   [Rust documentation](https://docs.rs/clippy_sarif/).
 - `hadolint-sarif`: CLI tool to convert `hadolint` diagnostics into SARIF. See
   the [Rust documentation](https://docs.rs/hadolint_sarif/).
+- `miri-sarif`: CLI tool to convert `miri` diagnostics into SARIF. See the
+  [Rust documentation](https://docs.rs/miri_sarif/).
 - `shellcheck-sarif`: CLI tool to convert `shellcheck` diagnostics into SARIF.
   See the [Rust documentation](https://docs.rs/shellcheck_sarif/).
 - `sarif-fmt`: CLI tool to pretty print SARIF diagnostics. See the

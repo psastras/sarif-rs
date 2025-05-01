@@ -1,0 +1,34 @@
+[package]
+name = "miri-sarif"
+version = "0.7.0"
+authors = ["Florian Gebhardt <me@fgardt.dev>"]
+edition = "2018"
+description = "Convert miri output to SARIF"
+license = "MIT"
+readme = "README.md"
+keywords = ["sarif", "miri", "cli"]
+categories = ["command-line-utilities"]
+homepage = "https://psastras.github.io/sarif-rs/"
+documentation = "https://docs.rs/miri_sarif"
+repository = "https://github.com/psastras/sarif-rs"
+
+[badges]
+github = { repository = "psastras/sarif-rs" }
+
+[[bin]]
+name = "miri-sarif"
+path = "src/bin.rs"
+
+[dependencies]
+anyhow = "1.0.98"
+serde-sarif = { path = "../serde-sarif", version = "0.7.0", features = [
+    "miri-converters",
+] }
+clap = { version = "4.5.37", features = ["derive"] }
+
+[dev-dependencies]
+version-sync = "0.9"
+
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/{ name }-v{ version }/{ name }-{ target }"
+pkg-fmt = "bin"

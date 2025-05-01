@@ -57,6 +57,7 @@
               sarif-fmt.crane.outputs.drv.crate
               clippy-sarif.crane.outputs.drv.crate
               hadolint-sarif.crane.outputs.drv.crate
+              miri-sarif.crane.outputs.drv.crate
               shellcheck-sarif.crane.outputs.drv.crate
               clang-tidy-sarif.crane.outputs.drv.crate
             ];
