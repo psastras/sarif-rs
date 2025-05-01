@@ -6,6 +6,7 @@ members = [
   "clippy-sarif",
   "clang-tidy-sarif",
   "serde-sarif",
+  "miri-sarif",
 ]
 
 [profile.release]

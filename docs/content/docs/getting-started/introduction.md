@@ -75,6 +75,7 @@ Below is a list of libraries and tools which are part of the `sarif-rs` project:
 - `clang-tidy-sarif`: CLI tool to convert `clang-tidy` diagnostics into SARIF.
 - `clippy-sarif`: CLI tool to convert `clippy` diagnostics into SARIF.
 - `hadolint-sarif`: CLI tool to convert `hadolint` diagnostics into SARIF.
+- `miri-sarif`: CLI tool to convert `cargo miri` diagnostics into SARIF.
 - `shellcheck-sarif`: CLI tool to convert `shellcheck` diagnostics into SARIF.
 - `sarif-fmt`: CLI tool to pretty print SARIF diagnostics.
 - `serde-sarif`: Typesafe SARIF structures for serializing and deserializing
