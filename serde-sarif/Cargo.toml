@@ -22,6 +22,7 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(doc_cfg)'] }
 [features]
 default = []
 clippy-converters = ["cargo_metadata", "regex", "anyhow"]
+miri-converters = ["cargo_metadata", "regex", "anyhow"]
 hadolint-converters = ["anyhow"]
 shellcheck-converters = ["anyhow"]
 clang-tidy-converters = ["regex", "anyhow", "once_cell"]
