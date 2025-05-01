@@ -77,6 +77,7 @@ serde-sarif = { version = "*", features = ["clippy-converters"] }
   types
 - **clippy-converters** Provides conversions between Clippy and SARIF types
 - **hadolint-converters** Provides conversions between hadolint and SARIF types
+- **miri-converters** Provides conversions between miri and SARIF types
 - **shellcheck-converters** Provides conversions between shellcheck and SARIF
   types
 
