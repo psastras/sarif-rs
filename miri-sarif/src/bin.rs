@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/miri-sarif/0.7.0")]
+#![doc(html_root_url = "https://docs.rs/miri-sarif/0.8.0")]
 
 //! This crate provides a command line tool to convert `cargo miri` diagnostic
 //! output into SARIF.
@@ -24,7 +24,7 @@
 //!
 //! ```shell
 //! # make sure to adjust the target and version (you may also want to pin to a specific version)
-//! curl -sSL https://github.com/psastras/sarif-rs/releases/download/miri-sarif-v0.7.0/miri-sarif-x86_64-unknown-linux-gnu -o miri-sarif
+//! curl -sSL https://github.com/psastras/sarif-rs/releases/download/miri-sarif-v0.8.0/miri-sarif-x86_64-unknown-linux-gnu -o miri-sarif
 //! ```
 //!
 //! ## Usage

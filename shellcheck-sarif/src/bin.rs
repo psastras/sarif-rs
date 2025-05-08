@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/shellcheck-sarif/0.7.0")]
+#![doc(html_root_url = "https://docs.rs/shellcheck-sarif/0.8.0")]
 
 //! This crate provides a command line tool to convert `shellcheck` diagnostic
 //! output into SARIF.
@@ -98,7 +98,7 @@ struct Args {
   /// input format; json or json1; defaults to 'json'
   #[arg(short, long, default_value = "json")]
   format: Option<String>,
-  
+
   /// output file; writes to stdout if none is given
   #[arg(short, long)]
   output: Option<std::path::PathBuf>,
