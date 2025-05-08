@@ -120,7 +120,7 @@ version = "0.7.0"
 dependencies = [
  "anyhow",
  "clap",
- "duct",
+ "duct 1.0.0",
  "serde-sarif",
  "version-sync",
 ]
@@ -205,12 +205,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "duct"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6ce170a0e8454fa0f9b0e5ca38a6ba17ed76a50916839d217eb5357e05cdfde"
+dependencies = [
+ "libc",
+ "os_pipe",
+ "shared_child",
+ "shared_thread",
+]
+
+[[package]]
 name = "duct_sh"
 version = "0.13.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5a6633cadba557545fbbe0299a2f9adc4bb2fc5fb238773f5e841e0c23d62146"
 dependencies = [
- "duct",
+ "duct 0.13.7",
 ]
 
 [[package]]
@@ -415,7 +427,7 @@ dependencies = [
  "anyhow",
  "clap",
  "codespan-reporting",
- "duct",
+ "duct 1.0.0",
  "duct_sh",
  "serde-sarif",
  "serde_json",
@@ -530,6 +542,12 @@ dependencies = [
  "libc",
  "winapi",
 ]
+
+[[package]]
+name = "shared_thread"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c7a6f98357c6bb0ebace19b22220e5543801d9de90ffe77f8abb27c056bac064"
 
 [[package]]
 name = "shellcheck-sarif"
