@@ -1,6 +1,6 @@
 [package]
 name = "clippy-sarif"
-version = "0.7.0"
+version = "0.8.0"
 authors = ["Paul Sastrasinh <psastras@gmail.com>"]
 edition = "2018"
 description = "Convert clippy output to SARIF"
@@ -21,7 +21,7 @@ path = "src/bin.rs"
 
 [dependencies]
 anyhow = "1.0.98"
-serde-sarif = { path = "../serde-sarif", version = "0.7.0", features = [
+serde-sarif = { path = "../serde-sarif", version = "0.8.0", features = [
     "clippy-converters",
 ] }
 clap = { version = "4.5.37", features = ["derive"] }
