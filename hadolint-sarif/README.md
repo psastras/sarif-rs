@@ -34,7 +34,7 @@ or downloaded directly from Github Releases
 
 ```shell
 # make sure to adjust the target and version (you may also want to pin to a specific version)
-curl -sSL https://github.com/psastras/sarif-rs/releases/download/shellcheck-sarif-v0.8.0/hadolint-sarif-x86_64-unknown-linux-gnu -o hadolint-sarif
+curl -sSL https://github.com/psastras/sarif-rs/releases/download/hadolint-sarif-v0.8.0/hadolint-sarif-x86_64-unknown-linux-gnu -o hadolint-sarif
 ```
 
 ### Fedora Linux
