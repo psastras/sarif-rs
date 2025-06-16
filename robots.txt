@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://psastras.github.io/sarif-rs/sitemap.xml
