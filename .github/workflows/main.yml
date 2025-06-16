@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v17
-      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - uses: DeterminateSystems/magic-nix-cache-action@v11
       - name: Run `nixci build`
         run: |
           nix run nixpkgs#nixci -- \
@@ -45,7 +45,7 @@ jobs:
         with:
           submodules: recursive
       - uses: DeterminateSystems/nix-installer-action@v17
-      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - uses: DeterminateSystems/magic-nix-cache-action@v11
       - name: Run Zola
         run: |
           nix develop --command zola build
@@ -106,7 +106,7 @@ jobs:
           fetch-depth: 0
       - uses: Swatinem/rust-cache@v2
       - uses: DeterminateSystems/nix-installer-action@v17
-      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - uses: DeterminateSystems/magic-nix-cache-action@v11
       - uses: actions-rs/cargo@v1
         with:
           command: build
