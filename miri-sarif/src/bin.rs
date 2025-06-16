@@ -60,7 +60,7 @@
 //! Github Advanced Security (GHAS), which can show code alerts in the
 //! "Security" tab of your repository.
 //!
-//! After uploading `clippy-sarif` output to Github, `clippy` diagnostics
+//! After uploading `miri-sarif` output to Github, `miri` diagnostics
 //! are available in GHAS.
 //!
 //! ### Example
@@ -79,19 +79,17 @@
 //!     runs-on: ubuntu-latest
 //!     if: ${{ github.ref == 'refs/heads/main' }}
 //!     steps:
-//!       - uses: actions/checkout@v2
-//!       - uses: actions-rs/toolchain@v1
+//!       - uses: actions/checkout@v4
+//!       - uses: dtolnay/rust-toolchain@stable
 //!         with:
-//!           profile: minimal
 //!           toolchain: nightly
 //!           components: miri
-//!           override: true
-//!       - uses: Swatinem/rust-cache@v1
+//!       - uses: Swatinem/rust-cache@v2
 //!       - run: cargo install miri-sarif sarif-fmt cargo-nextest
 //!       - run: MIRIFLAGS="--error-format=json" cargo miri nextest run --no-fail-fast --success-output immediate 2>&1 |
 //!           miri-sarif | tee results.sarif | sarif-fmt
 //!       - name: Upload SARIF file
-//!         uses: github/codeql-action/upload-sarif@v3
+//!         uses: github/codeql-action/upload-sarif@v4
 //!         with:
 //!           sarif_file: results.sarif
 //! ```
