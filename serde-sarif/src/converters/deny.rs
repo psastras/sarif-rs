@@ -132,7 +132,7 @@ fn process<R: BufRead>(mut reader: R) -> Result<sarif::Sarif> {
       map.insert(rule_id.clone(), map.len() as i64);
       
       let rule_description = if let Some(ref advisory) = diagnostic.advisory {
-        format!("{}", advisory.title)
+        advisory.title.to_string()
       } else {
         diagnostic.message.clone()
       };
