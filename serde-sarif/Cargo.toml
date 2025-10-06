@@ -26,6 +26,7 @@ miri-converters = ["cargo_metadata", "regex", "anyhow"]
 hadolint-converters = ["anyhow"]
 shellcheck-converters = ["anyhow"]
 clang-tidy-converters = ["regex", "anyhow", "once_cell"]
+deny-converters = ["anyhow"]
 opt-builder = []
 
 [dependencies]
