@@ -25,7 +25,7 @@ serde-sarif = { path = "../serde-sarif", version = "0.8.0", features = [
     "clang-tidy-converters",
 ] }
 clap = { version = "4.5.51", features = ["derive"] }
-duct = "1.1.0"
+duct = "1.1.1"
 
 [dev-dependencies]
 version-sync = "0.9"
