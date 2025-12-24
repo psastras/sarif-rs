@@ -23,7 +23,7 @@ path = "src/bin.rs"
 anyhow = "1.0.100"
 codespan-reporting = "0.12.0"
 serde-sarif = { path = "../serde-sarif", version = "0.8.0" }
-serde_json = "1.0.146"
+serde_json = "1.0.147"
 clap = { version = "4.5.53", features = ["derive"] }
 
 [dev-dependencies]
