@@ -20,7 +20,7 @@ name = "miri-sarif"
 path = "src/bin.rs"
 
 [dependencies]
-anyhow = "1.0.101"
+anyhow = "1.0.102"
 serde-sarif = { path = "../serde-sarif", version = "0.8.0", features = [
     "miri-converters",
 ] }
