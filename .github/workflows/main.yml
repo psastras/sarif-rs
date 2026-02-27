@@ -94,6 +94,7 @@ jobs:
           [
             clang-tidy-sarif,
             clippy-sarif,
+            deny-sarif,
             hadolint-sarif,
             miri-sarif,
             shellcheck-sarif,

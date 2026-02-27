@@ -60,6 +60,7 @@
               miri-sarif.crane.outputs.drv.crate
               shellcheck-sarif.crane.outputs.drv.crate
               clang-tidy-sarif.crane.outputs.drv.crate
+              deny-sarif.crane.outputs.drv.crate
             ];
           };
           default = all;
