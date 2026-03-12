@@ -38,7 +38,7 @@ strum = "0.28"
 strum_macros = "0.28"
 thiserror = "2.0.18"
 typed-builder = "0.22.0"
-once_cell = { version = "1.21.3", optional = true }
+once_cell = { version = "1.21.4", optional = true }
 
 [dev-dependencies]
 version-sync = "0.9"
