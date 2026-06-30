@@ -1,0 +1,3 @@
+{"type":"bans","message":"Package in deny list","severity":"warning","package":{"name":"tokio","version":"1.0.0"},"code":"banned-package"}
+{"type":"advisory","message":"Potential security vulnerability","severity":"error","package":{"name":"vulnerable-package","version":"0.1.0"},"advisory":{"id":"RUSTSEC-2023-0001","title":"Memory safety vulnerability","description":"This crate has a memory safety issue","url":"https://rustsec.org/advisories/RUSTSEC-2023-0001"}}
+{"type":"license","message":"License not allowed","severity":"warning","package":{"name":"bad-license","version":"1.0.0"},"license":{"expression":"GPL-3.0"}}
