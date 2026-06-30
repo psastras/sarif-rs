@@ -145,7 +145,9 @@ pub enum SupressionStatus {
 }
 
 #[doc = "Specifies the importance of this location in understanding the code flow in which it occurs. The order from most to least important is \"essential\", \"important\", \"unimportant\". Default: \"important\"."]
-#[derive(Display, Debug, Serialize, Deserialize, EnumString)]
+#[derive(
+  Clone, Display, Debug, Serialize, Deserialize, EnumString, PartialEq,
+)]
 #[serde(rename_all = "camelCase")]
 #[strum(serialize_all = "camelCase")]
 pub enum ThreadFlowLocationImportance {
