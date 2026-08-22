@@ -94,8 +94,8 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
         }
       }
 
-      // Rewrite Result::kind and Result::level to use ResultKind and
-      // ResultLevel instead of serde_json::Value.
+      // Rewrite Result::kind, Result::level and Result::baseline_state to use
+      // ResultKind, ResultLevel and ResultBaselineState instead of serde_json::Value.
       // This is a workaround for schemafy's inability to produce appropriate
       // exhaustive enums here.
       if s.ident == "Result" {
@@ -105,6 +105,8 @@ fn process_token_stream(input: proc_macro2::TokenStream) -> syn::File {
               field.ty = syn::parse_quote! { Option<ResultKind> };
             } else if field.ident.as_ref().unwrap() == "level" {
               field.ty = syn::parse_quote! { Option<ResultLevel> };
+            } else if field.ident.as_ref().unwrap() == "baseline_state" {
+              field.ty = syn::parse_quote! { Option<ResultBaselineState> };
             }
           }
         }
