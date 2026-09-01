@@ -20,3 +20,7 @@ pub mod shellcheck;
 #[cfg(feature = "clang-tidy-converters")]
 #[cfg_attr(doc, doc(cfg(feature = "clang-tidy-converters")))]
 pub mod clang_tidy;
+
+#[cfg(feature = "deny-converters")]
+#[cfg_attr(doc, doc(cfg(feature = "deny-converters")))]
+pub mod deny;
