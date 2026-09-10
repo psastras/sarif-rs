@@ -107,7 +107,9 @@ pub enum ResultLevel {
 }
 
 #[doc = "The state of a result relative to a baseline of a previous run."]
-#[derive(Display, Debug, Serialize, Deserialize, EnumString)]
+#[derive(
+  Clone, Copy, Display, Debug, Serialize, Deserialize, EnumString, PartialEq,
+)]
 #[serde(rename_all = "camelCase")]
 #[strum(serialize_all = "camelCase")]
 pub enum ResultBaselineState {
