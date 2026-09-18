@@ -736,7 +736,7 @@ fn to_writer_pretty(sarif: &sarif::Sarif, color: ColorOption) -> Result<()> {
           });
         }
 
-        term::emit(&mut writer.lock(), &config, &files, &diagnostic)?;
+        term::emit_to_write_style(&mut writer.lock(), &config, &files, &diagnostic)?;
         match diagnostic.severity {
           codespan_reporting::diagnostic::Severity::Note => {
             message_counter.0 += 1
