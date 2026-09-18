@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://psastras.github.io/sarif-rs/</loc>
+    </url>
+    <url>
+        <loc>https://psastras.github.io/sarif-rs/docs/</loc>
+    </url>
+    <url>
+        <loc>https://psastras.github.io/sarif-rs/docs/getting-started/</loc>
+    </url>
+    <url>
+        <loc>https://psastras.github.io/sarif-rs/docs/getting-started/introduction/</loc>
+        <lastmod>2021-05-01T08:00:00+00:00</lastmod>
+    </url>
+    <url>
+        <loc>https://psastras.github.io/sarif-rs/docs/help/</loc>
+    </url>
+    <url>
+        <loc>https://psastras.github.io/sarif-rs/docs/help/rust-docs/</loc>
+        <lastmod>2021-05-01T19:30:00+00:00</lastmod>
+    </url>
+</urlset>
