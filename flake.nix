@@ -5,8 +5,6 @@
     systems.url = "github:nix-systems/default";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     rust-flake.url = "github:juspay/rust-flake/f69408a404f09afe0d85be88eddff07a054c2397";
-    rust-flake.inputs.nixpkgs.follows = "nixpkgs";
-    rust-flake.inputs.rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
     devour-flake.url = "github:srid/devour-flake";
     devour-flake.flake = false;
   };
