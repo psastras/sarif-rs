@@ -16,7 +16,7 @@ pub enum Version {
 
 // todo: should be generated / synced with schema.json
 pub static SCHEMA_URL: &str =
-  "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0.json";
+  "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json";
 
 #[doc = "The role or roles played by the artifact in the analysis."]
 #[derive(Display, Debug, Serialize, Deserialize, EnumString)]
