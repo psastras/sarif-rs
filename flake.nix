@@ -4,7 +4,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    rust-flake.url = "github:juspay/rust-flake";
+    rust-flake.url = "github:juspay/rust-flake/main";
     devour-flake.url = "github:srid/devour-flake";
     devour-flake.flake = false;
   };
