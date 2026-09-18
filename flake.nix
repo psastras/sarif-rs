@@ -1,10 +1,10 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/25.05";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    rust-flake.url = "github:juspay/rust-flake/main";
+    rust-flake.url = "github:juspay/rust-flake/ea753dade9e283809d11c63082840657eb766e97";
     devour-flake.url = "github:srid/devour-flake";
     devour-flake.flake = false;
   };
