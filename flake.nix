@@ -1,7 +1,7 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/25.05";
-    flake-parts.url = "github:hercules-ci/flake-parts/main";
+    nixpkgs.url = "github:nixos/nixpkgs/24.11";
+    flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     rust-flake.url = "github:juspay/rust-flake/f69408a404f09afe0d85be88eddff07a054c2397";
